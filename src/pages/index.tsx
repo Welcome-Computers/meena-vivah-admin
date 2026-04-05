@@ -1,7 +1,7 @@
+import styles from "@/styles/Home.module.css";
+import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
-import styles from "@/styles/Home.module.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +39,7 @@ export default function Home() {
             <p>
               Looking for a starting point or more instructions? Head over to{" "}
               <a
-                href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -47,7 +47,7 @@ export default function Home() {
               </a>{" "}
               or the{" "}
               <a
-                href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -59,8 +59,7 @@ export default function Home() {
           <div className={styles.ctas}>
             <a
               className={styles.primary}
-              href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-              target="_blank"
+              href="/biodata"
               rel="noopener noreferrer"
             >
               <Image
@@ -70,16 +69,9 @@ export default function Home() {
                 width={16}
                 height={16}
               />
-              Deploy Now
+              Biodata
             </a>
-            <a
-              className={styles.secondary}
-              href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Documentation
-            </a>
+
           </div>
         </main>
       </div>

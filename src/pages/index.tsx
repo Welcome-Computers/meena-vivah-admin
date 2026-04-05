@@ -1,4 +1,8 @@
+import InputField from "@/components/InputElements/InputField";
+import OTPField from "@/components/InputElements/OTPField";
+import PasswordField from "@/components/InputElements/PasswordField";
 import styles from "@/styles/Home.module.css";
+import { Form } from "antd";
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
@@ -34,6 +38,15 @@ export default function Home() {
             height={20}
             priority
           />
+          <div className={styles.intro}>
+            <Form layout="vertical">
+              <InputField name="name" label="Name" maxLength={50} showCount />
+
+              <PasswordField name="password" label="Password" />
+
+              <OTPField name="otp" label="Enter OTP" length={6} />
+            </Form>
+          </div>
           <div className={styles.intro}>
             <h1>To get started, edit the index.tsx file.</h1>
             <p>

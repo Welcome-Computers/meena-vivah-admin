@@ -1,3 +1,5 @@
+
+
 import { Form, Input } from 'antd';
 import { InputProps } from 'antd/es/input';
 import { ReactNode, memo } from 'react';
@@ -10,15 +12,7 @@ interface IProps extends Omit<InputProps, 'name'> {
 }
 
 const InputField = memo((props: IProps) => {
-  const {
-    label,
-    name,
-    rootClassName,
-    maxLength,
-    showCount = false,
-    rules,
-    ...inputProps
-  } = props;
+  const { label, name, rootClassName, maxLength, showCount = false, rules, ...rest } = props;
 
   return (
     <div className={`${rootClassName} common_input_label_design`}>
@@ -42,10 +36,11 @@ const InputField = memo((props: IProps) => {
             ) : null;
           }}
         </Form.Item>
+      
       </div>
 
-      <Form.Item name={name} rules={rules} label={null}>
-        <Input {...inputProps} maxLength={maxLength} />
+      <Form.Item name={name} rules={rules} style={{ marginBottom: '6px' }} label={null}>
+        <Input {...rest} maxLength={maxLength} size='small'/>
       </Form.Item>
     </div>
   );

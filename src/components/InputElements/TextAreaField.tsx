@@ -1,3 +1,5 @@
+
+
 import { Form, Input } from 'antd';
 import { JSX, ReactNode, memo } from 'react';
 
@@ -17,7 +19,8 @@ interface IProps {
 }
 
 const TextAreaField = memo((props: IProps): JSX.Element => {
-  const { placeholder, label, disabled, rows, className, name, rootClassName, showCount = false, maxLength, ...rest } = props;
+  const { placeholder, label, disabled, rows, 
+    className, name, rootClassName, showCount = false, maxLength, ...rest } = props;
 
   return (
     <div className={`${rootClassName} common_input_label_design`}>
@@ -33,12 +36,13 @@ const TextAreaField = memo((props: IProps): JSX.Element => {
           {({ getFieldValue }) => {
             const text = getFieldValue(name) ?? '';
             const count = text?.length;
-            return <>{showCount && <div className="d_flex al_center opacity_50 no_wrap">{count >= 0 ? `${count} / ${maxLength}` : maxLength}</div>}</>;
+            return <>{showCount && <div>{count >= 0 ? `${count} / ${maxLength}` : maxLength}</div>}</>;
           }}
         </Form.Item>
       </div>
-      <Form.Item {...props} label={null}>
+      <Form.Item {...props} style={{ marginBottom: '6px' }} label={null}>
         <TextArea
+        size='small'
           {...rest}
           rows={rows}
           maxLength={maxLength}
@@ -47,7 +51,6 @@ const TextAreaField = memo((props: IProps): JSX.Element => {
           className={className}
           onChangeCapture={(ev) => {
             const { value } = ev.currentTarget;
-            // eslint-disable-next-line no-param-reassign
             ev.currentTarget.value = value.replaceAll('\r\n', '\n');
           }}
         />

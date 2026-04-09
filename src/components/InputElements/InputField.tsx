@@ -14,6 +14,8 @@ interface IProps extends Omit<InputProps, 'name'> {
 const InputField = memo((props: IProps) => {
   const { label, name, rootClassName, maxLength, showCount = false, rules, ...rest } = props;
 
+  console.log(123)
+
   return (
     <div className={`${rootClassName} common_input_label_design`}>
       <div className="d_flex al_center jc_between gap_10">

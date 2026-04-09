@@ -4,6 +4,7 @@ import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import ActionButton from "@/components/formComponents/ActionButtons";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
+import GotraDetials from "@/components/formComponents/GotraDetails";
 
 const Biodata = () => {
   const [form] = Form.useForm();
@@ -26,8 +27,11 @@ const Biodata = () => {
       </Button>
 
 {/* Main form components */}
-      <Form form={form} onFinish={handleFromSubmit}  initialValues={{ sibling: [{}]
-  }}>
+      <Form form={form} onFinish={handleFromSubmit}  initialValues={{ 
+        sibling: [{}] ,
+      other_gotra: [{}] 
+    }}
+  >
         <Row gutter={[30, 30]}>
           <PersonalDetails form={form} />
           <FamilyDetails form={form} />
@@ -35,6 +39,7 @@ const Biodata = () => {
 
         <Row gutter={[30, 30]}>
           <SiblingDetails form={form} />
+          <GotraDetials form={form} />
           <ActionButton form={form} />
         </Row>
         

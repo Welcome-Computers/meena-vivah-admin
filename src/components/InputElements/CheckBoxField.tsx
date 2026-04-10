@@ -1,13 +1,15 @@
-import {  Form, Radio } from "antd";
+import {  Form, Grid, Radio } from "antd";
 import { memo } from "react";
 
 const CheckBoxField = memo((props: any) => {
   const { name, label,form ,options ,rules} = props;
-
+const {useBreakpoint}=Grid;
+const screens=useBreakpoint();
 
   return (
-        <Form.Item
-        name={name} label={label}
+        <Form.Item style={{padding:"0" ,margin:0 }}
+        name={name} 
+        label={screens.xs ?null:label}
         rules={rules}
         >
         <Radio.Group>

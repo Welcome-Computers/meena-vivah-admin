@@ -12,7 +12,7 @@ const OtherDetails = memo((props: any) => {
         Other Details
       </h2>
 
-      <TextAreaField name="otherdetails" label="OtherDetails" rows={1} />
+      <TextAreaField name="other_details" label="OtherDetails" rows={1} />
     </Col>
   );
 });

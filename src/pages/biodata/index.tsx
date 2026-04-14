@@ -12,9 +12,21 @@ import OtherDetails from "@/components/formComponents/OtherDetails";
 const Biodata = () => {
   const [form] = Form.useForm();
 
-  const handleFromSubmit = () => {
+
+
+  const handleFromSubmit = async() => {
     const value = form.getFieldsValue();
-    console.log("data", value);
+  try {
+    const res=await fetch("/api/userController",
+      {method:"POST" ,headers:{"Content-Type":"application/json"},body:JSON.stringify(value),})
+
+    
+      console.log(res.json)
+
+  } catch (error) {
+    console.log("err data", error);
+  }  
+    
   };
 
   return (

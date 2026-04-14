@@ -22,7 +22,7 @@ const AddressDetails = memo((props: any) => {
           <div className={style["form-grid"]}>
              <div style={{ gridColumn: "span 2" }}>
             <TextAreaField
-              name={[value.name, "address"]}
+              name={[value.name, "full_address"]}
               label="Address"
               rows={1}
             /></div>

@@ -11,6 +11,10 @@ const DobField = memo((props: DobProps) => {
   const { name, label ,...rest} = props;
 
   const ageValidation = (_: any, value: any) => {
+     if (!value) {
+    return Promise.reject("Date of birth required");
+  }
+
     const today = new Date();
     const userDob=value.toDate();
 

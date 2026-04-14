@@ -13,8 +13,8 @@ const screens=useBreakpoint();
         rules={rules}
         >
         <Radio.Group>
-           {options.map((value:any)=>(
-            <Radio value={value}>{value.option}</Radio>
+           {options.map((value:any,index)=>(
+            <Radio key={index} value={value}>{value.option}</Radio>
            ))}
         </Radio.Group>
         </Form.Item>

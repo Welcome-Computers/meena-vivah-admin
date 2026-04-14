@@ -4,14 +4,29 @@ import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import ActionButton from "@/components/formComponents/ActionButtons";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
+import GotraDetials from "@/components/formComponents/GotraDetails";
+import PreferencesMobileDetails from "@/components/formComponents/PreferencesMobileDetails";
+import AddressDetails from "@/components/formComponents/AddressDetails";
+import OtherDetails from "@/components/formComponents/OtherDetails";
 
 const Biodata = () => {
   const [form] = Form.useForm();
 
 
-  const handleFromSubmit = () => {
+
+  const handleFromSubmit = async() => {
     const value = form.getFieldsValue();
-    console.log("data", value);
+  try {
+    const res=await fetch("/api/userController",
+      {method:"POST" ,headers:{"Content-Type":"application/json"},body:JSON.stringify(value),})
+
+    
+      console.log(res.json)
+
+  } catch (error) {
+    console.log("err data", error);
+  }  
+    
   };
 
   return (
@@ -25,19 +40,36 @@ const Biodata = () => {
         Logout
       </Button>
 
-{/* Main form components */}
-      <Form form={form} onFinish={handleFromSubmit}  initialValues={{ sibling: [{}]
-  }}>
+      {/* Main form components */}
+      <Form
+        form={form}
+        onFinish={handleFromSubmit}
+        initialValues={{
+          sibling_details: [{}],
+          mobile_details: [{}],
+          other_gotra: [{}],
+          address_details: [{}],
+        }}
+      >
         <Row gutter={[30, 30]}>
           <PersonalDetails form={form} />
           <FamilyDetails form={form} />
         </Row>
 
         <Row gutter={[30, 30]}>
+          <AddressDetails form={form} />
           <SiblingDetails form={form} />
+        </Row>
+
+        <Row gutter={[30, 30]}>
+          <GotraDetials form={form} />
+          <PreferencesMobileDetails form={form} />
+        </Row>
+
+        <Row gutter={[30, 30]}>
+          <OtherDetails />
           <ActionButton form={form} />
         </Row>
-        
       </Form>
     </AdminLayout>
   );

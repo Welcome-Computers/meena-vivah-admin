@@ -11,6 +11,10 @@ const DobField = memo((props: DobProps) => {
   const { name, label ,...rest} = props;
 
   const ageValidation = (_: any, value: any) => {
+     if (!value) {
+    return Promise.reject("Date of birth required");
+  }
+
     const today = new Date();
     const userDob=value.toDate();
 
@@ -32,7 +36,7 @@ const DobField = memo((props: DobProps) => {
   return (
         <Form.Item
           name={name}
-          style={{ marginBottom: "6px" }}
+          style={{ marginBottom: "5px" }}
           validateTrigger="onChange"
           label={label}
           rules={[
@@ -40,7 +44,9 @@ const DobField = memo((props: DobProps) => {
             { validator: ageValidation },
           ]}
         >
-          <DatePicker size="small" {...rest}/>
+          <DatePicker
+          style={{ marginBottom: "5px" }}
+          size="small" {...rest}/>
         </Form.Item>
   );
 });

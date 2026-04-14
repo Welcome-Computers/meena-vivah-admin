@@ -19,12 +19,12 @@ const InputField = memo((props: IProps) => {
   return (
     <div className={`${rootClassName} common_input_label_design`}>
       <div className="d_flex al_center jc_between gap_10">
-        {!!label && (
-          <div className="ant-col ant-form-item-label">
-            <label className="ant-form-item-required">
-              <div className="custom_title">{label}</div>
-            </label>
-          </div>
+         {!!label && (
+           <div className="ant-col ant-form-item-label">
+             <label className="ant-form-item-required">
+               <div className="custom_title">{label}</div>
+             </label>
+           </div> 
         )}
 
         <Form.Item noStyle dependencies={[name]}>

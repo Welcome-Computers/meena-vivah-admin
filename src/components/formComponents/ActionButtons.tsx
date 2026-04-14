@@ -8,8 +8,20 @@ const ActionButton = memo((props: any) => {
 
   return (
       <Col xs={24} md={12}>
+        <div   style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: 10,
+      marginTop:"20px"
+    }}
+    >
+
         <PreviewButton form={form} />
+
         <ConfromButton />
+
+    </div>
       </Col>
   );
 });

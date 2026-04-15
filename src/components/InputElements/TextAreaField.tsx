@@ -20,35 +20,21 @@ interface IProps {
 
 const TextAreaField = memo((props: IProps): JSX.Element => {
   const { placeholder, label, disabled, rows, 
-    className, name, rootClassName, showCount = false, maxLength, ...rest } = props;
+    className, name, rootClassName, maxLength, ...rest } = props;
 
   return (
     <div className={`${rootClassName} common_input_label_design`}>
-      <div className="d_flex al_center jc_between gap_10">
-        {!!label && (
-          <div className="ant-col ant-form-item-label">
-            <label htmlFor="terms_and_conditions_description" className="ant-form-item-required" title="">
-              <div className="custom_title">{label}</div>
-            </label>
-          </div>
-        )}
-        <Form.Item noStyle dependencies={[name]}>
-          {({ getFieldValue }) => {
-            const text = getFieldValue(name) ?? '';
-            const count = text?.length;
-            return <>{showCount && <div>{count >= 0 ? `${count} / ${maxLength}` : maxLength}</div>}</>;
-          }}
-        </Form.Item>
-      </div>
-      <Form.Item {...props} style={{ marginBottom: '6px' }} label={null}>
+      <Form.Item {...props} style={{ marginBottom: '6px' }} label={label}
+      //  labelCol={{ span: 5 }}     
+  // wrapperCol={{ span: 19 }}
+      >
         <TextArea
         size='small'
           {...rest}
           rows={rows}
-          maxLength={maxLength}
+          style={{ outline:"none" ,borderRadius:"0" ,border:"2px solid #444444"}}
           placeholder={placeholder}
           disabled={disabled}
-          className={className}
           onChangeCapture={(ev) => {
             const { value } = ev.currentTarget;
             ev.currentTarget.value = value.replaceAll('\r\n', '\n');

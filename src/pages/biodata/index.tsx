@@ -1,4 +1,4 @@
-import { Button, Form, Row } from "antd";
+import { Button, Col, Form, Row } from "antd";
 import AdminLayout from "../../components/layout/AdminLayout";
 import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
@@ -8,6 +8,10 @@ import GotraDetials from "@/components/formComponents/GotraDetails";
 import PreferencesMobileDetails from "@/components/formComponents/PreferencesMobileDetails";
 import AddressDetails from "@/components/formComponents/AddressDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
+
+
+
+
 
 const Biodata = () => {
   const [form] = Form.useForm();
@@ -19,14 +23,12 @@ const Biodata = () => {
   try {
     const res=await fetch("/api/userController",
       {method:"POST" ,headers:{"Content-Type":"application/json"},body:JSON.stringify(value),})
-
-    
       console.log(res.json)
-
   } catch (error) {
     console.log("err data", error);
   }  
-    
+  console.log("form data",value);  
+
   };
 
   return (
@@ -42,6 +44,10 @@ const Biodata = () => {
 
       {/* Main form components */}
       <Form
+       layout="horizontal"
+  labelCol={{ span: 6 }}
+  wrapperCol={{ span: 18 }}
+   labelAlign="left"   
         form={form}
         onFinish={handleFromSubmit}
         initialValues={{
@@ -51,25 +57,26 @@ const Biodata = () => {
           address_details: [{}],
         }}
       >
-        <Row gutter={[30, 30]}>
+        <Row gutter={[40, 40]}>
+          <Col  xs={24} md={12}>
           <PersonalDetails form={form} />
           <FamilyDetails form={form} />
-        </Row>
-
-        <Row gutter={[30, 30]}>
-          <AddressDetails form={form} />
           <SiblingDetails form={form} />
-        </Row>
+</Col>
 
-        <Row gutter={[30, 30]}>
-          <GotraDetials form={form} />
+<Col  xs={24} md={12}>
+          <GotraDetials form={form} 
+          />
           <PreferencesMobileDetails form={form} />
+          <AddressDetails form={form} />
+          <OtherDetails />
+        </Col>
         </Row>
 
-        <Row gutter={[30, 30]}>
-          <OtherDetails />
+
+
+{/* AT LAST IN RIGHT BOTTOM */}
           <ActionButton form={form} />
-        </Row>
       </Form>
     </AdminLayout>
   );

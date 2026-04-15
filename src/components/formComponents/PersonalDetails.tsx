@@ -10,10 +10,8 @@ const PersonalDetails = memo((props: any) => {
   const { form } = props;
 
   return (
-    <Col xs={24} md={12} className={style["form-container"]}>
-      <h2 style={{ fontFamily: "cursive", margin: "10px 0 5px 0" }} className={style["form-title"]}>
-        Personal Details
-      </h2>
+    <div className={style["form-container"]}>
+     
       <CheckBoxField
         form={form}
         name="gender"
@@ -26,22 +24,20 @@ const PersonalDetails = memo((props: any) => {
           { option: "Bride", value: "Bride" },
         ]}
       />
-
       <InputField
         name="name"
         label="Name"
-        maxLength={50}
-        showCount
+        
         rules={[{ required: true, message: "enter name first" }]}
       />
       <DobField name="dob" label="Date of Birth" />
-      <TextAreaField name="education" label="Education" form={form} rows={1} maxLength={50} rules={
+      <TextAreaField name="education" label="Education" form={form} rows={4} maxLength={50} rules={
         [
           {required:true,message:"Education Qualification Must be Filled."}
         ]
       }/>
-      <TextAreaField name="occupation" label="Occupation" form={form} rows={1} maxLength={50}/>
-    </Col>
+      <TextAreaField name="occupation" label="Occupation" form={form} rows={4} maxLength={50}/>
+    </div>
   );
 });
 

@@ -7,7 +7,6 @@ const ActionButton = memo((props: any) => {
   const { form } = props;
 
   return (
-      <Col xs={24} md={12}>
         <div   style={{
       display: "flex",
       justifyContent: "space-between",
@@ -22,7 +21,6 @@ const ActionButton = memo((props: any) => {
         <ConfromButton />
 
     </div>
-      </Col>
   );
 });
 

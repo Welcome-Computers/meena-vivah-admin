@@ -7,13 +7,13 @@ const OtherDetails = memo((props: any) => {
   const { form } = props;
 
   return (
-    <Col xs={24} md={12} className={style["form-container"]}>
-      <h2 style={{ fontFamily: "cursive", margin: "10px 0 5px 0" }} className={style["form-title"]}>
-        Other Details
-      </h2>
+    <div className={style["form-container"]}>
+    <p style={{   fontSize:"14px"}} className={style["form-title"]}>
+        Other Info      </p>
 
-      <TextAreaField name="other_details" label="OtherDetails" rows={1} />
-    </Col>
+
+      <TextAreaField name="other_details" label={null} rows={5} />
+    </div>
   );
 });
 

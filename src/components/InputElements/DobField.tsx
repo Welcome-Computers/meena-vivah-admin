@@ -45,8 +45,10 @@ const DobField = memo((props: DobProps) => {
           ]}
         >
           <DatePicker
-          style={{ marginBottom: "5px" }}
-          size="small" {...rest}/>
+          style={{ marginBottom: "5px",width:"100%",outline:"none" ,borderRadius:"0" ,border:"2px solid #444444"}}
+          size="small" {...rest}
+          
+          />
         </Form.Item>
   );
 });

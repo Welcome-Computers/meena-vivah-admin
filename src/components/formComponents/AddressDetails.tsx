@@ -9,16 +9,35 @@ import { Form } from "antd";
 const AddressDetails = memo((props: any) => {
   const { form } = props;
 
+  // if address and pincode empty then button disabled and Max 2 entries
+  const addressdetails = Form.useWatch("address_details") || [];
+  const isFirstFilled =
+    !(addressdetails.length < 2) ||
+    !(addressdetails[0]?.full_address && addressdetails[0]?.pincode);
 
-  // empty entires add button validation
-  // const addressdetails=Form.useWatch("address_details")
-  // const firstaddress=addressdetails[0]
-  // const isFirstFilled=firstaddress.full_address
+  // address type validation
+  if (addressdetails[0]?.type === addressdetails[1]?.type) {
+    form.setFields([
+      {
+        name: ["address_details", 1, "type"],
+        errors: ["type must be diffrent"],
+      },
+    ]);
+  } else {
+    form.setFields([
+      {
+        name: ["address_details", 1, "type"],
+        errors: [],
+      },
+    ]);
+  }
 
   return (
-    
     <div className={style["form-container"]}>
-      <FormListComponent formListName="address_details" >
+      <FormListComponent
+        formListName="address_details"
+        isDisabled={isFirstFilled}
+      >
         {(value: any) => (
           <div>
             <TextAreaField

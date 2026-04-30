@@ -47,7 +47,7 @@ const Biodata = () => {
       <Form
        layout="horizontal"
   labelCol={{ span: 6 }}
-  wrapperCol={{ span: 18 }}
+  wrapperCol={{ span: 18 }}  
    labelAlign="left"   
         form={form}
         onFinish={handleFromSubmit}

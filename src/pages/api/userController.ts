@@ -7,27 +7,7 @@ export default async function PersonalDetails(
 ) {
   const connection = await db.getConnection();
   try {
-    const {
-      name,
-      dob,
-      education,
-      occupation,
-      gender,
-      f_occupation,
-      f_name,
-      m_name,
-      m_occupation,
-      sibling_details,
-      address_details,
-      other_gotra,
-      gotra_self,
-      gotra_mother,
-      gotra_grandmother,
-      gotra_grandmother_maternal,
-      preferences,
-      mobile_details,
-      other_details,
-      type,
+    const { name, dob, education, occupation, gender, f_occupation, f_name, m_name, m_occupation, sibling_details, address_details, other_gotra, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, mobile_details, other_details, type,
     } = req.body;
 
     const mobile = mobile_details[0]?.mobile;
@@ -35,28 +15,9 @@ export default async function PersonalDetails(
 
     // person table query
     const [result]: any = await connection.query(
-      `INSERT INTO user (mobile,gender,name,dob,education,occupation,
-     fathersname,mothersname,fathersoccupation,mothersoccupation
-     ,self_gotra,m_gotra,gm_gotra,mat_gm_gotra
-     ,preferences,otherinfo
+      `INSERT INTO user (mobile,gender,name,dob,education,occupation,fathersname,mothersname,fathersoccupation,mothersoccupation,self_gotra,m_gotra,gm_gotra,mat_gm_gotra,preferences,otherinfo
      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [
-        mobile,
-        gender,
-        name,
-        dob,
-        education,
-        occupation,
-        f_name,
-        m_name,
-        f_occupation,
-        m_occupation,
-        gotra_self,
-        gotra_mother,
-        gotra_grandmother,
-        gotra_grandmother_maternal,
-        preferences,
-        other_details,
+      [ mobile, gender, name, dob, education, occupation, f_name, m_name, f_occupation, m_occupation, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, other_details,
       ],
     );
 
@@ -66,22 +27,13 @@ export default async function PersonalDetails(
     // sibling details query
     if (sibling_details && sibling_details.length > 0) {
       for (let details of sibling_details) {
-        const {
-          relation,
-          sibling_name,
-          sibling_occupation,
-          sibling_education,
+        const { relation, sibling_name, sibling_occupation, sibling_education,
         } = details;
 
         const sibling_relation = relation;
         await connection.query(
           `INSERT INTO sibling_details(user_id,relation,name,education,occupation) VALUES(?,?,?,?,?)`,
-          [
-            id,
-            sibling_relation,
-            sibling_name,
-            sibling_occupation,
-            sibling_education,
+          [ id, sibling_relation, sibling_name, sibling_occupation, sibling_education,
           ],
         );
       }
@@ -109,8 +61,7 @@ export default async function PersonalDetails(
       }
     }
 
-
-    // preferences and mobile Details
+    // mobile Details
     // if (mobile_details && mobile_details.length > 0) {
     //   for (let details of mobile_details) {
     //     const { mobile } = details;
@@ -119,8 +70,7 @@ export default async function PersonalDetails(
     //       [id, mobile],
     //     );
     //   }
-    // }  
-
+    // }
 
     await connection.commit();
 

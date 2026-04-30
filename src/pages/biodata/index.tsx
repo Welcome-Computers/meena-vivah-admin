@@ -5,7 +5,7 @@ import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import ActionButton from "@/components/formComponents/ActionButtons";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
 import GotraDetials from "@/components/formComponents/GotraDetails";
-import PreferencesMobileDetails from "@/components/formComponents/PreferencesMobileDetails";
+import MobileDetails from "@/components/formComponents/MobileDetails";
 import AddressDetails from "@/components/formComponents/AddressDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
 
@@ -20,6 +20,7 @@ const Biodata = () => {
 
   const handleFromSubmit = async() => {
     const value = form.getFieldsValue();
+    console.log("form data ",value)
   try {
     const res=await fetch("/api/userController",
       {method:"POST" ,headers:{"Content-Type":"application/json"},body:JSON.stringify(value),})
@@ -67,7 +68,7 @@ const Biodata = () => {
 <Col  xs={24} md={12}>
           <GotraDetials form={form} 
           />
-          <PreferencesMobileDetails form={form} />
+          <MobileDetails form={form} />
           <AddressDetails form={form} />
           <OtherDetails />
         </Col>

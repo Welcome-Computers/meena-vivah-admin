@@ -9,14 +9,12 @@ import style from "../../pages/biodata/style.module.css";
 const SiblingDetails = memo((props: any) => {
   const { form } = props;
 
-  // validation empty entries
-   const siblingdata=Form.useWatch("sibling_details",form) || [];
-   const lastItem=siblingdata[siblingdata.length - 1 ]
-   const valueDisabled=lastItem?.sibling_name?.length > 5 && lastItem?.relation?.length > 1
-  const isDisabled=!valueDisabled;
-
-
-
+  // validation for add empty entries
+  const siblingdata = Form.useWatch("sibling_details", form) || [];
+  const lastItem = siblingdata[siblingdata.length - 1];
+  const valueDisabled =
+    lastItem?.sibling_name?.length > 2 && lastItem?.relation?.length > 1;
+  const isDisabled = !valueDisabled;
   return (
     <div
       className={style["form-container"]}
@@ -30,9 +28,16 @@ const SiblingDetails = memo((props: any) => {
       </p>
 
       <FormListComponent formListName="sibling_details" isDisabled={isDisabled}>
-        {(value) => (
+        {(value:any) => (
           <div>
-            <InputField name={[value.name, "sibling_name"]} label="Name" />
+            <InputField
+              name={[value.name, "sibling_name"]}
+              rules={[
+                { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+                { max: 30, message: "Maximum 30 characters" },
+              ]}
+              label="Name"
+            />
 
             <CheckBoxField
               label="Relation"
@@ -55,15 +60,16 @@ const SiblingDetails = memo((props: any) => {
               name={[value.name, "sibling_education"]}
               label="Education"
               rows={1}
+              rules={[{ max: 100, message: "Maximum 100 characters" }]}
             />
             <TextAreaField
               name={[value.name, "sibling_occupation"]}
               label="Occupation"
               rows={1}
+              rules={[{ max: 100, message: "Maximum 100 characters" }]}
             />
           </div>
         )}
-
       </FormListComponent>
     </div>
   );

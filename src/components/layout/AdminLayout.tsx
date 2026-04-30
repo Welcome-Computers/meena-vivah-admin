@@ -26,7 +26,8 @@ export default function AdminLayout({ children }: any) {
       key: "/settings",
       icon: <SettingOutlined />,
       label: "Settings",
-    },
+    }
+
   ];
 
   return (

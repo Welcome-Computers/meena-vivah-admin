@@ -3,12 +3,28 @@ import { memo, useState } from "react";
 
 const PreviewButton = memo((props: any) => {
   const { form, name, label } = props;
+
+type PreviewData={
+   name?: string;
+  gender?: { value?: string };
+  relation?: { value?: string };
+  dob?: any; 
+  occupation?: string;
+  education?: string;
+  f_name?: string;
+  f_occupation?: string;
+  m_name?: string;
+  m_occupation?: string;
+  sibling_name?: string;
+  sibling_education?: string;
+  sibling_occupation?: string;
+}
+
   const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
-  const [dataPreview, setDataPreview] = useState({});
+  const [dataPreview, setDataPreview] = useState<PreviewData>({});
 
   const handlePreviewButton = () => {
     const previewData = form.getFieldsValue();
-    // console.log("preview data",previewData)
     setDataPreview(previewData);
     setisPreviewOpen(true);
   };

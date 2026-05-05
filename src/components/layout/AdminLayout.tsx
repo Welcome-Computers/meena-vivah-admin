@@ -13,7 +13,7 @@ export default function AdminLayout({ children }: any) {
 
   const menuItems = [
     {
-      key: "/",
+      key: "/dashboard",
       icon: <DashboardOutlined />,
       label: "Dashboard",
     },
@@ -26,7 +26,8 @@ export default function AdminLayout({ children }: any) {
       key: "/settings",
       icon: <SettingOutlined />,
       label: "Settings",
-    },
+    }
+
   ];
 
   return (

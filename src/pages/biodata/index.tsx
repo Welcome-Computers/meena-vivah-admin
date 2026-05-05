@@ -2,30 +2,30 @@ import ActionButton from "@/components/formComponents/ActionButtons";
 import AddressDetails from "@/components/formComponents/AddressDetails";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
 import GotraDetials from "@/components/formComponents/GotraDetails";
+import MobileDetails from "@/components/formComponents/MobileDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
-import PreferencesMobileDetails from "@/components/formComponents/PreferencesMobileDetails";
 import SiblingDetails from "@/components/formComponents/SiblingDetails";
-import { Button, Form, Row } from "antd";
+import { Button, Col, Form, Row } from "antd";
 import AdminLayout from "../../components/layout/AdminLayout";
 
 const Biodata = () => {
   const [form] = Form.useForm();
 
-
-
   const handleFromSubmit = async () => {
     const value = form.getFieldsValue();
+    console.log("form data ", value);
     try {
-      const res = await fetch("/api/userController",
-        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(value), })
-
-      console.log(res.json)
-
+      const res = await fetch("/api/userController", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value),
+      });
+      console.log(res.json);
     } catch (error) {
       console.log("err data", error);
     }
-
+    console.log("form data", value);
   };
 
   return (
@@ -41,6 +41,10 @@ const Biodata = () => {
 
       {/* Main form components */}
       <Form
+        layout="horizontal"
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
+        labelAlign="left"
         form={form}
         onFinish={handleFromSubmit}
         initialValues={{
@@ -50,25 +54,23 @@ const Biodata = () => {
           address_details: [{}],
         }}
       >
-        <Row gutter={[30, 30]}>
-          <PersonalDetails form={form} />
-          <FamilyDetails form={form} />
+        <Row gutter={[40, 40]}>
+          <Col xs={24} md={12}>
+            <PersonalDetails form={form} />
+            <FamilyDetails form={form} />
+            <SiblingDetails form={form} />
+          </Col>
+
+          <Col xs={24} md={12}>
+            <GotraDetials form={form} />
+            <MobileDetails form={form} />
+            <AddressDetails form={form} />
+            <OtherDetails />
+          </Col>
         </Row>
 
-        <Row gutter={[30, 30]}>
-          <AddressDetails form={form} />
-          <SiblingDetails form={form} />
-        </Row>
-
-        <Row gutter={[30, 30]}>
-          <GotraDetials form={form} />
-          <PreferencesMobileDetails form={form} />
-        </Row>
-
-        <Row gutter={[30, 30]}>
-          <OtherDetails />
-          <ActionButton form={form} />
-        </Row>
+        {/* AT LAST IN RIGHT BOTTOM */}
+        <ActionButton form={form} />
       </Form>
     </AdminLayout>
   );

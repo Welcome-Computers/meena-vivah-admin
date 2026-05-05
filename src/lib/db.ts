@@ -3,9 +3,9 @@ import mysql2 from "mysql2/promise";
 const db = mysql2.createPool({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "root",
   database: "marriageapp",
-}); 
+});
 
 async function CheckDb() {
   try {
@@ -15,7 +15,7 @@ async function CheckDb() {
   } catch (error) {
     console.log(error);
   }
-}  
+}
 
 CheckDb();
 

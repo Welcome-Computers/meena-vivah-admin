@@ -14,8 +14,6 @@ interface IProps extends Omit<InputProps, 'name'> {
 const InputField = memo((props: IProps) => {
   const { label, name, rootClassName, maxLength, showCount = false, rules, ...rest } = props;
 
-  console.log(123)
-
   return (
     <div 
   >

@@ -19,7 +19,7 @@ interface IProps {
 }
 
 const TextAreaField = memo((props: IProps): JSX.Element => {
-  const { placeholder, label, disabled, rows, 
+  const { placeholder, label, disabled, rows,
     className, name, rootClassName, showCount = false, maxLength, ...rest } = props;
 
   return (
@@ -40,9 +40,10 @@ const TextAreaField = memo((props: IProps): JSX.Element => {
           }}
         </Form.Item>
       </div>
+
       <Form.Item {...props} style={{ marginBottom: '6px' }} label={null}>
         <TextArea
-        size='small'
+          size='small'
           {...rest}
           rows={rows}
           maxLength={maxLength}

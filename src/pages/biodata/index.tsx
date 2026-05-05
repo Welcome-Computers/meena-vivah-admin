@@ -9,27 +9,23 @@ import MobileDetails from "@/components/formComponents/MobileDetails";
 import AddressDetails from "@/components/formComponents/AddressDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
 
-
-
-
-
 const Biodata = () => {
   const [form] = Form.useForm();
 
-
-
-  const handleFromSubmit = async() => {
+  const handleFromSubmit = async () => {
     const value = form.getFieldsValue();
-    console.log("form data ",value)
-  try {
-    const res=await fetch("/api/userController",
-      {method:"POST" ,headers:{"Content-Type":"application/json"},body:JSON.stringify(value),})
-      console.log(res.json)
-  } catch (error) {
-    console.log("err data", error);
-  }  
-  console.log("form data",value);  
-
+    console.log("form data ", value);
+    try {
+      const res = await fetch("/api/userController", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value),
+      });
+      console.log(res.json);
+    } catch (error) {
+      console.log("err data", error);
+    }
+    console.log("form data", value);
   };
 
   return (
@@ -45,10 +41,10 @@ const Biodata = () => {
 
       {/* Main form components */}
       <Form
-       layout="horizontal"
-  labelCol={{ span: 6 }}
-  wrapperCol={{ span: 18 }}  
-   labelAlign="left"   
+        layout="horizontal"
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
+        labelAlign="left"
         form={form}
         onFinish={handleFromSubmit}
         initialValues={{
@@ -59,25 +55,22 @@ const Biodata = () => {
         }}
       >
         <Row gutter={[40, 40]}>
-          <Col  xs={24} md={12}>
-          <PersonalDetails form={form} />
-          <FamilyDetails form={form} />
-          <SiblingDetails form={form} />
-</Col>
+          <Col xs={24} md={12}>
+            <PersonalDetails form={form} />
+            <FamilyDetails form={form} />
+            <SiblingDetails form={form} />
+          </Col>
 
-<Col  xs={24} md={12}>
-          <GotraDetials form={form} 
-          />
-          <MobileDetails form={form} />
-          <AddressDetails form={form} />
-          <OtherDetails />
-        </Col>
+          <Col xs={24} md={12}>
+            <GotraDetials form={form} />
+            <MobileDetails form={form} />
+            <AddressDetails form={form} />
+            <OtherDetails />
+          </Col>
         </Row>
 
-
-
-{/* AT LAST IN RIGHT BOTTOM */}
-          <ActionButton form={form} />
+        {/* AT LAST IN RIGHT BOTTOM */}
+        <ActionButton form={form} />
       </Form>
     </AdminLayout>
   );

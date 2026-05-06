@@ -1,9 +1,9 @@
-import style from "../../styles/Profile.module.css";
+import style from "./Profile.module.css";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
 import { NavBar } from "@/components/layout/NavBar";
-import { ProfileFilter } from "@/components/layout/ProfileFilter";
-import { ProfileCard } from "@/components/layout/ProfileCard";
+import { ProfileFilter } from "@/components/profile/ProfileFilter";
+import { ProfileCard } from "@/components/profile/ProfileCard";
 
 const ProfilePage = () => {
   return (

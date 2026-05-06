@@ -1,6 +1,6 @@
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import style from "@/styles/ProfileCard.module.css";
+import style from "./ProfileCard.module.css";
 
 export const ProfileCard = () => {
  const users = [

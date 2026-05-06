@@ -1,8 +1,8 @@
 import { Button, Drawer, Menu } from "antd";
-import { DropDown } from "./DropDown";
+import { DropDown } from "../ui/DropDown";
 import { MenuOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import style from "../../styles/Navbar.module.css";
+import style from "./Navbar.module.css";
 
 export const NavBar = ({
   isDropDownShow = false,

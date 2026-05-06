@@ -1,6 +1,6 @@
 import style from "../../styles/Home.module.css";
 import { FooterComponent } from "@/components/layout/Footer";
-import { HeroSection } from "@/components/layout/HeroSection";
+import { HeroSection } from "@/components/ui/HeroSection";
 import { NavBar } from "@/components/layout/NavBar";
 
 const Home = () => {

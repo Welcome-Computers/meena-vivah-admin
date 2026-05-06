@@ -1,5 +1,5 @@
 import { Dropdown } from "antd";
-import style from "../../styles/DropDown.module.css";
+import style from "./DropDown.module.css";
 import { DownOutlined } from "@ant-design/icons";
 
 export const DropDown = () => {

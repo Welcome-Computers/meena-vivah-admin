@@ -2,7 +2,7 @@ import { AGE_OPTIONS, LOOKING_FOR_OPTIONS, RELIGION_OPTIONS } from "@/pages/api/
 import { SearchOutlined,   BellOutlined,
   ClockCircleOutlined } from "@ant-design/icons";
 import { Select } from "antd";
-import style from "@/styles/ProfileFilter.module.css";
+import style from "./ProfileFilter.module.css";
 
 export const ProfileFilter=()=>{
 

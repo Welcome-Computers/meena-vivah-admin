@@ -1,0 +1,35 @@
+.profileFilterContainer {
+  border-radius: 10px;
+  border: 1px solid #FCE8D1;
+  background-color: #fff;
+  padding: 1rem;}
+
+
+.profileFilterContainer >label {
+  color:#601E4F;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 700;
+}
+
+
+.profileFilterContainer >label >span{
+  border:1px solid #601E4F;
+}
+
+.select{
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px; 
+}
+
+.searchButton{
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #601E4F;
+  color: #fff;
+  border: none;
+
+}

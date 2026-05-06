@@ -1,0 +1,52 @@
+.mainContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+  background-color: white;
+  margin: 0.2rem 0.1rem;
+  border-radius: 10px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+.avatar {
+  padding: 10px;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userInfo h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.userInfo p {
+  font-size: 13px;
+}
+
+.profession {
+  color: #888;
+  margin: 5px 0 10px;
+}
+
+/* DESKTOP MEDIA QUERIES */
+@media (min-width: 768px) {
+  .mainContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0.2rem 0.5rem;
+
+    gap: 1rem;
+  }
+  .userInfo h3 {
+    font-size: 20px;
+  }
+  .userInfo p {
+    font-size: 15px;
+  }
+}

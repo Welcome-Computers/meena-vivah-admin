@@ -1,0 +1,27 @@
+/* FOOTER STYLING DESKTOP */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  background-color: #cd3162;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+.footer > div > p {
+  font-size: 15px;
+}
+
+/* mobile view  */
+@media (max-width: 768px) {
+  .footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  .footer > div > h3 {
+    font-size: 15px;
+  }
+  .footer > div > p {
+    font-size: 11px;
+  }
+}

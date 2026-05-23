@@ -17,8 +17,8 @@ const PersonalDetails = memo((props: any) => {
         label="Gender"
         rules={[{ required: true, message: "Select Gender First" }]}
         options={[
-          { option: "Groom", value: "Groom" },
-          { option: "Bride", value: "Bride" },
+          { option: "Boy", value: "boy" },
+          { option: "Girl", value: "girl" },
         ]}
       />
       <InputField

@@ -1,19 +1,52 @@
 import { memo } from "react";
 import InputField from "../InputElements/InputField";
 import style from "../../pages/biodata/style.module.css";
-import FormListComponent from "./FormListComponent";
-import { promise } from "zod";
-import { RuleObject } from "antd/es/form";
+import { OtheGotraDetails } from "./OtherGotraDetails";
 
 const GotraDetials = memo((props: any) => {
   const { label, name, showCount = false, form, rules, ...rest } = props;
 
-  // validation for add empty entries
-  //  const otherGotra=Form.useWatch("other_gotra",form) || [];
-  //  const lastItem=otherGotra[otherGotra.length - 1 ]
-  //  const valueDisabled=lastItem?.other_gotra_relation?.length > 4 && lastItem?.other_gotra_name?.length > 4
-  // const isDisabled=!valueDisabled;
+  // gotra validation
 
+  const gotraOptions = [
+    "Bhardwaj",
+    "Vashistha",
+    "Kashyap",
+    "Atri",
+    "Gautam",
+    "Kaushik",
+    "Shandilya",
+    "Parashar",
+    "Agastya",
+    "Jamadagni",
+  ];
+
+  const gotraValidationRules = (_: any, currentValue: any) => {
+    if (!currentValue) {
+      return Promise.resolve();
+    }
+    const allGotraValues = {
+      gotra_self: form.getFieldValue("gotra_self"),
+      gotra_mother: form.getFieldValue("gotra_mother"),
+      gotra_grandmother: form.getFieldValue("gotra_grandmother"),
+      gotra_grandmother_maternal: form.getFieldValue(
+        "gotra_grandmother_maternal",
+      ),
+    };
+
+    const currentInputvalue = currentValue.trim().toLowerCase();
+    const value = Object.values(allGotraValues)
+      .filter(Boolean)
+      .map((value: any) => value.trim().toLowerCase());
+
+    let duplicatecount = value.filter(
+      (value) => value && currentInputvalue === value,
+    );
+    if (duplicatecount.length > 1) {
+      return Promise.reject("duplicate value not allowed");
+    }
+    return Promise.resolve();
+  };
   return (
     <div className={style["form-container"]}>
       <p
@@ -28,36 +61,55 @@ const GotraDetials = memo((props: any) => {
         <InputField
           name="gotra_self"
           label="Self"
+          dependencies={[
+            "gotra_mother",
+            "gotra_grandmother",
+            "gotra_grandmother_maternal",
+          ]}
           rules={[
             { required: true, message: "Enter Self Gotra Name" },
             { max: 40, message: "Maximum 40 characters" },
             { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+            { validator: gotraValidationRules },
           ]}
         />
 
         <InputField
           name="gotra_mother"
           label="Mother"
+          dependencies={[
+            "gotra_self",
+            "gotra_grandmother",
+            "gotra_grandmother_maternal",
+          ]}
           rules={[
             { required: true, message: "Enter Mother Gotra Name" },
             { max: 50, message: "Maximum 50 characters" },
             { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+            { validator: gotraValidationRules },
           ]}
         />
 
         <InputField
           name="gotra_grandmother"
           label="Grand Mother"
+          dependencies={[
+            "gotra_self",
+            "gotra_mother",
+            "gotra_grandmother_maternal",
+          ]}
           rules={[
             { required: true, message: "Enter Grand_Mother Gotra Name" },
             { max: 50, message: "Maximum 50 characters" },
             { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+            { validator: gotraValidationRules },
           ]}
         />
 
         <InputField
           name="gotra_grandmother_maternal"
-          label="Grandmother"
+          label="MaternalGrandmother"
+          dependencies={["gotra_self", "gotra_mother", "gotra_grandmother"]}
           rules={[
             {
               required: true,
@@ -65,54 +117,21 @@ const GotraDetials = memo((props: any) => {
             },
             { max: 50, message: "Maximum 50 characters" },
             { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+            { validator: gotraValidationRules },
           ]}
         />
       </div>
 
       {/* other gotra details and  button  */}
-      <FormListComponent formListName="other_gotra">
-        {(value:any) => (
-          <div style={{ display: "flex", width: "100%" }}>
-            <InputField
-              style={{ flex: 1 }}
-              name={[value.name, "other_gotra_relation"]}
-              label="Other Gotra"
-              placeholder="e.g. Step Mother"
-              rules={[{
-                validator:(_:RuleObject,inputVal:any)=>{
-                  const relationname=form.getFieldValue([
-                    "other_gotra",
-                    value.name,
-                    "other_gotra_name"
-                  ])
-
-                  if((inputVal && !relationname) || (!inputVal && relationname)){
-                    return Promise.reject(new Error("enter both fields"))
-                  }
-                    return Promise.resolve()
-
-                }
-              }]}
-           
-            />
-
-            <InputField
-              style={{ flex: 1 }}
-              name={[value.name, "other_gotra_name"]}
-              placeholder="e.g. Bhardwaj, Vashistha ..."
-            />
-          </div>
-        )}
-      </FormListComponent>
-
-
-
+      <OtheGotraDetails form={form} />
       {/* pereferences */}
-      <InputField name="preferences" label="Preferences"
-       rules={[
-            { max: 100, message: "Maximum 50 characters" },
-            { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
-          ]}
+      <InputField
+        name="preferences"
+        label="Preferences"
+        rules={[
+          { max: 100, message: "Maximum 50 characters" },
+          { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+        ]}
       />
     </div>
   );

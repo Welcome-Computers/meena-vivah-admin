@@ -1,27 +1,4 @@
 
-<!-- 
-
-1. 
-2. 
-3. 
-5. 
-6. All Gotra fields should be dropdowns with suggestions/autocomplete.
-7. 
-8. 
-9. 
-10. 
-11. 
-12.
-13.
-14. 
-15.
-4. 
--->
-
-
-
-
-
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ## Getting Started

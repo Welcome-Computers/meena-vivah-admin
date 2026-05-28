@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import InputField from "../InputElements/InputField";
 import TextAreaField from "../InputElements/TextAreaField";
 import FormListComponent from "./FormListComponent";
@@ -15,7 +15,8 @@ const AddressDetails = memo((props: any) => {
     !(addressdetails.length < 2) ||
     !(addressdetails[0]?.full_address && addressdetails[0]?.pincode);
 
-  // address type validation
+  useEffect(()=>{
+ // address type validation
   if (addressdetails[0]?.type === addressdetails[1]?.type) {
     form.setFields([
       {
@@ -31,6 +32,8 @@ const AddressDetails = memo((props: any) => {
       },
     ]);
   }
+
+  },[])
 
   return (
     <div className={style["form-container"]}>

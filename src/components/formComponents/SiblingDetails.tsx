@@ -12,9 +12,9 @@ const SiblingDetails = memo((props: any) => {
   // validation for add empty entries
   const siblingdata = Form.useWatch("sibling_details", form) || [];
   const lastItem = siblingdata[siblingdata.length - 1];
-  const valueDisabled =
-    lastItem?.sibling_name?.length > 2 && lastItem?.relation?.length > 1;
-  const isDisabled = !valueDisabled;
+  const isDisabled = !(
+    lastItem?.sibling_name?.length > 2 && lastItem?.relation?.length > 1
+  );
   return (
     <div
       className={style["form-container"]}
@@ -28,7 +28,7 @@ const SiblingDetails = memo((props: any) => {
       </p>
 
       <FormListComponent formListName="sibling_details" isDisabled={isDisabled}>
-        {(value:any) => (
+        {(value: any) => (
           <div>
             <InputField
               name={[value.name, "sibling_name"]}
@@ -52,6 +52,34 @@ const SiblingDetails = memo((props: any) => {
                 {
                   option: "Brother",
                   value: "Brother",
+                },
+              ]}
+              rules={[
+                {
+                  // validation to check duplicate sibling entry based on name and relation
+
+                  validator(_: any, value: any) {
+                    if (!value) {
+                      return Promise.resolve();
+                    }
+
+                    const seen = new Set();
+
+                    const sibling=form.getFieldValue("sibling_details") || [];
+                    for (const item of sibling) {
+                      const name = item.sibling_name.trim().toLowerCase();
+                      const relation = item.relation.trim().toLowerCase();
+                      const key = `${name}-${relation}`;
+                      if (seen.has(key)) {
+                        return Promise.reject(
+                          new Error("Duplicate Sibling Entry"),
+                        );
+                      }
+
+                      seen.add(key);
+                    }
+                    return Promise.resolve();
+                  },
                 },
               ]}
             />

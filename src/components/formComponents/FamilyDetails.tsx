@@ -9,7 +9,7 @@ const FamilyDetails = memo((props: any) => {
   return (
     <div className={style["form-container"]}>
       <InputField
-        name="f_name"
+        name="father_name"
         label="Father Name"
         rules={[
           { required: true, message: "enter name first" },
@@ -18,19 +18,19 @@ const FamilyDetails = memo((props: any) => {
         ]}
       />
       <TextAreaField
-        name="f_occupation"
-        label="Occupation"
+        name="father_occupation"
+        label="Father Occupation"
         rules={[{ max: 100, message: "Maximum 100 characters" }]}
         rows={1}
       />
       <InputField
-        name="m_name"
-        label="M.Name"
+        name="mother_name"
+        label="Mother Name"
         rules={[{ max: 30, message: "Maximum 30 characters" }]}
       />
       <TextAreaField
-        name="m_occupation"
-        label="M.Occupation"
+        name="mother_occupation"
+        label="Mother Occupation"
         rows={1}
         rules={[{ max: 100, message: "Maximum 100 characters" }]}
       />

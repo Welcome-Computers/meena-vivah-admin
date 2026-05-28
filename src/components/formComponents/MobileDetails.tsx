@@ -48,6 +48,7 @@ const MobileDetails = memo((props: any) => {
                   return Promise.resolve();
                 },
               },
+              {required:"true",message:"mobile number must be required"}
             ]}
             label="Mobile"
             placeholder="e.g. 91+"

@@ -3,7 +3,7 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 
 const { Header, Sider, Content } = Layout;
@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: any) {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* Sidebar */}
+
       <Sider breakpoint="lg" collapsedWidth="0">
         <div style={{ color: "white", padding: 16, fontSize: 18 }}>
           Admin Panel
@@ -51,6 +51,15 @@ export default function AdminLayout({ children }: any) {
         {/* Header */}
         <Header style={{ background: "#fff", paddingLeft: 16 }}>
           <h3>Welcome Admin</h3>
+          <Button
+            type="primary"
+            style={{ position: "absolute", top: 16, right: 16 }}
+            onClick={() => router.push('/')}
+            danger>
+            Logout
+          </Button>
+
+          {/* Sidebar */}
         </Header>
 
         {/* Content */}

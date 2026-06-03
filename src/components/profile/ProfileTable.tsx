@@ -22,7 +22,7 @@ const ProfileTable = (props: iProps) => {
 
   {
     title: "Name", dataIndex: "name", key: "name", width: 180, fixed: "left", render: (value, record) => (
-      <Space direction="vertical" size={0}>
+      <Space orientation="vertical" size={0}>
         <span>{value}</span>
         <Tag color={record.gender === "boy" ? "blue" : "magenta"}        >
           {record.gender?.toUpperCase()}
@@ -124,7 +124,7 @@ const ProfileTable = (props: iProps) => {
         return "-";
       return (
         <Space
-          direction="vertical"
+          orientation="vertical"
           size={0}
         >
           <span>
@@ -161,7 +161,7 @@ const ProfileTable = (props: iProps) => {
       }
       return (
         <Space
-          direction="vertical"
+          orientation="vertical"
           size={2}
         >
           {record.sibling_details.map(
@@ -206,7 +206,7 @@ const ProfileTable = (props: iProps) => {
       }
       return (
         <Space
-          direction="vertical"
+          orientation="vertical"
           size={2}
         >
           {record.other_gotra.map(

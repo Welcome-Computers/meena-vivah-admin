@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import db from "../db/dbCon";
+import db from "../db/dbConn";
 
 
 
@@ -12,3 +12,5 @@ export default async function getUser(
   res.send(data);
 
 }
+
+

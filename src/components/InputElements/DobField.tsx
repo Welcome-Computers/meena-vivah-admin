@@ -1,4 +1,4 @@
-import { DatePicker, DatePickerProps, Form, Select } from "antd";
+import { DatePickerProps, Form, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 import { useWatch } from "antd/es/form/Form";
 import { memo } from "react";
@@ -47,9 +47,15 @@ const DobField = memo((props: DobProps) => {
 
   // dob age validation
   const ageValidation = (_: RuleObject, value: any) => {
-    if (!value || !value.day || !value.month || !value.year) {
+    if (
+      !value ||
+      value.day === undefined ||
+      value.month === undefined ||
+      value.year === undefined
+    ) {
       return Promise.reject("All date fields are required");
     }
+
     const today = new Date();
     let age = today.getFullYear() - value.year;
     const monthDiff = today.getMonth() - value.month;
@@ -65,12 +71,12 @@ const DobField = memo((props: DobProps) => {
 
   return (
 
-    
-    
+
+
     <Form.Item
-    name={name}
-    style={{ marginBottom: "5px" }}
-    validateTrigger="onChange"
+      name={name}
+      style={{ marginBottom: "5px" }}
+      validateTrigger="onChange"
       label={label}
       rules={[
         { required: true, message: "DOB required" },
@@ -80,8 +86,8 @@ const DobField = memo((props: DobProps) => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         {/* year field */}
         <Form.Item
-    name={[name, "year"]}
-    noStyle
+          name={[name, "year"]}
+          noStyle
           style={{ width: "100%", padding: "2px" }}
         >
           <Select placeholder="Year" options={yearOptions}></Select>

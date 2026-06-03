@@ -1,7 +1,7 @@
 import { memo } from "react";
+import style from "../../pages/biodata/style.module.css";
 import InputField from "../InputElements/InputField";
 import TextAreaField from "../InputElements/TextAreaField";
-import style from "../../pages/biodata/style.module.css";
 
 const FamilyDetails = memo((props: any) => {
   const { form } = props;
@@ -26,7 +26,11 @@ const FamilyDetails = memo((props: any) => {
       <InputField
         name="mother_name"
         label="Mother Name"
-        rules={[{ max: 30, message: "Maximum 30 characters" }]}
+        rules={[
+          { required: true, message: "enter name first" },
+          { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+          { max: 30, message: "Maximum 30 characters" },
+        ]}
       />
       <TextAreaField
         name="mother_occupation"

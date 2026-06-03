@@ -1,5 +1,6 @@
 import { MenuOutlined } from "@ant-design/icons";
 import { Button, Drawer, Layout, Menu } from "antd";
+import Link from "next/link";
 import { useState } from "react";
 import { DropDown } from "../ui/DropDown";
 import style from "./Navbar.module.css";
@@ -34,15 +35,20 @@ export const NavBar = ({
             onClick={() => setOpen(true)}
             icon={<MenuOutlined style={{ fontSize: "20px" }} />}
           />
-          <img src="./logo.png" alt="logo" className={style.logo} />
+          <Link
+            href={"/"}>
+            <img src="./logo.png" alt="logo" className={style.logo} />
+          </Link>
 
         </div>
         <div>
           {/* login register buttons */}
           {isButtonShow && (
-            <Button type="primary" className={style.button}>
+            <Link
+              href={"/login"}
+              className={style.button}>
               Update profile ?
-            </Button>
+            </Link>
           )}
         </div>
 

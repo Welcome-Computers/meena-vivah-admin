@@ -64,10 +64,13 @@ const DobField = memo((props: DobProps) => {
   };
 
   return (
+
+    
+    
     <Form.Item
     name={name}
-      style={{ marginBottom: "5px" }}
-      validateTrigger="onChange"
+    style={{ marginBottom: "5px" }}
+    validateTrigger="onChange"
       label={label}
       rules={[
         { required: true, message: "DOB required" },
@@ -77,8 +80,8 @@ const DobField = memo((props: DobProps) => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         {/* year field */}
         <Form.Item
-          noStyle
-          name={[name, "year"]}
+    name={[name, "year"]}
+    noStyle
           style={{ width: "100%", padding: "2px" }}
         >
           <Select placeholder="Year" options={yearOptions}></Select>

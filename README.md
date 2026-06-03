@@ -1,37 +1,20 @@
 
-
-
-1. 
-2. 
-3. 
-7. check form submition with only mendetory field.
-7.b. add field occupation (dropdown to select) 
-	show occupation list, and should be add if new occupation. 
-	searchable if user type.
-
-
-	
-9. show max 20 result at home page only.
-
 10. create a common card of bride/groom
-
-
 13. download button shoud be there. with text/image.
 
 14. create a image/text of biodata and dowload should be programaticaly, 
 15. Login and update
-16. profile page should show an button card/table
-17. should be full page display	(full width - 220) card should be as per 
-18. dashboard > remove setting page, 
+
+
 19. dashboard > add a table with filters. just like ag grid.
-20. dashboard > 
+20. dashboard >  
 		newly added (last 30days) table + filter
 		newly edited (last 30days) table + filter
 		counter [total] [girls] [boys] [professinals list ]
 										> dr. 100+
 										> Teacher 1000+
 										> enginner 230+
-										> others 
+										> others
 		
 	
 

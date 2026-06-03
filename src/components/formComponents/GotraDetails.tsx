@@ -73,6 +73,7 @@ const GotraDetials = memo((props: any) => {
     {
       name: "gotra_self",
       label: "Self",
+      required: true,
       dependencies: [
         "gotra_mother",
         "gotra_grandmother",
@@ -82,6 +83,7 @@ const GotraDetials = memo((props: any) => {
     {
       name: "gotra_mother",
       label: "Mother",
+      required: true,
       dependencies: [
         "gotra_self",
         "gotra_grandmother",
@@ -91,6 +93,7 @@ const GotraDetials = memo((props: any) => {
     {
       name: "gotra_grandmother",
       label: "Grand Mother",
+      required: true,
       dependencies: [
         "gotra_self",
         "gotra_mother",
@@ -100,6 +103,7 @@ const GotraDetials = memo((props: any) => {
     {
       name: "gotra_grandmother_maternal",
       label: "MaternalGrandmother",
+      required: false,
       dependencies: ["gotra_self", "gotra_mother", "gotra_grandmother"],
     },
   ];
@@ -119,6 +123,7 @@ const GotraDetials = memo((props: any) => {
           <GotraField
             key={item.name}
             name={item.name}
+            required={item.required}
             label={item.label}
             dependencies={item.dependencies}
             gotraValidationRules={gotraValidationRules}

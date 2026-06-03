@@ -4,37 +4,37 @@ import DobField from "../InputElements/DobField";
 import TextAreaField from "../InputElements/TextAreaField";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import style from "../../pages/biodata/style.module.css";
-import { Form, Select } from "antd";
+import { AutoComplete, Form, Select } from "antd";
 
 const PersonalDetails = memo((props: any) => {
   const { form } = props;
 
   const occupationDropdown = [
-    { label: "Doctor", value: 1 },
-    { label: "Engineer", value: 2 },
-    { label: "S.F.", value: 5 },
-    { label: "Student", value: 6 },
-    { label: "Teacher / Professor", value: 7 },
-    { label: "Software Developer", value: 8 },
-    { label: "Business Owner / Businessman", value: 9 },
-    { label: "Accountant / CA", value: 10 },
-    { label: "Lawyer / Advocate", value: 11 },
-    { label: "Architect", value: 12 },
-    { label: "Nurse", value: 13 },
-    { label: "Graphic Designer", value: 14 },
-    { label: "Digital Marketer", value: 15 },
-    { label: "Manager", value: 16 },
-    { label: "Government Employee", value: 17 },
-    { label: "Freelancer", value: 18 },
-    { label: "Banker", value: 19 },
-    { label: "Artist / Writer", value: 20 },
-    { label: "Consultant", value: 21 },
-    { label: "Chef / Hospitality", value: 22 },
-    { label: "Farmer / Agriculturist", value: 23 },
-    { label: "Unemployed", value: 24 },
-    { label: "Retired", value: 25 },
-    { label: "Other", value: 26 },
-  ];
+  { label: "Doctor", value: "Doctor" },
+  { label: "Engineer", value: "Engineer" },
+  { label: "S.F.", value: "S.F." },
+  { label: "Student", value: "Student" },
+  { label: "Teacher / Professor", value: "Teacher / Professor" },
+  { label: "Software Developer", value: "Software Developer" },
+  { label: "Business Owner / Businessman", value: "Business Owner / Businessman" },
+  { label: "Accountant / CA", value: "Accountant / CA" },
+  { label: "Lawyer / Advocate", value: "Lawyer / Advocate" },
+  { label: "Architect", value: "Architect" },
+  { label: "Nurse", value: "Nurse" },
+  { label: "Graphic Designer", value: "Graphic Designer" },
+  { label: "Digital Marketer", value: "Digital Marketer" },
+  { label: "Manager", value: "Manager" },
+  { label: "Government Employee", value: "Government Employee" },
+  { label: "Freelancer", value: "Freelancer" },
+  { label: "Banker", value: "Banker" },
+  { label: "Artist / Writer", value: "Artist / Writer" },
+  { label: "Consultant", value: "Consultant" },
+  { label: "Chef / Hospitality", value: "Chef / Hospitality" },
+  { label: "Farmer / Agriculturist", value: "Farmer / Agriculturist" },
+  { label: "Unemployed", value: "Unemployed" },
+  { label: "Retired", value: "Retired" },
+  { label: "Other", value: "Other" },
+];
 
   return (
     <div className={style["form-container"]}>
@@ -88,7 +88,8 @@ const PersonalDetails = memo((props: any) => {
         label="Select Occupation"
         style={{ marginBottom: "6px" }}
       >
-        <Select
+       <Select
+         mode="tags"
           placeholder="e.g. Enginneer"
           options={occupationDropdown}
           showSearch
@@ -98,8 +99,11 @@ const PersonalDetails = memo((props: any) => {
             borderRadius: "0",
             border: "2px solid #444444",
           }}
-        ></Select>
+        ></Select> 
+       
       </Form.Item>
+
+
     </div>
   );
 });

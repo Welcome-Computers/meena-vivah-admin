@@ -6,12 +6,6 @@ import style from "@/pages/dashboard/dashboard.module.css"
 
 const Dashboard = async() => {
 
-  // fetch database data
-  // const getUsers=(async()=>{
-  //   const res=await fetch("http://localhost:3001/api/user")
-  //    return res.json();
-  // })
-  // const user=await getUsers();
 
  const data = [
   {

@@ -1,4 +1,4 @@
-import { Avatar } from "antd";
+import { Avatar, Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import style from "./ProfileCard.module.css";
 
@@ -56,6 +56,12 @@ export const ProfileCard = () => {
   },
 ];
   return (
+   <div>
+   <div className={style.buttonContainer}>
+    <Button className={style.button}>Table</Button>
+    <Button className={style.button}>Cart</Button>
+   </div>
+
     <div className={style.mainContainer}>
         {users.map((user,index)=>(
 
@@ -88,5 +94,7 @@ export const ProfileCard = () => {
 
 
     </div>
+    </div>
+    
   );
 };

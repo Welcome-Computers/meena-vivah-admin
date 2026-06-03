@@ -12,6 +12,7 @@ interface GotraFieldProps {
   setSuggestGotra: any;
   handleInputValue: (value: string, fieldName: string) => void;
   setActivatedField: any;
+  required?: boolean;
 }
 
 export const GotraField = ({
@@ -25,6 +26,7 @@ export const GotraField = ({
   setSuggestGotra,
   handleInputValue,
   setActivatedField,
+  required,
 }: GotraFieldProps) => {
   return (
     <>
@@ -39,7 +41,7 @@ export const GotraField = ({
         }}
         rules={[
           {
-            required: true,
+            required: required,
             message: "Field Required.",
             //   message: `Enter ${name} Gotra Name`,
           },

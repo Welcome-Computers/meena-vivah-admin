@@ -15,31 +15,25 @@ const AddressDetails = memo((props: any) => {
     !(addressdetails.length < 2) ||
     !(addressdetails[0]?.full_address && addressdetails[0]?.pincode);
 
-
   useEffect(() => {
-    if (addressdetails?.[0]?.type && addressdetails?.[1]?.type) {
-
-      if (addressdetails[0]?.type === addressdetails[1]?.type) {
-
-        form.setFields([
-          {
-            name: ["address_details", 1, "type",],
-            errors: ["Type must be different",],
-          },
-        ]);
-
-      } else {
-
-        form.setFields([
-          {
-            name: ["address_details", 1, "type",],
-            errors: [],
-          },
-        ]);
-      }
+    // address type validation
+    if (addressdetails[0]?.type === addressdetails[1]?.type) {
+      form.setFields([
+        {
+          name: ["address_details", 1, "type"],
+          errors: ["type must be diffrent"],
+        },
+      ]);
+    } else {
+      form.setFields([
+        {
+          name: ["address_details", 1, "type"],
+          errors: [],
+        },
+      ]);
     }
 
-  }, [addressdetails, form]);
+  }, [addressdetails, form])
 
   return (
     <div className={style["form-container"]}>

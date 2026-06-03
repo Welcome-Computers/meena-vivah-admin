@@ -7,7 +7,8 @@ export default async function PersonalDetails(
 ) {
   const connection = await db.getConnection();
   try {
-    const { name, dob, education, occupation, gender, father_occupation, father_name, mother_name, mother_occupation, sibling_details, address_details, other_gotra, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, mobile_details, other_details, type,
+    const { name, dob, education, occupation, gender,
+      father_occupation, father_name, mother_name, mother_occupation, sibling_details, address_details, other_gotra, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, mobile_details, other_details, type,
     } = req.body;
 
     const mobile = mobile_details[0]?.mobile;
@@ -17,7 +18,9 @@ export default async function PersonalDetails(
     const [result]: any = await connection.query(
       `INSERT INTO user (mobile,gender,name,dob,education,occupation,fathersname,mothersname,fathersoccupation,mothersoccupation,self_gotra,m_gotra,gm_gotra,mat_gm_gotra,preferences,otherinfo
      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [mobile, gender, name, dob, education, occupation, father_name, mother_name, father_occupation, mother_occupation, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, other_details],
+      [mobile, gender, name, dob, education, occupation, father_name, mother_name, father_occupation,
+        mother_occupation, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, other_details,
+      ],
     );
 
     // extract current user id

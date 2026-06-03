@@ -36,7 +36,8 @@ const InputField = memo((props: IProps) => {
       <Form.Item name={name}  dependencies={dependencies} rules={rules} 
       style={{ marginBottom: '6px'  } } label={label} {...formItemProps} 
       >
-        <Input {...rest} maxLength={maxLength} size='small' style={{ outline:"none" ,borderRadius:"0" ,border:"2px solid #444444"}}/>
+        <Input {...rest} maxLength={maxLength} size='small' 
+        style={{ outline:"none" ,borderRadius:"0" ,border:"2px solid #444444"}}/>
       </Form.Item>
     </div>
   );

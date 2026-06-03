@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import db from "../db";
+import db from "../db/dbCon";
 
 
 
@@ -8,7 +8,7 @@ export default async function getUser(
   res: NextApiResponse,
 ) {
 
-    const data=await db.query("SELECT * FROM users");
-    res.send(data);
+  const data = await db.query("SELECT * FROM users");
+  res.send(data);
 
 }

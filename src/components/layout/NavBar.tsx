@@ -1,7 +1,7 @@
-import { Button, Drawer, Menu } from "antd";
-import { DropDown } from "../ui/DropDown";
 import { MenuOutlined } from "@ant-design/icons";
+import { Button, Drawer, Layout, Menu } from "antd";
 import { useState } from "react";
+import { DropDown } from "../ui/DropDown";
 import style from "./Navbar.module.css";
 
 export const NavBar = ({
@@ -25,7 +25,7 @@ export const NavBar = ({
   ];
 
   return (
-    <div>
+    <Layout>
       <nav className={style.nav}>
         <div className={style.leftSection}>
 
@@ -40,17 +40,12 @@ export const NavBar = ({
         <div>
           {/* login register buttons */}
           {isButtonShow && (
-            <>
-              <button className={style.button}>
-                <a href="/home">Register Free!</a>
-              </button>
-              <button className={style.button}>
-                <a href="/home">Login</a>
-              </button>
-            </>
+            <Button type="primary" className={style.button}>
+              Update profile ?
+            </Button>
           )}
         </div>
-        
+
 
         {/* dorpdown menus*/}
         {isDropDownShow && <DropDown />}
@@ -58,6 +53,6 @@ export const NavBar = ({
       <Drawer placement="right" onClose={() => setOpen(false)} open={open}>
         <Menu items={items} />
       </Drawer>
-    </div>
+    </Layout>
   );
 };

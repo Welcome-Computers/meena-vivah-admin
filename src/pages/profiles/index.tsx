@@ -1,14 +1,16 @@
-
-import { FooterComponent } from "@/components/layout/Footer";
-import PublicLayout from "@/components/layout/PublicLayout";
-import ProfileContainer from "@/components/profile/ProfileContainer";
-import { HeroSection } from "@/components/ui/HeroSection";
-import { IUser } from "@/redux/types";
-import { message } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const Home = () => {
+import AdminLayout from "@/components/layout/AdminLayout";
+
+import ProfileContainer from "@/components/profile/ProfileContainer";
+import { IUser } from "@/redux/types";
+import { message } from "antd";
+import Title from "antd/es/typography/Title";
+
+
+
+const Dashboard = () => {
 
   const [data, setData] = useState<IUser[]>([]);
   const [loading, setLoading] = useState(false);
@@ -52,25 +54,21 @@ const Home = () => {
 
 
   return (
-    <PublicLayout>
+    <AdminLayout>
+      <div>
+        <Title level={5} style={{ marginBottom: 16 }}>
+          All Profiles
+        </Title>
 
-      {/* hero section + banner image  */}
-      <HeroSection />
-
-      {/* FOOTER SECTION  */}
-      <FooterComponent />
-
-      {/* LATEST PROFILES  */}
-      <div style={{ marginTop: 30, }}>
         <ProfileContainer
-          title={'Latest Profiles'}
           loading={loading}
           data={data}
           pagination={pagination}
           getUsers={getUsers} />
+
       </div>
-    </PublicLayout>
+    </AdminLayout>
   );
 };
 
-export default Home;
+export default Dashboard;

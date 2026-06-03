@@ -2,9 +2,12 @@
 import { AGE_OPTIONS, LOOKING_FOR_OPTIONS, RELIGION_OPTIONS } from "@/pages/api/formOptions/formOptions";
 import style from "./HeroSection.module.css";
 
-import { Select } from "antd";
+import { Button, Select } from "antd";
+import { useRouter } from "next/router";
 
 export const HeroSection = () => {
+
+  const { push } = useRouter()
 
   return (
     <>
@@ -30,7 +33,7 @@ export const HeroSection = () => {
             placeholder="Select Religion"
           />
 
-          <button>Search</button>
+          <Button onClick={() => push(`/profile`)}>Search</Button>
         </div>
       </section>
     </>

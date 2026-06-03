@@ -4,21 +4,21 @@ import { memo, useState } from "react";
 const PreviewButton = memo((props: any) => {
   const { form, name, label } = props;
 
-type PreviewData={
-   name?: string;
-  gender?: { value?: string };
-  relation?: { value?: string };
-  dob?: any; 
-  occupation?: string;
-  education?: string;
-  f_name?: string;
-  f_occupation?: string;
-  m_name?: string;
-  m_occupation?: string;
-  sibling_name?: string;
-  sibling_education?: string;
-  sibling_occupation?: string;
-}
+  type PreviewData = {
+    name?: string;
+    gender?: { value?: string };
+    relation?: { value?: string };
+    dob?: any;
+    occupation?: string;
+    education?: string;
+    f_name?: string;
+    f_occupation?: string;
+    m_name?: string;
+    m_occupation?: string;
+    sibling_name?: string;
+    sibling_education?: string;
+    sibling_occupation?: string;
+  }
 
   const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
   const [dataPreview, setDataPreview] = useState<PreviewData>({});
@@ -33,6 +33,10 @@ type PreviewData={
     setisPreviewOpen(false);
   };
 
+  const formattedDob = dataPreview.dob
+    ? `${dataPreview.dob.year}-${String(dataPreview.dob.month).padStart(2, '0')}-${String(dataPreview.dob.day).padStart(2, '0')}`
+    : null;
+
   return (
     <div>
       <Modal
@@ -46,7 +50,7 @@ type PreviewData={
         <p>Relation: {dataPreview.relation?.value || "Not provided"}</p>
         <p>
           Date of Birth:{" "}
-          {dataPreview.dob ? dataPreview.dob.format("DD-MM-YYYY") : "Not provided"}
+          {formattedDob ? formattedDob : "Not provided"}
         </p>
         <p>Occupation: {dataPreview.occupation || "Not provided"}</p>
         <p>Education: {dataPreview.education || "Not provided"}</p>

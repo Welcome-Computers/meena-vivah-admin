@@ -1,92 +1,83 @@
-import { Avatar } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { getAge } from "@/lib/Utility";
+import { IPagination, IUser } from "@/redux/types";
+import { Pagination } from "antd";
+import Image from "next/image";
 import style from "./ProfileCard.module.css";
 
-export const ProfileCard = () => {
- const users = [
-  {
-    id: 1,
-    name: "Rahul Sharma",
-    age: 27,
-    gender: "male",
-    profession: "Frontend Developer",
-    education: "B.Tech in Computer Science",
-    gotra: "Bharadwaj",
-    location: "Jaipur, Rajasthan",
-  },
-  {
-    id: 2,
-    name: "Amit Verma",
-    age: 29,
-    gender: "male",
-    profession: "Backend Engineer",
-    education: "MCA",
-    gotra: "Kashyap",
-    location: "Delhi, India",
-  },
-  {
-    id: 3,
-    name: "Priya Singh",
-    age: 25,
-    gender: "female",
-    profession: "UI/UX Designer",
-    education: "B.Des",
-    gotra: "Vashishtha",
-    location: "Lucknow, Uttar Pradesh",
-  },
-   {
-    id: 3,
-    name: "Priya Singh",
-    age: 25,
-    gender: "female",
-    profession: "UI/UX Designer",
-    education: "B.Des",
-    gotra: "Vashishtha",
-    location: "Lucknow, Uttar Pradesh",
-  },
-  {
-    id: 4,
-    name: "Sneha Patel",
-    age: 26,
-    gender: "female",
-    profession: "Software Engineer",
-    education: "B.Tech IT",
-    gotra: "Gautam",
-    location: "Ahmedabad, Gujarat",
-  },
-];
+interface iProps {
+  data: IUser[],
+  pagination: IPagination,
+  onPageChange: any;
+}
+
+export const ProfileCard = (props: iProps) => {
+  const { data, pagination, onPageChange } = props || {}
+
   return (
-    <div className={style.mainContainer}>
-        {users.map((user,index)=>(
+    <div>
+      <div className={style.mainContainer}>
 
-        
-      <div key={index} className={style.card}>
-        <div className={style.avatar}>
-          <Avatar size={140} icon={<UserOutlined />} />
-        </div>
+        {data.map((user, index) => {
+          const imageSrc =
+            user.gender ===
+              "boy"
+              ? "/images/groom.jpg"
+              : "/images/bride.jpg";
 
-        <div className={style.userInfo}>
-          <h3>{user.name}</h3>
-          <p className={style.profession}>{user.profession}</p>
-          <p>
-            <strong>Age:</strong> {user.age}
-          </p>
-          <p>
-            <strong>Education:</strong> {user.education}
-          </p>
-          <p>
-            <strong>Location:</strong> {user.location}
-          </p>
-          <p>
-            <strong>Gotra:</strong> {user.gotra}
-          </p>
-        </div>
-      </div>
-        )
+          return (
+            <div key={index} className={style.card}>
+              <div
+                className={
+                  style.avatar
+                }
+              >
+                <Image src={imageSrc} alt={user.name}
+                  width={140}
+                  height={140}
+                  className={style.profileImage}
+                />
+              </div>
+
+              <div className={style.userInfo}>
+                <h3>{user.name}</h3>
+                <p className={style.profession}>{user.occupation}</p>
+                <p>
+                  <strong>Age:</strong> {getAge(user.dob)}
+                </p>
+                <p>
+                  <strong>Education:</strong> {user.education}
+                </p>
+                <p>
+                  <strong>Location:</strong> {user.fathersname}
+                </p>
+                <p>
+                  <strong>Gotra:</strong> {user.self_gotra}
+                </p>
+              </div>
+            </div>
+          )
+        }
         )}
 
-
-
+      </div>
+      {/* GRID PAGINATION */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          marginTop: 16,
+        }}
+      >
+        <Pagination
+          current={pagination.page}
+          pageSize={pagination.limit}
+          total={pagination.total}
+          showSizeChanger
+          pageSizeOptions={["10", "20", "50", "100"]}
+          showTotal={(total) => `Total ${total} profiles`}
+          onChange={onPageChange}
+        />
+      </div>
     </div>
   );
 };

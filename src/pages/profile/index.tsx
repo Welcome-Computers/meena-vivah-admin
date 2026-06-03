@@ -14,7 +14,7 @@ const ProfilePage = () => {
 
         {/* banner */}
         <div className={style.profilebanner}>
-          <img src="profilebanner.png" alt="" />
+          <img src="banner2.png" alt="" />
         </div>
 
         {/* showing profiles */}

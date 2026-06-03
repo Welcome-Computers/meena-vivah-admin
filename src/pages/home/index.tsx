@@ -3,7 +3,7 @@ import { FooterComponent } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/ui/HeroSection";
 import { NavBar } from "@/components/layout/NavBar";
 
-const Home = () => {
+const HomePage = () => {
   return (
     <>
       <header className={style.header}>
@@ -20,4 +20,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

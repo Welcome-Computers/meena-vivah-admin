@@ -1,31 +1,32 @@
-import { Button, Col, Form, Row } from "antd";
-import AdminLayout from "../../components/layout/AdminLayout";
-import SiblingDetails from "@/components/formComponents/SiblingDetails";
-import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import ActionButton from "@/components/formComponents/ActionButtons";
+import AddressDetails from "@/components/formComponents/AddressDetails";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
 import GotraDetials from "@/components/formComponents/GotraDetails";
 import MobileDetails from "@/components/formComponents/MobileDetails";
-import AddressDetails from "@/components/formComponents/AddressDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
+import PersonalDetails from "@/components/formComponents/PersonalDetails";
+import SiblingDetails from "@/components/formComponents/SiblingDetails";
+import { Button, Col, Form, Row } from "antd";
+import AdminLayout from "../../components/layout/AdminLayout";
 
 const Biodata = () => {
   const [form] = Form.useForm();
 
   const handleFromSubmit = async () => {
-    const value = form.getFieldsValue();
-    console.log("form data ", value);
+    const { dob, ...rest } = form.getFieldsValue();
+
+    const formData = JSON.stringify({ ...rest, dob: dob.format("YYYY-MM-DD") });
+    console.log("form data ", formData);
     try {
       const res = await fetch("/api/userController", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(value),
+        body: formData,
       });
       console.log(res.json);
     } catch (error) {
       console.log("err data", error);
     }
-    console.log("form data", value);
   };
 
   return (

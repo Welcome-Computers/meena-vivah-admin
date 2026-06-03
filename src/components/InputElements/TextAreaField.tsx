@@ -19,20 +19,20 @@ interface IProps {
 }
 
 const TextAreaField = memo((props: IProps): JSX.Element => {
-  const { placeholder, label, disabled, rows, 
+  const { placeholder, label, disabled, rows,
     className, name, rootClassName, maxLength, ...rest } = props;
 
   return (
     <div className={`${rootClassName} common_input_label_design`}>
       <Form.Item {...props} style={{ marginBottom: '6px' }} label={label}
       //  labelCol={{ span: 5 }}     
-  // wrapperCol={{ span: 19 }}
+      // wrapperCol={{ span: 19 }}
       >
         <TextArea
-        size='small'
+          size='small'
           {...rest}
           rows={rows}
-          style={{ outline:"none" ,borderRadius:"0" ,border:"2px solid #444444"}}
+          style={{ outline: "none", borderRadius: "0", border: "2px solid #444444" }}
           placeholder={placeholder}
           disabled={disabled}
           onChangeCapture={(ev) => {

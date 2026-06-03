@@ -1,4 +1,4 @@
-import { getAge } from "@/lib/Utility";
+import { getAge } from "@/lib/utility";
 import { IPagination, IUser } from "@/redux/types";
 import { Pagination } from "antd";
 import Image from "next/image";

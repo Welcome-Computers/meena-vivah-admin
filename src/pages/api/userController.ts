@@ -1,4 +1,4 @@
-import db from "@/lib/db/dbCon";
+import db from "@/lib/db/dbConn";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function PersonalDetails(

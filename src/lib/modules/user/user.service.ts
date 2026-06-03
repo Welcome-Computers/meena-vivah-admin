@@ -1,13 +1,13 @@
 import { desc, eq, sql } from "drizzle-orm";
-import { otherGotras } from './../../db/schema/otherGotra';
+import { otherGotras } from '../../schema/otherGotra';
 
 import { db } from "@/lib/db";
 
-import { users } from "@/lib/db/schema/user";
+import { users } from "@/lib/schema/user";
 
-import { addresses } from "@/lib/db/schema/address";
+import { addresses } from "@/lib/schema/address";
 
-import { siblingDetails } from "@/lib/db/schema/sibling";
+import { siblingDetails } from "@/lib/schema/sibling";
 
 
 

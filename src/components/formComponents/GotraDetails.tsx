@@ -1,8 +1,8 @@
 import { memo, useState } from "react";
-import InputField from "../InputElements/InputField";
 import style from "../../pages/biodata/style.module.css";
-import { OtheGotraDetails } from "./OtherGotraDetails";
+import InputField from "../InputElements/InputField";
 import { GotraField } from "./Gotra/GotraField";
+import { OtheGotraDetails } from "./OtherGotraDetails";
 
 const GotraDetials = memo((props: any) => {
   const { label, name, showCount = false, form, rules, ...rest } = props;
@@ -56,8 +56,8 @@ const GotraDetials = memo((props: any) => {
     setSuggestGotra(
       value
         ? gotraOptions.filter((item: string) =>
-            item.toLowerCase().includes(value.trim().toLowerCase()),
-          )
+          item.toLowerCase().includes(value.trim().toLowerCase()),
+        )
         : [],
     );
   };
@@ -133,8 +133,7 @@ const GotraDetials = memo((props: any) => {
       </div>
 
       {/* other gotra details and  button  */}
-      <OtheGotraDetails form={form} GOTRA_FIELDS={GOTRA_FIELDS} 
-      />
+      <OtheGotraDetails form={form} GOTRA_FIELDS={GOTRA_FIELDS} />
 
       {/* pereferences */}
       <InputField

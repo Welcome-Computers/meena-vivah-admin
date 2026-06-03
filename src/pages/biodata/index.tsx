@@ -6,7 +6,11 @@ import MobileDetails from "@/components/formComponents/MobileDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import SiblingDetails from "@/components/formComponents/SiblingDetails";
+import { removeEmptyObjects } from "@/lib/utility";
+import { appMessage } from "@/lib/utility/message";
 import { Button, Col, Form, Row } from "antd";
+import axios from "axios";
+import dayjs from "dayjs";
 import { useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 
@@ -16,7 +20,7 @@ const Biodata = () => {
   const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
   const [dataPreview, setDataPreview] = useState({});
 
-  const handleFromSubmit = async () => {
+  const handleFromSubmit1 = async () => {
     const { dob, ...rest } = form.getFieldsValue();
 
     const formattedDob = dob
@@ -32,13 +36,51 @@ const Biodata = () => {
         headers: { "Content-Type": "application/json" },
         body: formData,
       });
+
       console.log(res.json);
     } catch (error) {
       console.log("err data", error);
     }
   };
 
+  const handleFromSubmit = async () => {
 
+    const { dob, ...rest } = form.getFieldsValue();
+
+    const formattedDob = dob
+      ? dayjs(
+        new Date(dob.year, dob.month, dob.day)
+      ).format("YYYY-MM-DD")
+      : null;
+
+    const formData = {
+      ...rest,
+      dob: formattedDob,
+
+      sibling_details: removeEmptyObjects(rest.sibling_details),
+      other_gotra: removeEmptyObjects(rest.other_gotra),
+      mobile_details: removeEmptyObjects(rest.mobile_details),
+      address_details: removeEmptyObjects(rest.address_details),
+    };
+
+    // console.log("form data", formData);
+    try {
+      const res: any = await axios.post("http://localhost:3005/api/user", formData);
+
+      if (res.data.success) {
+        appMessage.success("Profile created successfully");
+      } else {
+        appMessage.error(
+          res.data.message || "Profile not created"
+        );
+      }
+    } catch (error: any) {
+      appMessage.error(
+        error?.response?.data?.message || "Something went wrong"
+      );
+      // console.log("err data", error);
+    }
+  };
 
   const handlePreviewButton = () => {
     const previewData = form.getFieldsValue();

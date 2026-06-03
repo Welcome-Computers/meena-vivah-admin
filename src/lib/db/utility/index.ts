@@ -22,3 +22,17 @@ export const getAge = (dob?: string | null) => {
 
   return age;
 };
+
+
+export const removeEmptyObjects = (arr: any[] = []) => {
+  return arr.filter(
+    (item) =>
+      item &&
+      Object.values(item).some(
+        (value) =>
+          value !== undefined &&
+          value !== null &&
+          value !== ''
+      )
+  );
+};

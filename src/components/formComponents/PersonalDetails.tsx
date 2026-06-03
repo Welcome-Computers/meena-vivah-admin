@@ -1,10 +1,9 @@
 import { memo } from "react";
-import InputField from "../InputElements/InputField";
-import DobField from "../InputElements/DobField";
-import TextAreaField from "../InputElements/TextAreaField";
-import { Col, message } from "antd";
-import CheckBoxField from "../InputElements/CheckBoxField";
 import style from "../../pages/biodata/style.module.css";
+import CheckBoxField from "../InputElements/CheckBoxField";
+import DobField from "../InputElements/DobField";
+import InputField from "../InputElements/InputField";
+import TextAreaField from "../InputElements/TextAreaField";
 
 const PersonalDetails = memo((props: any) => {
   const { form } = props;

@@ -4,7 +4,7 @@ import mysql from "mysql2/promise";
 
 import { drizzle } from "drizzle-orm/mysql2";
 
-import * as schema from "./schema";
+import * as schema from "../schema";
 
 declare global {
   // eslint-disable-next-line no-var

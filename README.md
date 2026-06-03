@@ -1,4 +1,37 @@
 
+10. create a common card of bride/groom
+13. download button shoud be there. with text/image.
+
+14. create a image/text of biodata and dowload should be programaticaly, 
+15. Login and update
+
+
+19. dashboard > add a table with filters. just like ag grid.
+20. dashboard >  
+		newly added (last 30days) table + filter
+		newly edited (last 30days) table + filter
+		counter [total] [girls] [boys] [professinals list ]
+										> dr. 100+
+										> Teacher 1000+
+										> enginner 230+
+										> others
+		
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ## Getting Started

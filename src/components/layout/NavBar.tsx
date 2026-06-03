@@ -42,11 +42,11 @@ export const NavBar = ({
           {isButtonShow && (
             <>
               <button className={style.button}>
-                <a href="/home">Register Free!</a>
+                <a href="/home">Login and Update</a>
               </button>
-              <button className={style.button}>
-                <a href="/home">Login</a>
-              </button>
+              {/* <button className={style.button}>
+                <a href="/home">Update</a>
+              </button> */}
             </>
           )}
         </div>

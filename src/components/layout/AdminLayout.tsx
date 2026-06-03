@@ -1,6 +1,5 @@
 import {
   DashboardOutlined,
-  SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
@@ -22,11 +21,7 @@ export default function AdminLayout({ children }: any) {
       icon: <UserOutlined />,
       label: "Biodata",
     },
-    {
-      key: "/settings",
-      icon: <SettingOutlined />,
-      label: "Settings",
-    }
+ 
 
   ];
 

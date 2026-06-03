@@ -23,9 +23,9 @@ export default function AdminLayout({ children }: any) {
       label: "Biodata",
     },
     {
-      key: "/settings",
+      key: "/profiles",
       icon: <SettingOutlined />,
-      label: "Settings",
+      label: "Profiles",
     }
 
   ];

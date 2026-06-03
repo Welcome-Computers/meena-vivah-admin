@@ -15,7 +15,12 @@ const Biodata = () => {
   const handleFromSubmit = async () => {
     const { dob, ...rest } = form.getFieldsValue();
 
-    const formData = JSON.stringify({ ...rest, dob: dob.format("YYYY-MM-DD") });
+    const formattedDob = dob
+      ? `${dob.year}-${String(dob.month).padStart(2, '0')}-${String(dob.day).padStart(2, '0')}`
+      : null;
+
+    const formData = JSON.stringify({ ...rest, dob: formattedDob });
+
     console.log("form data ", formData);
     try {
       const res = await fetch("/api/userController", {

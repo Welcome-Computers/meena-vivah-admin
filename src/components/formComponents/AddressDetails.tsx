@@ -1,10 +1,10 @@
+import { Form } from "antd";
 import { memo, useEffect } from "react";
+import style from "../../pages/biodata/style.module.css";
+import CheckBoxField from "../InputElements/CheckBoxField";
 import InputField from "../InputElements/InputField";
 import TextAreaField from "../InputElements/TextAreaField";
 import FormListComponent from "./FormListComponent";
-import style from "../../pages/biodata/style.module.css";
-import CheckBoxField from "../InputElements/CheckBoxField";
-import { Form, message } from "antd";
 
 const AddressDetails = memo((props: any) => {
   const { form } = props;
@@ -15,25 +15,25 @@ const AddressDetails = memo((props: any) => {
     !(addressdetails.length < 2) ||
     !(addressdetails[0]?.full_address && addressdetails[0]?.pincode);
 
-  useEffect(()=>{
- // address type validation
-  if (addressdetails[0]?.type === addressdetails[1]?.type) {
-    form.setFields([
-      {
-        name: ["address_details", 1, "type"],
-        errors: ["type must be diffrent"],
-      },
-    ]);
-  } else {
-    form.setFields([
-      {
-        name: ["address_details", 1, "type"],
-        errors: [],
-      },
-    ]);
-  }
+  useEffect(() => {
+    // address type validation
+    if (addressdetails[0]?.type === addressdetails[1]?.type) {
+      form.setFields([
+        {
+          name: ["address_details", 1, "type"],
+          errors: ["type must be diffrent"],
+        },
+      ]);
+    } else {
+      form.setFields([
+        {
+          name: ["address_details", 1, "type"],
+          errors: [],
+        },
+      ]);
+    }
 
-  },[])
+  }, [addressdetails, form])
 
   return (
     <div className={style["form-container"]}>
@@ -45,7 +45,7 @@ const AddressDetails = memo((props: any) => {
           <div>
 
 
-               {/* for address type  */}
+            {/* for address type  */}
             <CheckBoxField
               label="AddressType"
               form={form}
@@ -62,9 +62,9 @@ const AddressDetails = memo((props: any) => {
                 },
               ]}
             />
-            
 
-            
+
+
             <TextAreaField
               name={[value.name, "full_address"]}
               label="Address"
@@ -86,13 +86,13 @@ const AddressDetails = memo((props: any) => {
               placeholder="e.g. 332001"
               rules={
                 [
-                  {pattern:/^[0-9]{6}$/,message:"Pincode must be 6 digit number"}
+                  { pattern: /^[0-9]{6}$/, message: "Pincode must be 6 digit number" }
 
                 ]
               }
             />
 
-         
+
           </div>
         )}
       </FormListComponent>

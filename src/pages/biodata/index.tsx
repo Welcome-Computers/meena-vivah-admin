@@ -1,4 +1,4 @@
-import ActionButton from "@/components/formComponents/ActionButtons";
+import ModalComp from "@/components/common/ModalComp";
 import AddressDetails from "@/components/formComponents/AddressDetails";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
 import GotraDetials from "@/components/formComponents/GotraDetails";
@@ -7,10 +7,14 @@ import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import { Button, Col, Form, Row } from "antd";
+import { useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 
 const Biodata = () => {
   const [form] = Form.useForm();
+
+  const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
+  const [dataPreview, setDataPreview] = useState({});
 
   const handleFromSubmit = async () => {
     const { dob, ...rest } = form.getFieldsValue();
@@ -34,17 +38,20 @@ const Biodata = () => {
     }
   };
 
+
+
+  const handlePreviewButton = () => {
+    const previewData = form.getFieldsValue();
+    setDataPreview(previewData);
+    setisPreviewOpen(true);
+  };
+
+  const hanldeClosePreview = () => {
+    setisPreviewOpen(false);
+  };
+
   return (
     <AdminLayout>
-      {/* button logout */}
-      <Button
-        type="primary"
-        danger
-        style={{ position: "absolute", top: 16, right: 16 }}
-      >
-        Logout
-      </Button>
-
       {/* Main form components */}
       <Form
         layout="horizontal"
@@ -76,8 +83,34 @@ const Biodata = () => {
         </Row>
 
         {/* AT LAST IN RIGHT BOTTOM */}
-        <ActionButton form={form} />
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 10,
+          marginTop: "20px"
+        }}
+        >
+
+          <Button type="primary" onClick={handlePreviewButton}>
+            Preview
+          </Button>
+
+          <Button type="primary" htmlType="submit">
+            Confrom
+          </Button>
+
+        </div>
+
       </Form>
+
+      <ModalComp
+        title={"Preview Biodata"}
+        isOpen={isPreviewOpen}
+        data={dataPreview}
+        hanldeClose={hanldeClosePreview}
+      />
+
     </AdminLayout>
   );
 };

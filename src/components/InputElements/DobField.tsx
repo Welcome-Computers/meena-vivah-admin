@@ -48,7 +48,7 @@ const DobField = memo((props: DobProps) => {
   const form = Form.useFormInstance();
 
 
-  console.log(form.getFieldsValue(true));
+  // console.log(form.getFieldsValue(true));
 
   // dob age validation
 
@@ -92,6 +92,7 @@ const DobField = memo((props: DobProps) => {
       validateTrigger={["onChange", "onBlur"]}
       dependencies={[name]}
       rules={[
+        { required: true, message: "Enter DOB" },
         { validator: ageValidation },
       ]}
     >

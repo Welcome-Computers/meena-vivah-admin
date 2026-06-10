@@ -1,7 +1,6 @@
 import {
   DashboardOutlined,
-  SettingOutlined,
-  UserOutlined,
+  SettingOutlined
 } from "@ant-design/icons";
 import { Button, Layout, Menu } from "antd";
 import { useRouter } from "next/router";
@@ -17,12 +16,6 @@ export default function AdminLayout({ children }: any) {
       icon: <DashboardOutlined />,
       label: "Dashboard",
     },
-    {
-      key: "/biodata",
-      icon: <UserOutlined />,
-      label: "Biodata",
-    },
-
     {
       key: "profiles",
       icon: <SettingOutlined />,

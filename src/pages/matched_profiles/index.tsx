@@ -1,8 +1,8 @@
 import PublicLayout from "@/components/layout/PublicLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { ProfileFilter } from "@/components/profile/ProfileFilter";
-import { GetUsersProps } from "@/lib/modules/user/user.types";
-import { getUsersAction } from "@/redux/features/users/action";
+import { GetUsersProps } from "@/lib/modules/profile/profile.types";
+import { getUsersAction } from "@/redux/features/profile/action";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect } from "react";

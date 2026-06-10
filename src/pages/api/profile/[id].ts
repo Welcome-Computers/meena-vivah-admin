@@ -7,13 +7,13 @@ import { ZodError } from "zod";
 
 import {
   updateUserSchema,
-} from "@/lib/modules/user/user.validation";
+} from "@/lib/modules/profile/profile.validation";
 
 import {
   getUserById,
   suspendUser,
   updateUser,
-} from "@/lib/modules/user/user.service";
+} from "@/lib/modules/profile/profile.service";
 
 export default async function handler(
   req: NextApiRequest,

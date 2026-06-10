@@ -2,11 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import masterGotra from "./features/masterGotra";
 import masterOccupation from "./features/masterOccupation";
-import userReducer from "./features/users";
+import userReducer from "./features/profile";
 
 import { masterGotraApi } from "./features/masterGotra/services";
 import { masterOccupationApi } from "./features/masterOccupation/services";
-import { userApi } from "./features/users/services";
+import { userApi } from "./features/profile/services";
 
 export const store = configureStore({
   reducer: {

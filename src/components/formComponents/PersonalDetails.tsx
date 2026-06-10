@@ -8,14 +8,14 @@ import SearchableSelectField from "../InputElements/SearchableSelectField";
 import TextAreaField from "../InputElements/TextAreaField";
 
 const PersonalDetails = memo((props: any) => {
-  const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading } = props;
-
+  const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading, handleOnBlurMobile } = props;
 
   return (
     <div className={style["form-container"]}>
       <InputField
         name="mobile"
         label="Mobile"
+        onBlur={(e) => handleOnBlurMobile?.(e)}
         placeholder="e.g. 000-000-0000"
         rules={[
           {
@@ -36,7 +36,7 @@ const PersonalDetails = memo((props: any) => {
               return Promise.resolve();
             },
           },
-          { required: "true", message: "mobile number must be required" }
+          { required: "true", message: "Mobile number must be required" }
         ]}
       />
       <CheckBoxField
@@ -59,7 +59,10 @@ const PersonalDetails = memo((props: any) => {
         ]}
       />
 
-      <DobField name="dob" label="Date of Birth" />
+      <DobField
+        name="dob"
+        label="Date of Birth"
+      />
 
       <SearchableSelectField
         name={"occupation"}
@@ -69,6 +72,9 @@ const PersonalDetails = memo((props: any) => {
         options={occupatonOptions}
         loading={isOccupationLoading}
         placeholder="Select occupations"
+        rules={[
+          { required: true, message: "Enter Occupation " },
+        ]}
       />
 
       <TextAreaField

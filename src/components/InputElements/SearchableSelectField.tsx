@@ -101,7 +101,7 @@ const SearchableSelectField = memo((props: IProps) => {
         }
         size="small"
         className="custom-input"
-        dropdownRender={(menu) => (
+        popupRender={(menu) => (
           <>
             {menu}
 

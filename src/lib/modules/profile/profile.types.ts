@@ -12,10 +12,10 @@ export type GetUsersProps = {
   min_age?: number;
   max_age?: number;
 
-  gotra_self?: string;
-  gotra_mother?: string;
-  gotra_grandmother?: string;
-  gotra_grandmother_maternal?: string;
+  self_gotra?: string;
+  m_gotra?: string;
+  gm_gotra?: string;
+  mat_gm_gotra?: string;
 };
 
 

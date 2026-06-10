@@ -9,11 +9,11 @@ import {
   createUser,
   getProfileMatches,
   getUsers,
-} from "@/lib/modules/user/user.service";
+} from "@/lib/modules/profile/profile.service";
 
 import {
   createUserSchema,
-} from "@/lib/modules/user/user.validation";
+} from "@/lib/modules/profile/profile.validation";
 
 export default async function handler(
   req: NextApiRequest,
@@ -93,10 +93,10 @@ export default async function handler(
       const gender = req.query.gender as string;
       const min_age = Number(req.query.min_age);
       const max_age = Number(req.query.max_age);
-      const gotra_self = req.query.gotra_self as string;
-      const gotra_mother = req.query.gotra_mother as string;
-      const gotra_grandmother = req.query.gotra_grandmother as string;
-      const gotra_grandmother_maternal = req.query.gotra_grandmother_maternal as string;
+      const self_gotra = req.query.self_gotra as string;
+      const m_gotra = req.query.m_gotra as string;
+      const gm_gotra = req.query.gm_gotra as string;
+      const mat_gm_gotra = req.query.mat_gm_gotra as string;
 
       if (action === "matches") {
 
@@ -125,10 +125,10 @@ export default async function handler(
           min_age,
           max_age,
 
-          gotra_self,
-          gotra_mother,
-          gotra_grandmother,
-          gotra_grandmother_maternal,
+          self_gotra,
+          m_gotra,
+          gm_gotra,
+          mat_gm_gotra,
         });
 
 
@@ -168,10 +168,7 @@ export default async function handler(
     /**
      * Duplicate Entry
      */
-    if (
-      error?.cause?.code ===
-      "ER_DUP_ENTRY"
-    ) {
+    if (error?.cause?.code === "ER_DUP_ENTRY") {
 
       return res.status(409).json({
         success: false,

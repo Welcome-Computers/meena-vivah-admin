@@ -1,7 +1,6 @@
 import { Form } from "antd";
 import { RuleObject } from "antd/es/form";
 import { memo } from "react";
-import InputField from "../InputElements/InputField";
 import SearchableSelectField from "../InputElements/SearchableSelectField";
 import FormListComponent from "./FormListComponent";
 
@@ -47,16 +46,15 @@ export const OtheGotraDetails = memo((props: any) => {
   return (
     <FormListComponent formListName="other_gotra" isDisabled={isDisabled}>
       {(value: any) => (
-        <div style={{ display: "grid", gridTemplateColumns: "6fr 3fr" }}>
-          <InputField
-            formItemProps={{
-              labelCol: { span: 9 },
-              wrapperCol: { span: 14 },
-            }}
-            style={{ flex: 1 }}
+        <div className="otherGotraSection" style={{ display: "grid", gridTemplateColumns: "6fr 3fr" }}>
+          <SearchableSelectField
+            className="otherGotraSection_type"
+            label={"Gotra Name"}
             name={[value.name, "other_gotra_relation"]}
-            label="Other Gotra"
-            placeholder="e.g. Step Mother"
+            options={[
+              { label: "Step Mother", value: "step_mother" },
+              { label: "Step Grand Mother", value: "step_grand_mother" },
+            ]}
             dependencies={[["other_gotra", value.name, "other_gotra_name"]]}
             rules={[
               {
@@ -74,20 +72,12 @@ export const OtheGotraDetails = memo((props: any) => {
                 },
               },
             ]}
-          />
-
-          {/* <SearchableSelectField
-            name={"looking_for"}
-            label={"Gotra Name"}
-            options={[
-              { label: "Step Mother", value: "step_mother" },
-              { label: "Step Grand Mother", value: "step_grand_mother" },
-            ]}
             placeholder="Select"
-          /> */}
+          />
 
           <SearchableSelectField
             // mode="tags"
+            className="otherGotraSection_name"
             allowCreate
             onCreateOption={handleCreateGotra}
             name={[value.name, "other_gotra_name"]}
@@ -104,16 +94,6 @@ export const OtheGotraDetails = memo((props: any) => {
             ]}
           />
 
-          {/* <InputField
-            formItemProps={{
-              wrapperCol: { span: 24 },
-            }}
-            style={{ flex: 1 }}
-            name={[value.name, "other_gotra_name"]}
-            placeholder="e.g. Bhardwaj, Vashistha ..."
-            dependencies={[["other_gotra", value.name, "other_gotra_relation"]]}
-            rules={[{ validator: otherGotraRules }]}
-          /> */}
         </div>
       )}
     </FormListComponent>

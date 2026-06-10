@@ -78,25 +78,25 @@ const ModalComp = memo((props: iProps) => {
         <Col span={12}>
           <Text strong>Father's Name:</Text>
           <br />
-          <Text>{data.father_name || "Not provided"}</Text>
+          <Text>{data.fathersname || "Not provided"}</Text>
         </Col>
 
         <Col span={12}>
           <Text strong>Father's Occupation:</Text>
           <br />
-          <Text>{data.father_occupation || "Not provided"}</Text>
+          <Text>{data.fathersoccupation || "Not provided"}</Text>
         </Col>
 
         <Col span={12}>
           <Text strong>Mother's Name:</Text>
           <br />
-          <Text>{data.mother_name || "Not provided"}</Text>
+          <Text>{data.mothersname || "Not provided"}</Text>
         </Col>
 
         <Col span={12}>
           <Text strong>Mother's Occupation:</Text>
           <br />
-          <Text>{data.mother_occupation || "Not provided"}</Text>
+          <Text>{data.mothersoccupation || "Not provided"}</Text>
         </Col>
 
         <Col span={12}>

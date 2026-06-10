@@ -6,7 +6,7 @@ import ProfileContainer from "@/components/profile/ProfileContainer";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useCallback, useEffect } from "react";
 
-import { getUsersAction } from "@/redux/features/users/action";
+import { getUsersAction } from "@/redux/features/profile/action";
 
 const Home = () => {
 

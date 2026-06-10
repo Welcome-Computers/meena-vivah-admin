@@ -1,9 +1,8 @@
+import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Form } from "antd";
-import { Children, memo } from "react";
-import { CloseOutlined } from "@ant-design/icons";
-import { PlusOutlined } from "@ant-design/icons";
+import { memo } from "react";
 const FormListComponent = memo((props: any) => {
-  const { name, children, label, formListName ,isDisabled } = props;
+  const { name, children, label, formListName, isDisabled } = props;
 
 
   return (
@@ -11,30 +10,41 @@ const FormListComponent = memo((props: any) => {
       {(fields, { add, remove }) => (
         <div>
           {fields.map((value) => (
-            <div key={value.key}>
-              {typeof children === "function" ? children(value) : children}
+            <div
+              key={value.key}
+              style={{
+                display: "flex",
+                alignItems: "start",
+                gap: 8,
+                marginBottom: 8,
+              }}
+            >
+              {/* Field */}
+              <div style={{ flex: 1 }}>
+                {typeof children === "function" ? children(value) : children}
+              </div>
 
+              {/* Remove Button (same row) */}
               {fields.length > 1 && (
-                <div style={{ display: "flex", justifyContent: "end" }}>
-                  <Button
-                    size="small"
-                    onClick={() => remove(value.name)}
-                    icon={<CloseOutlined />}
-                  ></Button>
-                </div>
+                <Button
+                  style={{ marginTop: "5px" }}
+                  size="small"
+                  danger
+                  icon={<CloseOutlined />}
+                  onClick={() => remove(value.name)}
+                />
               )}
             </div>
           ))}
 
+          {/* Add Button (bottom right) */}
           <div style={{ display: "flex", justifyContent: "end" }}>
-
             <Button
               icon={<PlusOutlined />}
               size="small"
-               disabled={isDisabled}
+              disabled={isDisabled}
               onClick={() => add()}
-            ></Button>
-
+            />
           </div>
         </div>
       )}

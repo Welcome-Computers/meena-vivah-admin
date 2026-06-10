@@ -1,6 +1,6 @@
 import { Form } from "antd";
 import { memo, useEffect } from "react";
-import style from "../../pages/biodata/style.module.css";
+import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import InputField from "../InputElements/InputField";
 import TextAreaField from "../InputElements/TextAreaField";
@@ -63,23 +63,25 @@ const AddressDetails = memo((props: any) => {
               ]}
             />
 
-
-
             <TextAreaField
               name={[value.name, "full_address"]}
               label="Address"
               rows={1}
             />
 
-            <InputField name={[value.name, "tehsil"]} label="Tehsil/Village" />
+            {/* <InputField name={[value.name, "tehsil"]} label="Tehsil/Village" /> */}
 
 
             <InputField
               name={[value.name, "city"]}
               label="City"
-              placeholder="e.g.jaipur"
+              placeholder="e.g. Jaipur"
             />
-            <InputField name={[value.name, "state"]} label="State" />
+            <InputField
+              name={[value.name, "state"]}
+              label="State"
+              placeholder="e.g. Rajasthan"
+            />
             <InputField
               name={[value.name, "pincode"]}
               label="Pincode"

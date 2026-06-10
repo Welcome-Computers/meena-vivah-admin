@@ -52,7 +52,10 @@ export const createUserSchema =
     /**
      * MOBILE DETAILS
      */
-    mobile_details:
+    mobile:
+      z.string().min(10),
+
+    other_mobile:
       z.array(
         z.object({
           mobile:
@@ -70,9 +73,6 @@ export const createUserSchema =
             z.string(),
 
           state:
-            z.string(),
-
-          tehsil:
             z.string(),
 
           city:

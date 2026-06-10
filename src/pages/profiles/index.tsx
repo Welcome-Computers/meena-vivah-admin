@@ -1,56 +1,36 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { IUser } from "@/redux/types";
-import { message } from "antd";
+import { getUsersAction } from "@/redux/features/users/action";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import Title from "antd/es/typography/Title";
 
 
 
-const Dashboard = () => {
+const Profiles = () => {
 
-  const [data, setData] = useState<IUser[]>([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const [pagination, setPagination] = useState({
-    "total": 6,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 1
-  });
+  const {
+    loading,
+    userList,
+    pagination,
+  } = useAppSelector((state) => state.users);
 
-  const getUsers = async (
-    page = pagination.page,
-    limit = pagination.limit
-  ) => {
-    try {
-      setLoading(true);
 
-      const response = await axios.get(
-        `http://localhost:3005/api/user?page=${page}&limit=${limit}`
-      );
-
-      const result = response?.data;
-
-      if (result?.success) {
-        setData(result?.data || []);
-
-        setPagination(result?.pagination);
-      }
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to fetch profiles");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const getUsers = useCallback(
+    (page: number, limit = 10) => {
+      dispatch(getUsersAction({ page, limit }));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    getUsers(1);
-  }, []);
+    getUsers(1, 10);
+  }, [getUsers]);
+
 
 
   return (
@@ -62,7 +42,7 @@ const Dashboard = () => {
 
         <ProfileContainer
           loading={loading}
-          data={data}
+          data={userList}
           pagination={pagination}
           getUsers={getUsers} />
 
@@ -71,4 +51,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Profiles;

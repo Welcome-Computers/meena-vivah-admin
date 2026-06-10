@@ -1,15 +1,44 @@
+import { RuleObject } from "antd/es/form";
 import { memo } from "react";
-import style from "../../pages/biodata/style.module.css";
+import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import DobField from "../InputElements/DobField";
 import InputField from "../InputElements/InputField";
+import SearchableSelectField from "../InputElements/SearchableSelectField";
 import TextAreaField from "../InputElements/TextAreaField";
 
 const PersonalDetails = memo((props: any) => {
-  const { form } = props;
+  const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading } = props;
+
 
   return (
     <div className={style["form-container"]}>
+      <InputField
+        name="mobile"
+        label="Mobile"
+        placeholder="e.g. 000-000-0000"
+        rules={[
+          {
+            validator: (_: RuleObject, val: any) => {
+
+              if (!val) {
+                return Promise.resolve();
+              }
+              if (val.length < 10) {
+                return Promise.reject(
+                  new Error("Enter 10 Digit Mobile Number"),
+                );
+              }
+              if (!/^(\+91)?[6-9]\d{9}$/.test(val)) {
+                return Promise.reject(new Error("Check Mobile Number"));
+              }
+
+              return Promise.resolve();
+            },
+          },
+          { required: "true", message: "mobile number must be required" }
+        ]}
+      />
       <CheckBoxField
         form={form}
         name="gender"
@@ -24,12 +53,24 @@ const PersonalDetails = memo((props: any) => {
         name="name"
         label="Name"
         rules={[
-          { required: true, message: "enter name first" },
+          { required: true, message: "Enter first name " },
           { max: 30, message: "Maximum 30 characters" },
           { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
         ]}
       />
+
       <DobField name="dob" label="Date of Birth" />
+
+      <SearchableSelectField
+        name={"occupation"}
+        label={"Occupation"}
+        allowCreate
+        onCreateOption={handleCreateOccupation}
+        options={occupatonOptions}
+        loading={isOccupationLoading}
+        placeholder="Select occupations"
+      />
+
       <TextAreaField
         name="education"
         label="Education"
@@ -45,14 +86,7 @@ const PersonalDetails = memo((props: any) => {
           { max: 100, message: "Maximum 100 characters" },
         ]}
       />
-      <TextAreaField
-        name="occupation"
-        label="Occupation"
-        form={form}
-        rows={4}
-        rules={[{ max: 100, message: "Maximum 100 characters" }]}
-        maxLength={50}
-      />
+
     </div>
   );
 });

@@ -1,24 +1,15 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import {
-  Card,
-  Col,
-  message,
   Row,
-  Space,
   Typography
 } from "antd";
 
+import TopStatics from "@/components/dashboard/TopStatics";
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { IUser } from "@/redux/types";
-import {
-  HeartOutlined,
-  ManOutlined,
-  UserOutlined,
-  WomanOutlined,
-} from "@ant-design/icons";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { getUsersAction } from "@/redux/features/users/action";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useCallback, useEffect } from "react";
 
 const { Title } = Typography;
 
@@ -30,45 +21,27 @@ const Dashboard = () => {
     matched: 18,
   };
 
-  const [data, setData] = useState<IUser[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  const [pagination, setPagination] = useState({
-    "total": 6,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 1
-  });
+  const dispatch = useAppDispatch();
 
-  const getUsers = async (
-    page = pagination.page,
-    limit = pagination.limit
-  ) => {
-    try {
-      setLoading(true);
+  const {
+    loading,
+    userList,
+    pagination,
+  } = useAppSelector((state) => state.users);
 
-      const response = await axios.get(
-        `http://localhost:3005/api/user?page=${page}&limit=${limit}`
-      );
 
-      const result = response?.data;
-
-      if (result?.success) {
-        setData(result?.data || []);
-
-        setPagination(result?.pagination);
-      }
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to fetch profiles");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const getUsers = useCallback(
+    (page: number, limit = 10) => {
+      dispatch(getUsersAction({ page, limit }));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    getUsers(1);
-  }, []);
+    getUsers(1, 10);
+  }, [getUsers]);
+
 
 
   return (
@@ -80,73 +53,7 @@ const Dashboard = () => {
 
         {/* ================= STATS ================= */}
         <Row gutter={16}>
-          <Col span={6}>
-            <Card>
-              <Space>
-                <UserOutlined />
-                <div>
-                  <h3>
-                    {
-                      stats.totalMembers
-                    }
-                  </h3>
-                  <p>
-                    Total Members
-                  </p>
-                </div>
-              </Space>
-            </Card>
-          </Col>
-
-          <Col span={6}>
-            <Card>
-              <Space>
-                <ManOutlined />
-                <div>
-                  <h3>
-                    {
-                      stats.boys
-                    }
-                  </h3>
-                  <p>Boys</p>
-                </div>
-              </Space>
-            </Card>
-          </Col>
-
-          <Col span={6}>
-            <Card>
-              <Space>
-                <WomanOutlined />
-                <div>
-                  <h3>
-                    {
-                      stats.girls
-                    }
-                  </h3>
-                  <p>Girls</p>
-                </div>
-              </Space>
-            </Card>
-          </Col>
-
-          <Col span={6}>
-            <Card>
-              <Space>
-                <HeartOutlined />
-                <div>
-                  <h3>
-                    {
-                      stats.matched
-                    }
-                  </h3>
-                  <p>
-                    Matched
-                  </p>
-                </div>
-              </Space>
-            </Card>
-          </Col>
+          <TopStatics stats={stats} />
         </Row>
 
         {/* ================= TABLE 1 ================= */}
@@ -155,7 +62,7 @@ const Dashboard = () => {
             defaultShow="table"
             loading={loading}
             title={'Last 15 Days New Registrations'}
-            data={data}
+            data={userList || []}
             pagination={pagination}
             getUsers={getUsers} />
         </div>
@@ -166,7 +73,7 @@ const Dashboard = () => {
             title={'Last 15 Days Updates'}
             loading={loading}
             defaultShow="table"
-            data={data}
+            data={userList || []}
             pagination={pagination}
             getUsers={getUsers} />
         </div>

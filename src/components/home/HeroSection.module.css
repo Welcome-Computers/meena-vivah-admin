@@ -1,0 +1,99 @@
+/* dropdown styling */
+.selectContainer {
+  position: relative;
+  border: 12px solid #0000009c;
+  margin: auto;
+  margin: auto;
+  display: grid;
+  position: absolute;
+  right: 100px;
+  top: 128px;
+  width: 250px;
+}
+
+.selectContainer>button {
+  grid-column: span 2;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 8px 1rem;
+  color: white;
+  border: none;
+  outline: none;
+  background-color: #cd3162;
+}
+
+.select {
+  width: 100%;
+  border: 1px solid gray;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  padding: 5px;
+  border-radius: 0%;
+  background-color: #fff;
+  color: #333;
+}
+
+.select:nth-child(3) {
+  grid-column: span 2;
+}
+
+.hero {
+  height: 45vh;
+  background-image: url("/images/herobanner.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.hero>h2 {
+  color: #000;
+  font-size: 1.2rem;
+  text-align: center;
+  top: 10%;
+  position: relative;
+  text-shadow: #ccc 0px 0px 10px;
+  stroke-width: 1px;
+  background-image: url("/images/couple_handshake.png");
+  background-size: 400px 230px;
+  background-repeat: no-repeat;
+  background-position: center 30px;
+  padding-bottom: 70px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.hero>h2 span {
+  display: block;
+  color: #cd3162
+}
+
+/* DESKTOP MEDIA QUERIES */
+@media (min-width: 768px) {
+  .selectContainer {
+    position: relative;
+    border: 12px solid #0000009c;
+    margin: auto;
+    margin: auto;
+    display: grid;
+    position: absolute;
+    right: 100px;
+    top: 128px;
+    width: 250px;
+  }
+
+
+  .selectContainer>button {
+    grid-column: span 1;
+  }
+
+  .select {
+    padding: 0.8rem;
+  }
+
+  .select:nth-child(3) {
+    grid-column: span 1;
+  }
+
+  .hero>h2 {
+    font-size: 2.5rem;
+  }
+}

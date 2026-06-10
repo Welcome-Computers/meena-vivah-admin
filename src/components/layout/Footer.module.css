@@ -7,21 +7,38 @@
   text-align: center;
   padding: 2rem;
 }
-.footer > div > p {
+
+.footer_inner {
+  display: flex;
+  justify-content: space-between;
+  background-color: #cd3162;
+  color: white;
+  text-align: center;
+}
+
+.footer_inner {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer_inner>div>p {
   font-size: 15px;
 }
 
 /* mobile view  */
 @media (max-width: 768px) {
-  .footer {
+  .footer_inner {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
   }
-  .footer > div > h3 {
+
+  .footer_inner>div>h3 {
     font-size: 15px;
   }
-  .footer > div > p {
+
+  .footer_inner>div>p {
     font-size: 11px;
   }
 }

@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte, ne, notInArray, sql } from "drizzle-orm";
 import { otherGotras } from '../../schema/otherGotra';
 
 import { db } from "@/lib/db";
@@ -9,13 +9,23 @@ import { addresses } from "@/lib/schema/address";
 
 import { siblingDetails } from "@/lib/schema/sibling";
 
+import { masterGotra } from "@/lib/schema/masterGotra";
 
 
-
+import { masterOccupation } from "@/lib/schema/masterOccupation";
+import { alias } from "drizzle-orm/mysql-core";
+import { GetMatchedUsersProps, GetUsersProps } from "./user.types";
 import {
   CreateUserInput,
   UpdateUserInput,
 } from "./user.validation";
+
+
+const selfGotra = alias(masterGotra, "selfGotra");
+const motherGotra = alias(masterGotra, "motherGotra");
+const grandmotherGotra = alias(masterGotra, "grandmotherGotra");
+const maternalGrandmotherGotra = alias(masterGotra, "maternalGrandmotherGotra");
+
 
 export async function createUser(
   payload: CreateUserInput
@@ -31,9 +41,11 @@ export async function createUser(
         await tx
           .insert(users)
           .values({
+            // other_mobile:
+            //   payload.other_mobile,
+
             mobile:
-              payload.mobile_details?.[0]
-                ?.mobile,
+              payload.gender,
 
             gender:
               payload.gender,
@@ -85,6 +97,8 @@ export async function createUser(
       const userId =
         userResult.id;
 
+
+
       /**
        * ADDRESS
        */
@@ -103,9 +117,6 @@ export async function createUser(
 
                 address:
                   item.full_address,
-
-                tehsil:
-                  item.tehsil,
 
                 state:
                   item.state,
@@ -186,97 +197,237 @@ export async function createUser(
   );
 }
 
-type GetUsersProps = {
-  page?: number;
-  limit?: number;
-};
+
 
 export async function getUsers({
   page = 1,
   limit = 10,
+
+  occupation,
+  gender,
+
+  min_age,
+  max_age,
+
+  gotra_self,
+  gotra_mother,
+  gotra_grandmother,
+  gotra_grandmother_maternal
 }: GetUsersProps) {
 
-  const offset =
-    (page - 1) * limit;
+  const offset = (page - 1) * limit;
+
+  /**
+   * DYNAMIC CONDITIONS
+   */
+  const conditions = [
+    eq(users.isSuspended, false),
+  ];
+
+  /**
+   * OCCUPATION
+   */
+  if (occupation) {
+    conditions.push(
+      eq(users.occupation, occupation)
+    );
+  }
+
+  /**
+   * GENDER
+   */
+  if (gender) {
+    conditions.push(
+      eq(users.gender, gender)
+    );
+  }
+
+  /**
+   * GOTRA
+   */
+  if (gotra_self) {
+    conditions.push(
+      eq(users.self_gotra, gotra_self)
+    );
+  }
+
+  if (gotra_mother) {
+    conditions.push(
+      eq(users.m_gotra, gotra_mother)
+    );
+  }
+
+  if (gotra_grandmother) {
+    conditions.push(
+      eq(users.gm_gotra, gotra_grandmother)
+    );
+  }
+
+  if (
+    gotra_grandmother_maternal
+  ) {
+    conditions.push(
+      eq(
+        users.mat_gm_gotra,
+        gotra_grandmother_maternal
+      )
+    );
+  }
+
+  /**
+   * AGE FILTER USING DOB
+   */
+  const today = new Date();
+
+  // Minimum age
+  if (min_age) {
+
+    const maxDob = new Date();
+
+    maxDob.setFullYear(
+      today.getFullYear() - min_age
+    );
+
+    conditions.push(
+      lte(users.dob, maxDob)
+    );
+  }
+
+  // Maximum age
+  if (max_age) {
+
+    const minDob = new Date();
+
+    minDob.setFullYear(
+      today.getFullYear() - max_age
+    );
+
+    conditions.push(
+      gte(users.dob, minDob)
+    );
+  }
 
   /**
    * USERS
    */
-  const data =
-    await db
-      .select()
-      .from(users)
-      .where(
-        eq(
-          users.isSuspended,
-          false
-        )
-      )
-      .orderBy(
-        desc(users.id)
-      )
-      .limit(limit)
-      .offset(offset);
+
+
+
+
+  const data = await db
+    .select({
+      id: users.id,
+      mobile: users.mobile,
+      gender: users.gender,
+      name: users.name,
+      dob: users.dob,
+      education: users.education,
+
+      fathersname: users.fathersname,
+      mothersname: users.mothersname,
+      fathersoccupation: users.fathersoccupation,
+      mothersoccupation: users.mothersoccupation,
+
+      preferences: users.preferences,
+      otherinfo: users.otherinfo,
+
+      isSuspended: users.isSuspended,
+      createdAt: users.createdAt,
+
+      occupationFull: masterOccupation,
+      occupation: masterOccupation.name,
+
+      self_gotra: selfGotra.name,
+      m_gotra: motherGotra.name,
+      gm_gotra: grandmotherGotra.name,
+      mat_gm_gotra: maternalGrandmotherGotra.name,
+    })
+    .from(users)
+
+    .leftJoin(
+      masterOccupation,
+      sql`${users.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
+    )
+
+    .leftJoin(
+      selfGotra,
+      sql`${users.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
+    )
+
+    .leftJoin(
+      motherGotra,
+      sql`${users.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
+    )
+
+    .leftJoin(
+      grandmotherGotra,
+      sql`${users.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
+    )
+
+    .leftJoin(
+      maternalGrandmotherGotra,
+      sql`${users.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
+    )
+
+    .where(and(...conditions))
+    .orderBy(desc(users.id))
+    .limit(limit)
+    .offset(offset);
 
   /**
    * COMBINE RELATIONAL DATA
    */
+
   const finalData =
     await Promise.all(
-      data.map(
-        async (user) => {
+      data.map(async (user) => {
 
-          const userAddress =
-            await db
-              .select()
-              .from(addresses)
-              .where(
-                eq(
-                  addresses.user_id,
-                  user.id
-                )
-              );
-
-          const userSiblings =
-            await db
-              .select()
-              .from(
-                siblingDetails
+        const userAddress =
+          await db
+            .select()
+            .from(addresses)
+            .where(
+              eq(
+                addresses.user_id,
+                user.id
               )
-              .where(
-                eq(
-                  siblingDetails.user_id,
-                  user.id
-                )
-              );
+            );
 
-          const userOtherGotra =
-            await db
-              .select()
-              .from(
-                otherGotras
+        const userSiblings =
+          await db
+            .select()
+            .from(siblingDetails)
+            .where(
+              eq(
+                siblingDetails.user_id,
+                user.id
               )
-              .where(
-                eq(
-                  otherGotras.user_id,
-                  user.id
-                )
-              );
+            );
 
-          return {
-            ...user,
+        const userOtherGotra =
+          await db
+            .select()
+            .from(otherGotras)
+            .where(
+              eq(
+                otherGotras.user_id,
+                user.id
+              )
+            );
 
-            address_details:
-              userAddress,
+        return {
+          ...user,
 
-            sibling_details:
-              userSiblings,
+          address_details:
+            userAddress,
 
-            other_gotra:
-              userOtherGotra,
-          };
-        }
-      )
+          sibling_details:
+            userSiblings,
+
+          other_gotra:
+            userOtherGotra,
+        };
+      })
     );
 
   /**
@@ -288,23 +439,22 @@ export async function getUsers({
         count:
           sql<number>`count(*)`,
       })
+
       .from(users)
-      .where(
-        eq(
-          users.isSuspended,
-          false
-        )
-      );
+
+      .where(and(...conditions));
 
   const total =
-    totalResult.count;
+    Number(totalResult.count);
 
   return {
     data: finalData,
 
     pagination: {
       total,
+
       page,
+
       limit,
 
       totalPages:
@@ -314,6 +464,253 @@ export async function getUsers({
     },
   };
 }
+
+export async function getProfileMatches({
+  page = 1,
+  limit = 10,
+
+  looking_for,
+  preferredAge,
+  req_occupation,
+  exclude_gotra
+
+}: GetMatchedUsersProps) {
+
+  const offset = (page - 1) * limit;
+
+  /**
+   * DYNAMIC CONDITIONS
+   */
+  const conditions = [
+    eq(users.isSuspended, false),
+  ];
+
+  /**
+   * OCCUPATION
+   */
+  if (
+    req_occupation?.length
+  ) {
+    conditions.push(
+      inArray(users.occupation, req_occupation)
+    );
+  }
+
+  /**
+   * GENDER
+   */
+  if (looking_for) {
+    conditions.push(
+      ne(users.gender, looking_for)
+    );
+  }
+
+  /**
+   * GOTRA
+   */
+
+  // console.log("exclude_gotra ++++ ", exclude_gotra)
+
+  if (exclude_gotra?.length) {
+    conditions.push(
+      notInArray(
+        users.self_gotra,
+        exclude_gotra
+      )
+    );
+
+    conditions.push(
+      notInArray(
+        users.m_gotra,
+        exclude_gotra
+      )
+    );
+
+    conditions.push(
+      notInArray(
+        users.gm_gotra,
+        exclude_gotra
+      )
+    );
+
+    conditions.push(
+      notInArray(
+        users.mat_gm_gotra,
+        exclude_gotra
+      )
+    );
+  }
+
+  /**
+   * AGE FILTER USING DOB
+   */
+
+  if (preferredAge?.length === 2) {
+
+    const [minAge, maxAge,] = preferredAge;
+
+    const today = new Date();
+
+    const maxDob = new Date();
+
+    maxDob.setFullYear(today.getFullYear() - minAge);
+
+    const minDob = new Date();
+
+    minDob.setFullYear(today.getFullYear() - (maxAge - 1));
+
+    conditions.push(gte(users.dob, minDob));
+
+    conditions.push(lte(users.dob, maxDob));
+
+  }
+
+  /**
+   * USERS
+   */
+  const data = await db
+    .select({
+      id: users.id,
+      mobile: users.mobile,
+      gender: users.gender,
+      name: users.name,
+      dob: users.dob,
+      education: users.education,
+
+      fathersname: users.fathersname,
+      mothersname: users.mothersname,
+      fathersoccupation: users.fathersoccupation,
+      mothersoccupation: users.mothersoccupation,
+
+      preferences: users.preferences,
+      otherinfo: users.otherinfo,
+
+      isSuspended: users.isSuspended,
+      createdAt: users.createdAt,
+
+      occupationFull: masterOccupation,
+      occupation: masterOccupation.name,
+
+      self_gotra: selfGotra.name,
+      m_gotra: motherGotra.name,
+      gm_gotra: grandmotherGotra.name,
+      mat_gm_gotra: maternalGrandmotherGotra.name,
+    })
+    .from(users)
+
+    .leftJoin(
+      masterOccupation,
+      sql`${users.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
+    )
+
+    .leftJoin(
+      selfGotra,
+      sql`${users.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
+    )
+
+    .leftJoin(
+      motherGotra,
+      sql`${users.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
+    )
+
+    .leftJoin(
+      grandmotherGotra,
+      sql`${users.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
+    )
+
+    .leftJoin(
+      maternalGrandmotherGotra,
+      sql`${users.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
+    )
+
+    .where(and(...conditions))
+    .orderBy(desc(users.id))
+    .limit(limit)
+    .offset(offset);
+
+  /**
+   * COMBINE RELATIONAL DATA
+   */
+  const finalData =
+    await Promise.all(
+      data.map(async (user) => {
+
+        const userAddress =
+          await db
+            .select()
+            .from(addresses)
+            .where(
+              eq(
+                addresses.user_id,
+                user.id
+              )
+            );
+
+        const userSiblings =
+          await db
+            .select()
+            .from(siblingDetails)
+            .where(
+              eq(
+                siblingDetails.user_id,
+                user.id
+              )
+            );
+
+        const userOtherGotra =
+          await db
+            .select()
+            .from(otherGotras)
+            .where(
+              eq(
+                otherGotras.user_id,
+                user.id
+              )
+            );
+
+        return {
+          ...user,
+
+          address_details:
+            userAddress,
+
+          sibling_details:
+            userSiblings,
+
+          other_gotra:
+            userOtherGotra,
+        };
+      })
+    );
+
+  /**
+   * TOTAL COUNT
+   */
+  const [totalResult] =
+    await db
+      .select({
+        count:
+          sql<number>`count(*)`,
+      })
+
+      .from(users)
+
+      .where(and(...conditions));
+
+  const total =
+    Number(totalResult.count);
+
+  return {
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+    data: finalData,
+  };
+}
+
 
 export async function getUserById(
   id: number

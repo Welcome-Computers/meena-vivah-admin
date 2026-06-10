@@ -8,10 +8,10 @@ export default async function PersonalDetails(
   const connection = await db.getConnection();
   try {
     const { name, dob, education, occupation, gender,
-      father_occupation, father_name, mother_name, mother_occupation, sibling_details, address_details, other_gotra, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, mobile_details, other_details, type,
+      father_occupation, father_name, mother_name, mother_occupation, sibling_details, address_details, other_gotra, gotra_self, gotra_mother, gotra_grandmother, gotra_grandmother_maternal, preferences, mobile, other_details, type,
     } = req.body;
 
-    const mobile = mobile_details[0]?.mobile;
+    // const mobile = other_mobile[0]?.mobile;
     await connection.beginTransaction();
 
     // person table query
@@ -64,8 +64,8 @@ export default async function PersonalDetails(
     }
 
     // mobile Details
-    // if (mobile_details && mobile_details.length > 0) {
-    //   for (let details of mobile_details) {
+    // if (other_mobile && other_mobile.length > 0) {
+    //   for (let details of other_mobile) {
     //     const { mobile } = details;
     //     await connection.query(
     //       `INSERT INTO mobile(user_id,mobile) VALUES(?,?)`,

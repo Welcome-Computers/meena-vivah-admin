@@ -21,10 +21,7 @@ interface iProps {
   pagination: IPagination;
   defaultShow?: "grid" | "table";
   title?: string;
-  getUsers?: (
-    page?: number,
-    limit?: number
-  ) => Promise<void>;
+  getUsers?: (page: number, limit?: number) => void
 }
 
 const ProfileContainer = (props: iProps) => {
@@ -43,7 +40,7 @@ const ProfileContainer = (props: iProps) => {
   };
 
   return (
-    <div>
+    <div style={{ padding: "0 20px" }}>
       {/* VIEW TOGGLE BUTTONS */}
       <div
         style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}      >
@@ -54,14 +51,14 @@ const ProfileContainer = (props: iProps) => {
             type={view === "grid" ? "primary" : "default"}
             icon={<AppstoreOutlined />}
             onClick={() => setView("grid")}>
-            Grid
+            {/* Grid */}
           </Button>
 
           <Button
             type={view === "table" ? "primary" : "default"}
             icon={<TableOutlined />}
             onClick={() => setView("table")}>
-            Table
+            {/* Table */}
           </Button>
         </Space>
       </div>

@@ -21,7 +21,7 @@ const GotraDetials = memo((props: any) => {
   const [suggestGotra, setSuggestGotra] = useState<string[]>([]);
   const [activatedField, setActivatedField] = useState<string>("");
 
-  const GOTRA_FIELDS = ["gotra_self", "gotra_mother", "gotra_grandmother", "gotra_grandmother_maternal"];
+  const GOTRA_FIELDS = ["self_gotra", "m_gotra", "gm_gotra", "mat_gm_gotra"];
 
   // Duplicate value check
   const gotraValidationRules = (_: any, inputValue: any) => {
@@ -57,50 +57,50 @@ const GotraDetials = memo((props: any) => {
 
   const gotraField = [
     {
-      name: "gotra_self",
+      name: "self_gotra",
       label: "Self",
       dependencies: [
-        "gotra_mother",
-        "gotra_grandmother",
-        "gotra_grandmother_maternal",
+        "m_gotra",
+        "gm_gotra",
+        "mat_gm_gotra",
       ],
     },
     {
-      name: "gotra_mother",
+      name: "m_gotra",
       label: "Mother",
       dependencies: [
-        "gotra_self",
-        "gotra_grandmother",
-        "gotra_grandmother_maternal",
+        "self_gotra",
+        "gm_gotra",
+        "mat_gm_gotra",
       ],
     },
     {
-      name: "gotra_grandmother",
+      name: "gm_gotra",
       label: "Grand Mother",
       dependencies: [
-        "gotra_self",
-        "gotra_mother",
-        "gotra_grandmother_maternal",
+        "self_gotra",
+        "m_gotra",
+        "mat_gm_gotra",
       ],
     },
     {
-      name: "gotra_grandmother_maternal",
-      label: "MaternalGrandmother",
-      dependencies: ["gotra_self", "gotra_mother", "gotra_grandmother"],
+      name: "mat_gm_gotra",
+      label: "Maternal Grandmother",
+      dependencies: ["self_gotra", "m_gotra", "gm_gotra"],
     },
   ];
 
 
-  const { gotra_self,
-    gotra_mother,
-    gotra_grandmother,
-    gotra_grandmother_maternal } = fromData || {}
+  const { self_gotra,
+    m_gotra,
+    gm_gotra,
+    mat_gm_gotra } = fromData || {}
 
   const otherGotraDependencies = [
-    "gotra_self",
-    "gotra_self",
-    "gotra_grandmother",
-    "gotra_grandmother_maternal",
+    "self_gotra",
+    "self_gotra",
+    "gm_gotra",
+    "mat_gm_gotra",
   ]
 
   const { data, isLoading, refetch } = useGetGotrasQuery({});
@@ -112,10 +112,10 @@ const GotraDetials = memo((props: any) => {
       label: item.name,
       value: item.code,
       disabled: [
-        gotra_self,
-        gotra_mother,
-        gotra_grandmother,
-        gotra_grandmother_maternal
+        self_gotra,
+        m_gotra,
+        gm_gotra,
+        mat_gm_gotra
       ]?.includes(
         item.code
       ),

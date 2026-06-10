@@ -6,13 +6,13 @@ import SearchableSelectField from "../InputElements/SearchableSelectField";
 
 const FamilyDetails = memo((props: any) => {
   const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading } = props;
-  const motherName = Form.useWatch("mother_name", form);
-  const fatherName = Form.useWatch("father_name", form);
+  const motherName = Form.useWatch("mothersname", form);
+  const fatherName = Form.useWatch("fathersname", form);
 
   return (
     <div className={style["form-container"]}>
       <InputField
-        name="father_name"
+        name="fathersname"
         label="Father Name"
         rules={[
           { required: true, message: "Enter first name " },
@@ -22,7 +22,7 @@ const FamilyDetails = memo((props: any) => {
       />
 
       <SearchableSelectField
-        name="father_occupation"
+        name="fathersoccupation"
         label="Father Occupation"
         disabled={!fatherName}
         allowCreate
@@ -30,18 +30,20 @@ const FamilyDetails = memo((props: any) => {
         options={occupatonOptions}
         loading={isOccupationLoading}
         placeholder="Select occupations"
-        rules={[{ max: 100, message: "Maximum 100 characters" }]}
+        rules={[
+          { max: 100, message: "Maximum 100 characters" }
+        ]}
       />
 
       <InputField
-        name="mother_name"
+        name="mothersname"
         label="Mother Name"
         rules={[
           { max: 100, message: "Maximum 100 characters" },
         ]}
       />
       <SearchableSelectField
-        name="mother_occupation"
+        name="mothersoccupation"
         label="Mother Occupation"
         disabled={!motherName}
         allowCreate

@@ -21,13 +21,19 @@ interface iProps {
   pagination: IPagination;
   defaultShow?: "grid" | "table";
   title?: string;
+  showToggle?: boolean;
   getUsers?: (page: number, limit?: number) => void
 }
 
 const ProfileContainer = (props: iProps) => {
-  const { loading, data, pagination, getUsers, defaultShow = "grid",
-    title = "Profiles"
-
+  const {
+    loading,
+    data,
+    pagination,
+    getUsers,
+    defaultShow = "grid",
+    title = "Profiles",
+    showToggle = true
   } = props;
 
   const [view, setView] = useState<"grid" | "table">(defaultShow);
@@ -46,21 +52,24 @@ const ProfileContainer = (props: iProps) => {
         style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}      >
         <h3>{title} </h3>
 
-        <Space>
-          <Button
-            type={view === "grid" ? "primary" : "default"}
-            icon={<AppstoreOutlined />}
-            onClick={() => setView("grid")}>
-            {/* Grid */}
-          </Button>
+        {showToggle ?
+          <Space>
+            <Button
+              type={view === "grid" ? "primary" : "default"}
+              icon={<AppstoreOutlined />}
+              onClick={() => setView("grid")}>
+              {/* Grid */}
+            </Button>
 
-          <Button
-            type={view === "table" ? "primary" : "default"}
-            icon={<TableOutlined />}
-            onClick={() => setView("table")}>
-            {/* Table */}
-          </Button>
-        </Space>
+            <Button
+              type={view === "table" ? "primary" : "default"}
+              icon={<TableOutlined />}
+              onClick={() => setView("table")}>
+              {/* Table */}
+            </Button>
+          </Space>
+          : null}
+
       </div>
 
       {/* CONDITIONAL RENDER */}

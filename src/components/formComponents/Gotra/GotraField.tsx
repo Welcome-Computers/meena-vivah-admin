@@ -43,9 +43,14 @@ export const GotraField = ({
         }}
         placeholder="Select occupations"
         rules={[
-          { required: true, message: "Field Required." },
           { max: 50, message: "Maximum 50 characters" },
-          { validator: gotraValidationRules },
+
+          ...(name === "mat_gm_gotra"
+            ? []
+            : [
+              { required: true, message: "Field Required." },
+              { validator: gotraValidationRules },
+            ]),
         ]}
       />
     </>

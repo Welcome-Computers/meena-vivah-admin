@@ -3,7 +3,7 @@ import { otherGotras } from '../../schema/otherGotra';
 
 import { db } from "@/lib/db";
 
-import { users } from "@/lib/schema/user";
+import { users } from "@/lib/schema/profile";
 
 import { addresses } from "@/lib/schema/address";
 
@@ -14,11 +14,11 @@ import { masterGotra } from "@/lib/schema/masterGotra";
 
 import { masterOccupation } from "@/lib/schema/masterOccupation";
 import { alias } from "drizzle-orm/mysql-core";
-import { GetMatchedUsersProps, GetUsersProps } from "./user.types";
+import { GetMatchedUsersProps, GetUsersProps } from "./profile.types";
 import {
   CreateUserInput,
   UpdateUserInput,
-} from "./user.validation";
+} from "./profile.validation";
 
 
 const selfGotra = alias(masterGotra, "selfGotra");
@@ -63,28 +63,28 @@ export async function createUser(
               payload.occupation,
 
             fathersname:
-              payload.father_name,
+              payload.fathersname,
 
             mothersname:
-              payload.mother_name,
+              payload.mothersname,
 
             fathersoccupation:
-              payload.father_occupation,
+              payload.fathersoccupation,
 
             mothersoccupation:
-              payload.mother_occupation,
+              payload.mothersoccupation,
 
             self_gotra:
-              payload.gotra_self,
+              payload.self_gotra,
 
             m_gotra:
-              payload.gotra_mother,
+              payload.m_gotra,
 
             gm_gotra:
-              payload.gotra_grandmother,
+              payload.gm_gotra,
 
             mat_gm_gotra:
-              payload.gotra_grandmother_maternal,
+              payload.mat_gm_gotra,
 
             preferences:
               payload.preferences,
@@ -209,10 +209,10 @@ export async function getUsers({
   min_age,
   max_age,
 
-  gotra_self,
-  gotra_mother,
-  gotra_grandmother,
-  gotra_grandmother_maternal
+  self_gotra,
+  m_gotra,
+  gm_gotra,
+  mat_gm_gotra
 }: GetUsersProps) {
 
   const offset = (page - 1) * limit;
@@ -245,31 +245,31 @@ export async function getUsers({
   /**
    * GOTRA
    */
-  if (gotra_self) {
+  if (self_gotra) {
     conditions.push(
-      eq(users.self_gotra, gotra_self)
+      eq(users.self_gotra, self_gotra)
     );
   }
 
-  if (gotra_mother) {
+  if (m_gotra) {
     conditions.push(
-      eq(users.m_gotra, gotra_mother)
+      eq(users.m_gotra, m_gotra)
     );
   }
 
-  if (gotra_grandmother) {
+  if (gm_gotra) {
     conditions.push(
-      eq(users.gm_gotra, gotra_grandmother)
+      eq(users.gm_gotra, gm_gotra)
     );
   }
 
   if (
-    gotra_grandmother_maternal
+    mat_gm_gotra
   ) {
     conditions.push(
       eq(
         users.mat_gm_gotra,
-        gotra_grandmother_maternal
+        mat_gm_gotra
       )
     );
   }
@@ -716,10 +716,68 @@ export async function getUserById(
   id: number
 ) {
 
-  return await db.query.users
-    .findFirst({
-      where: eq(users.id, id),
-    });
+  // return await db.query.users
+  //   .findFirst({
+  //     where: eq(users.id, id),
+  //   });
+
+  const [user] = await db.select({
+    id: users.id,
+    mobile: users.mobile,
+    gender: users.gender,
+    name: users.name,
+    dob: users.dob,
+    education: users.education,
+
+    fathersname: users.fathersname,
+    mothersname: users.mothersname,
+    fathersoccupation: users.fathersoccupation,
+    mothersoccupation: users.mothersoccupation,
+
+    preferences: users.preferences,
+    otherinfo: users.otherinfo,
+
+    occupationFull: masterOccupation,
+    occupation: masterOccupation.name,
+
+    self_gotra: selfGotra.name,
+    m_gotra: motherGotra.name,
+    gm_gotra: grandmotherGotra.name,
+    mat_gm_gotra:
+      maternalGrandmotherGotra.name,
+  })
+    .from(users)
+
+    .leftJoin(
+      masterOccupation,
+      sql`${users.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
+    )
+
+    .leftJoin(
+      selfGotra,
+      sql`${users.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
+    )
+
+    .leftJoin(
+      motherGotra,
+      sql`${users.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
+    )
+
+    .leftJoin(
+      grandmotherGotra,
+      sql`${users.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
+    )
+
+    .leftJoin(
+      maternalGrandmotherGotra,
+      sql`${users.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
+    )
+
+    .where(eq(users.id, id))
+    .limit(1);
+  // .then(rows => rows[0] ?? null);
+
+  return user;
 }
 
 export async function updateUser(
@@ -759,4 +817,32 @@ export async function suspendUser(
     );
 
   return true;
+}
+
+
+export async function getUserByMobile(
+  mobile: string
+) {
+  const data = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      mobile: users.mobile,
+      gender: users.gender,
+      dob: users.dob,
+      occupation: masterOccupation.name,
+    })
+    .from(users)
+    .leftJoin(
+      masterOccupation,
+      sql`${users.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
+    )
+    .where(
+      and(
+        eq(users.mobile, mobile),
+        eq(users.isSuspended, false)
+      )
+    );
+
+  return data;
 }

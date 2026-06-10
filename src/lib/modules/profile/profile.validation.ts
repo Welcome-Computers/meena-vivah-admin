@@ -19,28 +19,28 @@ export const createUserSchema =
     occupation:
       z.string().optional(),
 
-    father_name:
+    fathersname:
       z.string().optional(),
 
-    mother_name:
+    mothersname:
       z.string().optional(),
 
-    father_occupation:
+    fathersoccupation:
       z.string().optional(),
 
-    mother_occupation:
+    mothersoccupation:
       z.string().optional(),
 
-    gotra_self:
+    self_gotra:
       z.string().optional(),
 
-    gotra_mother:
+    m_gotra:
       z.string().optional(),
 
-    gotra_grandmother:
+    gm_gotra:
       z.string().optional(),
 
-    gotra_grandmother_maternal:
+    mat_gm_gotra:
       z.string().optional(),
 
     preferences:

@@ -3,7 +3,7 @@ import { useCallback, useEffect } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { getUsersAction } from "@/redux/features/users/action";
+import { getUsersAction } from "@/redux/features/profile/action";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import Title from "antd/es/typography/Title";
 
@@ -41,6 +41,8 @@ const Profiles = () => {
         </Title>
 
         <ProfileContainer
+          defaultShow="table"
+          showToggle={false}
           loading={loading}
           data={userList}
           pagination={pagination}

@@ -3,7 +3,6 @@ import { memo, useEffect } from "react";
 import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import InputField from "../InputElements/InputField";
-import TextAreaField from "../InputElements/TextAreaField";
 import FormListComponent from "./FormListComponent";
 
 const AddressDetails = memo((props: any) => {
@@ -43,8 +42,6 @@ const AddressDetails = memo((props: any) => {
       >
         {(value: any) => (
           <div>
-
-
             {/* for address type  */}
             <CheckBoxField
               label="AddressType"
@@ -53,20 +50,23 @@ const AddressDetails = memo((props: any) => {
               name={[value.name, "type"]}
               options={[
                 {
-                  option: "Premanent",
-                  value: "Premanent",
+                  option: "Common",
+                  value: "common",
+                },
+                {
+                  option: "Native",
+                  value: "native",
                 },
                 {
                   option: "Current",
-                  value: "Current",
+                  value: "current",
                 },
               ]}
             />
 
-            <TextAreaField
+            <InputField
               name={[value.name, "full_address"]}
               label="Address"
-              rows={1}
             />
 
             {/* <InputField name={[value.name, "tehsil"]} label="Tehsil/Village" /> */}
@@ -93,7 +93,6 @@ const AddressDetails = memo((props: any) => {
                 ]
               }
             />
-
 
           </div>
         )}

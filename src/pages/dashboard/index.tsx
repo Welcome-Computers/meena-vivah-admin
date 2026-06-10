@@ -7,7 +7,7 @@ import {
 
 import TopStatics from "@/components/dashboard/TopStatics";
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { getUsersAction } from "@/redux/features/users/action";
+import { getUsersAction } from "@/redux/features/profile/action";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useCallback, useEffect } from "react";
 

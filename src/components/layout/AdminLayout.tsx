@@ -22,11 +22,26 @@ export default function AdminLayout({ children }: any) {
       icon: <UserOutlined />,
       label: "Biodata",
     },
+
     {
-      key: "/profiles",
+      key: "profiles",
       icon: <SettingOutlined />,
       label: "Profiles",
-    }
+      children: [
+        {
+          key: "/profiles",
+          label: "All Profiles",
+        },
+        {
+          key: "/profiles/create_profile",
+          label: "Create Profiles",
+        },
+        {
+          key: "/profiles/update_profile",
+          label: "Update Profiles",
+        },
+      ],
+    },
 
   ];
 
@@ -42,8 +57,12 @@ export default function AdminLayout({ children }: any) {
           theme="dark"
           mode="inline"
           selectedKeys={[router.pathname]}
-          onClick={(e) => router.push(e.key)}
           items={menuItems}
+          onClick={(e) => {
+            if (e.key.startsWith("/")) {
+              router.push(e.key);
+            }
+          }}
         />
       </Sider>
 
@@ -63,7 +82,7 @@ export default function AdminLayout({ children }: any) {
         </Header>
 
         {/* Content */}
-        <Content style={{ margin: "16px" }}>
+        <Content style={{ margin: "0px 0px 0px 0px " }}>
           <div
             style={{
               padding: 20,

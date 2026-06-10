@@ -32,7 +32,7 @@ const TextAreaField = memo((props: IProps): JSX.Element => {
           size='small'
           {...rest}
           rows={rows}
-          style={{ outline: "none", borderRadius: "0", border: "2px solid #444444" }}
+          className="custom-input"
           placeholder={placeholder}
           disabled={disabled}
           onChangeCapture={(ev) => {

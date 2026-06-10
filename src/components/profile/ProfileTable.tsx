@@ -1,8 +1,10 @@
+import { getAge } from "@/lib/utility";
 import { IPagination, IUser } from "@/redux/types";
 
-import { Button, Space, Table, Tag, Tooltip } from "antd";
+import { Avatar, Button, Space, Table, Tag, Tooltip } from "antd";
 
 import type { ColumnsType } from "antd/es/table";
+import Image from "next/image";
 
 interface iProps {
   loading: boolean;
@@ -21,22 +23,47 @@ const ProfileTable = (props: iProps) => {
   },
 
   {
-    title: "Name", dataIndex: "name", key: "name", width: 180, fixed: "left", render: (value, record) => (
-      <Space orientation="vertical" size={0}>
-        <span>{value}</span>
-        <Tag color={record.gender === "boy" ? "blue" : "magenta"}        >
-          {record.gender?.toUpperCase()}
-        </Tag>
-      </Space>
-    ),
+    title: "Name", dataIndex: "name", key: "name", width: 180, fixed: "left", render: (value, record) => {
+      const imageSrc =
+        record.gender === "boy"
+          ? "/images/groom.jpg"
+          : "/images/bride.jpg";
+      return (
+        <Space orientation="horizontal" size={0}>
+          <Avatar size={50}
+            icon={<Image src={imageSrc} alt={value.name}
+              width={60}
+              height={60}
+            />} />
+          <Space
+            orientation="vertical"
+            size={0}
+            style={{ marginLeft: "10px" }}>
+            <span>{value}</span>
+            <Space
+              orientation="horizontal"
+              size={0}>
+              {/* <Tag color={record.gender === "boy" ? "blue" : "magenta"}        >
+                {record.gender?.toUpperCase()}
+              </Tag> */}
+              <Tag color={"black"}>
+                {getAge(record.dob)}
+              </Tag>
+            </Space>
+          </Space>
+        </Space>
+      )
+    },
   },
 
   {
-    title: "Mobile",
-    dataIndex: "mobile",
-    key: "mobile",
-    width: 140,
+    title: "Occupation",
+    dataIndex: "occupation",
+    key: "occupation",
+    width: 180,
+    fixed: "left"
   },
+
 
   {
     title: "DOB",
@@ -60,28 +87,6 @@ const ProfileTable = (props: iProps) => {
     width: 180,
   },
 
-  {
-    title: "Occupation",
-    dataIndex: "occupation",
-    key: "occupation",
-    width: 180,
-  },
-
-  {
-    title: "Father",
-    dataIndex:
-      "fathersname",
-    key: "fathersname",
-    width: 180,
-  },
-
-  {
-    title: "Mother",
-    dataIndex:
-      "mothersname",
-    key: "mothersname",
-    width: 180,
-  },
 
   {
     title: "Gotra",
@@ -112,6 +117,22 @@ const ProfileTable = (props: iProps) => {
         </Tag>
       </Space>
     ),
+  },
+
+  {
+    title: "Father",
+    dataIndex:
+      "fathersname",
+    key: "fathersname",
+    width: 180,
+  },
+
+  {
+    title: "Mother",
+    dataIndex:
+      "mothersname",
+    key: "mothersname",
+    width: 180,
   },
 
   {
@@ -269,47 +290,62 @@ const ProfileTable = (props: iProps) => {
     },
   },
 
-  {
-    title:
-      "Created",
-    dataIndex:
-      "createdAt",
-    key:
-      "createdAt",
-    width: 130,
-    render: (
-      value
-    ) =>
-      value
-        ? new Date(
-          value
-        ).toLocaleDateString(
-          "en-IN"
-        )
-        : "-",
-  },
+  // {
+  //   title:
+  //     "Created",
+  //   dataIndex:
+  //     "createdAt",
+  //   key:
+  //     "createdAt",
+  //   width: 130,
+  //   render: (
+  //     value
+  //   ) =>
+  //     value
+  //       ? new Date(
+  //         value
+  //       ).toLocaleDateString(
+  //         "en-IN"
+  //       )
+  //       : "-",
+  // },
+
+  // {
+  //   title:
+  //     "Status",
+  //   dataIndex:
+  //     "isSuspended",
+  //   key:
+  //     "isSuspended",
+  //   width: 120,
+  //   fixed: "right",
+  //   render: (
+  //     value
+  //   ) =>
+  //     value ? (
+  //       <Tag color="red">
+  //         Suspended
+  //       </Tag>
+  //     ) : (
+  //       <Tag color="green">
+  //         Active
+  //       </Tag>
+  //     ),
+  // },
+
+  // {
+  //   title: "Mobile",
+  //   dataIndex: "mobile",
+  //   key: "mobile",
+  //   width: 140,
+  // },
 
   {
-    title:
-      "Status",
-    dataIndex:
-      "isSuspended",
-    key:
-      "isSuspended",
+    title: "Mobile",
+    dataIndex: "mobile",
+    key: "mobile",
     width: 120,
     fixed: "right",
-    render: (
-      value
-    ) =>
-      value ? (
-        <Tag color="red">
-          Suspended
-        </Tag>
-      ) : (
-        <Tag color="green">
-          Active
-        </Tag>
-      ),
   },
 
   {
@@ -317,7 +353,7 @@ const ProfileTable = (props: iProps) => {
       "Action",
     key:
       "action",
-    width: 160,
+    width: 100,
     fixed: "right",
     render: (
       _,
@@ -330,11 +366,11 @@ const ProfileTable = (props: iProps) => {
         >
           View
         </Button>
-        <Button
+        {/* <Button
           size="small"
         >
           Edit
-        </Button>
+        </Button> */}
       </Space>
     ),
   },

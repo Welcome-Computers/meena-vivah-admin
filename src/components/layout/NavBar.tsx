@@ -2,7 +2,7 @@ import { MenuOutlined } from "@ant-design/icons";
 import { Button, Drawer, Layout, Menu } from "antd";
 import Link from "next/link";
 import { useState } from "react";
-import { DropDown } from "../ui/DropDown";
+import { DropDown } from "../home/DropDown";
 import style from "./Navbar.module.css";
 
 export const NavBar = ({
@@ -26,10 +26,9 @@ export const NavBar = ({
   ];
 
   return (
-    <Layout>
+    <Layout style={{ background: "none" }}>
       <nav className={style.nav}>
         <div className={style.leftSection}>
-
           <Button
             className={style.menuButton}
             onClick={() => setOpen(true)}
@@ -37,7 +36,7 @@ export const NavBar = ({
           />
           <Link
             href={"/"}>
-            <img src="./logo.png" alt="logo" className={style.logo} />
+            <img src="/images/logo.png" alt="logo" className={style.logo} />
           </Link>
 
         </div>

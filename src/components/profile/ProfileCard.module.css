@@ -1,8 +1,8 @@
 .mainContainer {
   display: grid;
-  gap: 0.8rem;
+  gap: 0rem;
   background-color: white;
-  margin: 0.2rem 0.1rem;
+  margin: 0rem 0rem;
   border-radius: 10px;
 
   grid-template-columns: repeat(4, 1fr);
@@ -39,12 +39,13 @@
 .card {
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: .5rem;
   border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
 }
 
 .avatar {
-  padding: 10px;
+  padding: 10px 10px 10px 10px;
 }
 
 .userInfo {
@@ -68,11 +69,11 @@
 /* DESKTOP MEDIA QUERIES */
 @media (min-width: 768px) {
 
-  .userInfo h3 {
-    font-size: 20px;
+  .userInfo h4 {
+    font-size: 16px;
   }
 
   .userInfo p {
-    font-size: 15px;
+    font-size: 12px;
   }
 }

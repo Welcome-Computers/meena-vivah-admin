@@ -1,15 +1,15 @@
-import { Col, Form } from "antd";
+import { Form } from "antd";
+import { RuleObject } from "antd/es/form";
 import { memo } from "react";
+import style from "../../pages/profiles/style.module.css";
 import InputField from "../InputElements/InputField";
 import FormListComponent from "./FormListComponent";
-import style from "../../pages/biodata/style.module.css";
-import { RuleObject } from "antd/es/form";
 
 const MobileDetails = memo((props: any) => {
   const { form } = props;
 
   // validation empty entries and max 3 mobile nummbers can add
-  const mobileDetails = Form.useWatch("mobile_details", form) || [];
+  const mobileDetails = Form.useWatch("other_mobile", form) || [];
   const isDisabled = !(
     mobileDetails[mobileDetails.length - 1]?.mobile?.length > 9 &&
     mobileDetails.length < 3
@@ -17,15 +17,15 @@ const MobileDetails = memo((props: any) => {
 
   return (
     <div className={style["form-container"]}>
-      <FormListComponent formListName="mobile_details" isDisabled={isDisabled}>
+      <FormListComponent formListName="other_mobile" isDisabled={isDisabled}>
         {(field: any) => (
           <InputField
-            name={[field.name, "mobile"]}
+            name={[field.name, "other_mobile"]}
             rules={[
               {
                 validator: (_: RuleObject, val: any) => {
                   const mobiledetails =
-                    form.getFieldValue("mobile_details") || [];
+                    form.getFieldValue("other_mobile") || [];
                   if (!val) {
                     return Promise.resolve();
                   }
@@ -48,10 +48,10 @@ const MobileDetails = memo((props: any) => {
                   return Promise.resolve();
                 },
               },
-              {required:"true",message:"mobile number must be required"}
+              // { required: "true", message: "mobile number must be required" }
             ]}
-            label="Mobile"
-            placeholder="e.g. 91+"
+            label="Other Mobile"
+            placeholder="e.g. 000-000-0000"
           />
         )}
       </FormListComponent>

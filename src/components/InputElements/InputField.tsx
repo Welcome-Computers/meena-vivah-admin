@@ -9,35 +9,39 @@ interface IProps extends Omit<InputProps, 'name'> {
   label?: string | ReactNode;
   rootClassName?: string;
   rules?: Array<any>;
-   dependencies?: any[];
-   formItemProps?:FormItemProps;
+  dependencies?: any[];
+  formItemProps?: FormItemProps;
 }
 
 const InputField = memo((props: IProps) => {
-  const { label, name, rootClassName, maxLength, showCount = false, rules,formItemProps, dependencies, ...rest } = props;
+  const { label, name, rootClassName, maxLength, showCount = false, rules, formItemProps, dependencies, ...rest } = props;
 
   return (
-    <div 
-  >
-    
-        <Form.Item noStyle shouldUpdate {...formItemProps} >
-          {({ getFieldValue }) => {
-            const value = getFieldValue(name) ?? '';
-            const count = value.length;
-            return showCount && maxLength ? (
-              <div className="d_flex al_center opacity_50 no_wrap">
-                {count} / {maxLength}
-              </div>
-            ) : null;
-          }}
-        </Form.Item>
-      
+    <div >
+      <Form.Item noStyle shouldUpdate {...formItemProps} >
+        {({ getFieldValue }) => {
+          const value = getFieldValue(name) ?? '';
+          const count = value.length;
+          return showCount && maxLength ? (
+            <div className="d_flex al_center opacity_50 no_wrap">
+              {count} / {maxLength}
+            </div>
+          ) : null;
+        }}
+      </Form.Item>
 
-      <Form.Item name={name}  dependencies={dependencies} rules={rules} 
-      style={{ marginBottom: '6px'  } } label={label} {...formItemProps} 
+
+      <Form.Item
+        name={name}
+        dependencies={dependencies}
+        rules={rules}
+        style={{ marginBottom: '6px' }}
+        label={label}
+        {...formItemProps}
       >
-        <Input {...rest} maxLength={maxLength} size='small' 
-        style={{ outline:"none" ,borderRadius:"0" ,border:"2px solid #444444"}}/>
+        <Input {...rest} maxLength={maxLength} size='small'
+          className="custom-input"
+        />
       </Form.Item>
     </div>
   );

@@ -1,20 +1,21 @@
+import { Form } from "antd";
 import { memo } from "react";
-import { Col, Form } from "antd";
-import InputField from "../InputElements/InputField";
-import TextAreaField from "../InputElements/TextAreaField";
+import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
+import InputField from "../InputElements/InputField";
+import SearchableSelectField from "../InputElements/SearchableSelectField";
 import FormListComponent from "./FormListComponent";
-import style from "../../pages/biodata/style.module.css";
 
 const SiblingDetails = memo((props: any) => {
-  const { form } = props;
+  const { form, occupatonOptions, isOccupationLoading, handleCreateOccupation } = props;
+
 
   // validation for add empty entries
   const siblingdata = Form.useWatch("sibling_details", form) || [];
   const lastItem = siblingdata[siblingdata.length - 1];
-  const isDisabled = !(
-    lastItem?.sibling_name?.length > 2 && lastItem?.relation?.length > 1
-  );
+  const isDisabled = !(lastItem?.sibling_name?.length > 2 && lastItem?.relation?.length > 1);
+
+
   return (
     <div
       className={style["form-container"]}
@@ -30,6 +31,50 @@ const SiblingDetails = memo((props: any) => {
       <FormListComponent formListName="sibling_details" isDisabled={isDisabled}>
         {(value: any) => (
           <div>
+            <CheckBoxField
+              label="Relation"
+              form={form}
+              isLableShow={true}
+              name={[value.name, "relation"]}
+              options={[
+                {
+                  option: "Sister",
+                  value: "girl",
+                },
+                {
+                  option: "Brother",
+                  value: "boy",
+                },
+              ]}
+              rules={[
+                {
+                  // validation to check duplicate sibling entry based on name and relation
+
+                  validator(_: any, value: any) {
+                    const sibling = form.getFieldValue("sibling_details") || [];
+                    const seen = new Set();
+
+                    for (const item of sibling) {
+                      const name = (item?.sibling_name || "").trim().toLowerCase();
+                      const relation = (item?.relation || "").trim().toLowerCase();
+
+                      if (!name || !relation) continue;
+
+                      const key = `${name}-${relation}`;
+
+                      if (seen.has(key)) {
+                        return Promise.reject(new Error("Duplicate Sibling Entry"));
+                      }
+
+                      seen.add(key);
+                    }
+
+                    return Promise.resolve();
+                  }
+                },
+              ]}
+            />
+
             <InputField
               name={[value.name, "sibling_name"]}
               rules={[
@@ -39,63 +84,40 @@ const SiblingDetails = memo((props: any) => {
               label="Name"
             />
 
+
             <CheckBoxField
-              label="Relation"
+              label="Marital Status"
               form={form}
               isLableShow={true}
-              name={[value.name, "relation"]}
+              name={[value.name, "marr"]}
               options={[
                 {
-                  option: "Sister",
-                  value: "Sister",
+                  option: "Married",
+                  value: "married",
                 },
                 {
-                  option: "Brother",
-                  value: "Brother",
-                },
-              ]}
-              rules={[
-                {
-                  // validation to check duplicate sibling entry based on name and relation
-
-                  validator(_: any, value: any) {
-                    if (!value) {
-                      return Promise.resolve();
-                    }
-
-                    const seen = new Set();
-
-                    const sibling=form.getFieldValue("sibling_details") || [];
-                    for (const item of sibling) {
-                      const name = item.sibling_name.trim().toLowerCase();
-                      const relation = item.relation.trim().toLowerCase();
-                      const key = `${name}-${relation}`;
-                      if (seen.has(key)) {
-                        return Promise.reject(
-                          new Error("Duplicate Sibling Entry"),
-                        );
-                      }
-
-                      seen.add(key);
-                    }
-                    return Promise.resolve();
-                  },
+                  option: "Unmarried",
+                  value: "unmarried",
                 },
               ]}
             />
 
-            <TextAreaField
+            <InputField
               name={[value.name, "sibling_education"]}
               label="Education"
-              rows={1}
               rules={[{ max: 100, message: "Maximum 100 characters" }]}
             />
-            <TextAreaField
+
+            <SearchableSelectField
               name={[value.name, "sibling_occupation"]}
               label="Occupation"
-              rows={1}
-              rules={[{ max: 100, message: "Maximum 100 characters" }]}
+              options={occupatonOptions}
+              loading={isOccupationLoading}
+              allowCreate
+              onCreateOption={handleCreateOccupation}
+              placeholder="Select occupations"
             />
+
           </div>
         )}
       </FormListComponent>

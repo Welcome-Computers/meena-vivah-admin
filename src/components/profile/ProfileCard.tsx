@@ -1,6 +1,6 @@
 import { getAge } from "@/lib/utility";
 import { IPagination, IUser } from "@/redux/types";
-import { Pagination } from "antd";
+import { Avatar, Pagination } from "antd";
 import Image from "next/image";
 import style from "./ProfileCard.module.css";
 
@@ -26,20 +26,16 @@ export const ProfileCard = (props: iProps) => {
 
           return (
             <div key={index} className={style.card}>
-              <div
-                className={
-                  style.avatar
-                }
-              >
-                <Image src={imageSrc} alt={user.name}
+              <div className={style.avatar}>
+                <Avatar size={80} icon={<Image src={imageSrc} alt={user.name}
                   width={140}
                   height={140}
                   className={style.profileImage}
-                />
+                />} />
               </div>
 
               <div className={style.userInfo}>
-                <h3>{user.name}</h3>
+                <h4>{user.name}</h4>
                 <p className={style.profession}>{user.occupation}</p>
                 <p>
                   <strong>Age:</strong> {getAge(user.dob)}
@@ -48,10 +44,10 @@ export const ProfileCard = (props: iProps) => {
                   <strong>Education:</strong> {user.education}
                 </p>
                 <p>
-                  <strong>Location:</strong> {user.fathersname}
+                  <strong>Contact:</strong> {user.mobile}
                 </p>
                 <p>
-                  <strong>Gotra:</strong> {user.self_gotra}
+                  <strong>Gotra:</strong> {user.self_gotra}/ {user.m_gotra}/ {user.gm_gotra}
                 </p>
               </div>
             </div>

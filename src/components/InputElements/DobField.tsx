@@ -45,70 +45,98 @@ const DobField = memo((props: DobProps) => {
     value: currentYear - index,
   }));
 
+  const form = Form.useFormInstance();
+
+
+  console.log(form.getFieldsValue(true));
+
   // dob age validation
+
   const ageValidation = (_: RuleObject, value: any) => {
     if (
-      !value ||
-      value.day === undefined ||
-      value.month === undefined ||
-      value.year === undefined
+      value?.day === undefined ||
+      value?.month === undefined ||
+      value?.year === undefined
     ) {
-      return Promise.reject("All date fields are required");
+      return Promise.resolve(); // no validation yet
     }
 
     const today = new Date();
-    let age = today.getFullYear() - value.year;
-    const monthDiff = today.getMonth() - value.month;
 
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < value.day)) {
+    let age = today.getFullYear() - value.year;
+
+    const monthDiff =
+      today.getMonth() - value.month;
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 &&
+        today.getDate() < value.day)
+    ) {
       age--;
     }
+
     if (age < 18) {
-      return Promise.reject("Age must be 18 or above");
+      return Promise.reject(
+        new Error("Age must be 18 or above")
+      );
     }
     return Promise.resolve();
   };
 
   return (
-
-
-
     <Form.Item
       name={name}
-      style={{ marginBottom: "5px" }}
-      validateTrigger="onChange"
       label={label}
+      style={{ marginBottom: "5px" }}
+      validateTrigger={["onChange", "onBlur"]}
+      dependencies={[name]}
       rules={[
-        { required: true, message: "DOB required" },
         { validator: ageValidation },
       ]}
     >
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8,
+      }}>
         {/* year field */}
         <Form.Item
           name={[name, "year"]}
           noStyle
-          style={{ width: "100%", padding: "2px" }}
+          rules={[
+            { required: true, message: "Year is required" }
+          ]}
         >
-          <Select placeholder="Year" options={yearOptions}></Select>
+          <Select
+            showSearch
+            className="custom-input"
+            placeholder="Year" options={yearOptions}
+          />
         </Form.Item>
 
         {/* month field */}
         <Form.Item
           noStyle
           name={[name, "month"]}
-          style={{ width: "100%", padding: "2px" }}
+          rules={[
+            { required: true, message: "Month is required" }
+          ]}
         >
-          <Select placeholder="Month" options={monthOptions}></Select>
+          <Select
+            className="custom-input"
+            placeholder="Month" options={monthOptions}></Select>
         </Form.Item>
 
         {/* day field */}
         <Form.Item
           noStyle
           name={[name, "day"]}
-          style={{ width: "100%", padding: "2px" }}
+          rules={[
+            { required: true, message: "Day is required" }
+          ]}
         >
-          <Select placeholder="Day" options={dayOptions}></Select>
+          <Select
+            className="custom-input"
+            placeholder="Day" options={dayOptions}></Select>
         </Form.Item>
       </div>
     </Form.Item>

@@ -1,5 +1,4 @@
-import InputField from "@/components/InputElements/InputField";
-import { GotraDropDown } from "./GotraDropDown";
+import SearchableSelectField from "@/components/InputElements/SearchableSelectField";
 
 interface GotraFieldProps {
   name: string;
@@ -12,6 +11,9 @@ interface GotraFieldProps {
   setSuggestGotra: any;
   handleInputValue: (value: string, fieldName: string) => void;
   setActivatedField: any;
+  isGotraLoading: boolean;
+  handleCreateGotra: any,
+  gottraOptions: any
 }
 
 export const GotraField = ({
@@ -19,43 +21,33 @@ export const GotraField = ({
   label,
   dependencies,
   gotraValidationRules,
-  activatedField,
-  suggestGotra,
-  handleSelectedItem,
-  setSuggestGotra,
   handleInputValue,
-  setActivatedField,
+  isGotraLoading,
+  handleCreateGotra,
+  gottraOptions
 }: GotraFieldProps) => {
+
   return (
     <>
-      <InputField
+      <SearchableSelectField
+        // mode="tags"
+        allowCreate
+        onCreateOption={handleCreateGotra}
         name={name}
-        onChange={(e) => handleInputValue(e.target.value, name)}
         label={label}
+        options={gottraOptions}
+        loading={isGotraLoading}
         dependencies={dependencies}
-        onFocus={() => {
-          setActivatedField(name);
-          setSuggestGotra([]);
+        onChange={(gotraCode) => {
+          handleInputValue(gotraCode, name)
         }}
+        placeholder="Select occupations"
         rules={[
-          {
-            required: true,
-            message: "Field Required.",
-            //   message: `Enter ${name} Gotra Name`,
-          },
+          { required: true, message: "Field Required." },
           { max: 50, message: "Maximum 50 characters" },
-          { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
           { validator: gotraValidationRules },
         ]}
       />
-
-      {activatedField === name && (
-        <GotraDropDown
-          suggestGotra={suggestGotra}
-          handleSelectedItem={handleSelectedItem}
-          setSuggestGotra={setSuggestGotra}
-        />
-      )}
     </>
   );
 };

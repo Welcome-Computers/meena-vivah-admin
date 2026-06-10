@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 export const LOOKING_FOR_OPTIONS = [
-  { value: "bride", label: "Bride" },
-  { value: "groom", label: "Groom" },
+  { value: "girl", label: "Girl" },
+  { value: "boy", label: "Boy" },
 ];
 
 export const AGE_OPTIONS = [

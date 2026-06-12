@@ -1,70 +1,60 @@
-import { IOccupation, paginationInit } from "@/redux/types";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { GetOccupationProps } from '@/lib/modules/master-occupation/master-occupation.types';
+
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { queryString } from "object-query-string";
+
+export const masterOccupationApi = createApi({
+  reducerPath: "masterOccupationApi",
+
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  }),
+
+  tagTypes: ["Occupations", "Occupations"],
+
+  endpoints: (builder) => ({
+    // GET USERS
+    getOccupations: builder.query({
+      query: (params: GetOccupationProps) => {
 
 
-interface IOccupationState {
-  loading: boolean;
-  errorMsg: string | null;
+        return ({
+          url: `/api/master-occupation?${queryString(params)}`,
+          method: "GET",
 
-  occupationList: IOccupation[];
+        })
+      },
 
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
+      providesTags: ["Occupations"],
+    }),
 
-const initialState: IOccupationState = {
-  loading: false,
+    // CREATE USER
+    createOccupation: builder.mutation({
+      query: (body) => ({
+        url: `/api/master-occupation`,
+        method: "POST",
+        body,
+      }),
 
-  errorMsg: null,
+      invalidatesTags: ["Occupations"],
+    }),
 
-  occupationList: [],
+    // DELETE USER
+    deleteOccupation: builder.mutation({
+      query: (id) => ({
+        url: `/api/master-occupation/${id}`,
+        method: "DELETE",
+      }),
 
-  pagination: paginationInit,
-};
+      invalidatesTags: ["Occupations"],
+    }),
 
-const occupationSlice = createSlice({
-  name: "USER_SLICE",
-
-  initialState,
-
-  reducers: {
-    // LOADING
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
-    },
-
-    // ERROR
-    setError: (state, action: PayloadAction<string>) => {
-      state.errorMsg = action.payload;
-    },
-
-    // USERS
-    setOccupationList: (state, action: PayloadAction<IOccupation[]>) => {
-      state.occupationList = action.payload;
-    },
-
-    // PAGINATION
-    setPagination: (state, action: PayloadAction<any>) => {
-      state.pagination = action.payload;
-    },
-
-    // CLEAR USERS
-    clearOccupations: (state) => {
-      state.occupationList = [];
-    },
-  },
+  }),
 });
 
 export const {
-  setLoading,
-  setError,
-  setOccupationList,
-  setPagination,
-  clearOccupations,
-} = occupationSlice.actions;
-
-export default occupationSlice.reducer;
+  useGetOccupationsQuery,
+  useLazyGetOccupationsQuery,
+  useCreateOccupationMutation,
+  useDeleteOccupationMutation,
+} = masterOccupationApi;

@@ -1,5 +1,5 @@
 import { appMessage } from "@/lib/utility/message";
-import { useCreateGotraMutation, useGetGotrasQuery } from "@/redux/features/masterGotra/services";
+import { useCreateGotraMutation, useGetGotrasQuery } from "@/redux/features/masterGotra";
 import { Form } from "antd";
 import { memo, useState } from "react";
 import style from "../../pages/profiles/style.module.css";

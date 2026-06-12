@@ -2,10 +2,10 @@ import PublicLayout from "@/components/layout/PublicLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { ProfileFilter } from "@/components/profile/ProfileFilter";
 import { GetUsersProps } from "@/lib/modules/profile/profile.types";
-import { getUsersAction } from "@/redux/features/profile/action";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useGetUsersQuery } from "@/redux/features/profile";
+import { useAppDispatch } from "@/redux/hooks";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useCallback, useState } from "react";
 import style from "./Profile.module.css";
 
 
@@ -16,50 +16,36 @@ const MatchedProfilePage = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
 
-  const filters = {
+
+  const searchfilters = {
     looking_for: searchParams.get("looking_for"),
     preferredAge: searchParams.getAll("preferredAge[]").map(Number),
     req_occupation: searchParams.getAll("req_occupation[]"),
     exclude_gotra: searchParams.getAll("exclude_gotra[]"),
   };
 
-  console.log({ filters })
+  const [filters, setFilters] = useState<any>(searchfilters);
+  const [page, setPage] = useState(1);
 
-  const {
-    loading,
-    userList,
-    pagination,
-  } = useAppSelector((state) => state.users);
+  const { data, isLoading, error, } = useGetUsersQuery({ ...filters, page, limit: 10 });
 
+  const userList = data?.data || [];
+  const pagination = data?.pagination || {};
 
-  const getUsers = useCallback(
-    (page: number, limit = 10) => {
-      dispatch(getUsersAction({ page, limit }));
-    },
-    [dispatch]
-  );
+  const getUsers = (page: number) => {
+    setPage(page);
+  };
 
-  console.log({ userList })
-
-
-  useEffect(() => {
-    getUsers(1, 10);
-  }, [getUsers]);
 
   const filterDataHandler = useCallback((query: GetUsersProps) => {
-    dispatch(getUsersAction({ ...query, action: "matches", page: 1, limit: 10 }));
+    setFilters({ ...query, action: "matches", page: 1, limit: 10 });
   }, [dispatch]);
 
 
   return (
     <PublicLayout
       headerSection={
-        <>
-          {/* banner */}
-
-          <div className={style.profilebanner} />
-
-        </>
+        <div className={style.profilebanner} />
       }
     >
 
@@ -72,7 +58,7 @@ const MatchedProfilePage = () => {
             filterDataHandler={filterDataHandler} />
           <div>
             <ProfileContainer
-              loading={loading}
+              loading={isLoading}
               data={userList}
               pagination={pagination}
               getUsers={getUsers} />

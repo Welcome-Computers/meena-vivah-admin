@@ -1,18 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import masterGotra from "./features/masterGotra";
-import masterOccupation from "./features/masterOccupation";
-import userReducer from "./features/profile";
-
-import { masterGotraApi } from "./features/masterGotra/services";
-import { masterOccupationApi } from "./features/masterOccupation/services";
-import { userApi } from "./features/profile/services";
+import { masterGotraApi } from "./features/masterGotra";
+import { masterOccupationApi } from "./features/masterOccupation";
+import { userApi } from "./features/profile";
 
 export const store = configureStore({
   reducer: {
-    users: userReducer,
-    masterGotra: masterGotra,
-    masterOccupation: masterOccupation,
 
     [userApi.reducerPath]: userApi.reducer,
     [masterGotraApi.reducerPath]: masterGotraApi.reducer,

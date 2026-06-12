@@ -7,9 +7,8 @@ import {
 
 import TopStatics from "@/components/dashboard/TopStatics";
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { getUsersAction } from "@/redux/features/profile/action";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useCallback, useEffect } from "react";
+import { useGetUsersQuery } from "@/redux/features/profile";
+import { useState } from "react";
 
 const { Title } = Typography;
 
@@ -22,25 +21,16 @@ const Dashboard = () => {
   };
 
 
-  const dispatch = useAppDispatch();
+  const [page, setPage] = useState(1);
 
-  const {
-    loading,
-    userList,
-    pagination,
-  } = useAppSelector((state) => state.users);
+  const { data, isLoading, error, } = useGetUsersQuery({ page, limit: 10 });
 
+  const userList = data?.data || [];
+  const pagination = data?.pagination || {};
 
-  const getUsers = useCallback(
-    (page: number, limit = 10) => {
-      dispatch(getUsersAction({ page, limit }));
-    },
-    [dispatch]
-  );
-
-  useEffect(() => {
-    getUsers(1, 10);
-  }, [getUsers]);
+  const getUsers = (page: number) => {
+    setPage(page);
+  };
 
 
 
@@ -60,7 +50,7 @@ const Dashboard = () => {
         <div style={{ marginTop: 30, }}>
           <ProfileContainer
             defaultShow="table"
-            loading={loading}
+            loading={isLoading}
             title={'Last 15 Days New Registrations'}
             data={userList || []}
             pagination={pagination}
@@ -71,7 +61,7 @@ const Dashboard = () => {
         <div style={{ marginTop: 30, }}>
           <ProfileContainer
             title={'Last 15 Days Updates'}
-            loading={loading}
+            loading={isLoading}
             defaultShow="table"
             data={userList || []}
             pagination={pagination}

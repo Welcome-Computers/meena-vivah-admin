@@ -1,70 +1,81 @@
-import { IUser, paginationInit } from "@/redux/types";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { GetUsersProps } from "@/lib/modules/profile/profile.types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { queryString } from "object-query-string";
 
+export const userApi = createApi({
+  reducerPath: "userApi",
 
-interface IUserState {
-  loading: boolean;
-  errorMsg: string | null;
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  }),
 
-  userList: IUser[];
+  tagTypes: ["Users"],
 
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
+  endpoints: (builder) => ({
+    // GET USERS
+    getUsers: builder.query({
+      query: (params: GetUsersProps) => {
 
-const initialState: IUserState = {
-  loading: false,
+        return ({
+          url: `/api/profile?${queryString(params)}`,
+          method: "GET",
 
-  errorMsg: null,
+        })
+      },
 
-  userList: [],
+      providesTags: ["Users"],
+    }),
 
-  pagination: paginationInit,
-};
+    // CREATE USER
+    createUser: builder.mutation({
+      query: (body) => ({
+        url: `/api/profile`,
+        method: "POST",
+        body,
+      }),
 
-const userSlice = createSlice({
-  name: "USER_SLICE",
+      invalidatesTags: ["Users"],
+    }),
 
-  initialState,
+    // DELETE USER
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `/api/profile/${id}`,
+        method: "DELETE",
+      }),
 
-  reducers: {
-    // LOADING
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
-    },
+      invalidatesTags: ["Users"],
+    }),
 
-    // ERROR
-    setError: (state, action: PayloadAction<string>) => {
-      state.errorMsg = action.payload;
-    },
+    getSingleProfileById: builder.query({
+      query: (id) => {
+        debugger;
+        return ({
+          url: `/api/profile/${id}`,
+          method: "GET",
+        })
+      },
+      providesTags: [],
+    }),
 
-    // USERS
-    setUserList: (state, action: PayloadAction<IUser[]>) => {
-      state.userList = action.payload;
-    },
+    getProfilesByMobile: builder.query({
+      query: (mobile: string) => {
+        return ({
+          url: `/api/profile/by-mobile?mobile=${mobile}`,
+          method: "GET",
+        })
+      },
+      providesTags: [],
+    })
 
-    // PAGINATION
-    setPagination: (state, action: PayloadAction<any>) => {
-      state.pagination = action.payload;
-    },
-
-    // CLEAR USERS
-    clearUsers: (state) => {
-      state.userList = [];
-    },
-  },
+  }),
 });
 
 export const {
-  setLoading,
-  setError,
-  setUserList,
-  setPagination,
-  clearUsers,
-} = userSlice.actions;
-
-export default userSlice.reducer;
+  useGetSingleProfileByIdQuery,
+  useLazyGetProfilesByMobileQuery,
+  useGetUsersQuery,
+  useLazyGetUsersQuery,
+  useCreateUserMutation,
+  useDeleteUserMutation,
+} = userApi;

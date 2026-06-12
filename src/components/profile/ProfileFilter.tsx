@@ -13,8 +13,8 @@ import {
 
 
 import { GetGotraProps } from "@/lib/modules/master-gotra/master-gotra.types";
-import { useGetGotrasQuery } from "@/redux/features/masterGotra/services";
-import { useGetOccupationsQuery } from "@/redux/features/masterOccupation/services";
+import { useGetGotrasQuery } from "@/redux/features/masterGotra";
+import { useGetOccupationsQuery } from "@/redux/features/masterOccupation";
 import SearchableSelectField from "../InputElements/SearchableSelectField";
 import AgeRangeField from "./AgeRangeField";
 import style from "./ProfileFilter.module.css";

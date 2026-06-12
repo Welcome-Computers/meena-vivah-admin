@@ -2,7 +2,7 @@ import ModalComp from "@/components/common/ModalComp";
 import ModalByMobile from "@/components/profile/ModalByMobile";
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateUserMutation, useLazyGetProfilesByMobileQuery } from "@/redux/features/profile/services";
+import { useCreateUserMutation, useLazyGetProfilesByMobileQuery } from "@/redux/features/profile";
 import { Form } from "antd";
 import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";

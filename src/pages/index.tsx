@@ -1,59 +1,39 @@
-
 import { HeroSection } from "@/components/home/HeroSection";
 import { FooterComponent } from "@/components/layout/Footer";
 import PublicLayout from "@/components/layout/PublicLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useCallback, useEffect } from "react";
-
-import { getUsersAction } from "@/redux/features/profile/action";
+import { useGetUsersQuery } from "@/redux/features/profile";
+import { useState } from "react";
 
 const Home = () => {
+  const [page, setPage] = useState(1);
 
-  const dispatch = useAppDispatch();
+  const { data, isLoading, error, } = useGetUsersQuery({ page, limit: 10 });
 
-  const {
-    loading,
-    userList,
-    pagination,
-  } = useAppSelector((state) => state.users);
+  const userList = data?.data || [];
+  const pagination = data?.pagination || {};
 
-
-  const getUsers = useCallback(
-    (page: number, limit = 10) => {
-      dispatch(getUsersAction({ page, limit }));
-    },
-    [dispatch]
-  );
-
-  useEffect(() => {
-    getUsers(1, 10);
-  }, [getUsers]);
-
-
+  const getUsers = (page: number) => {
+    setPage(page);
+  };
 
   return (
     <PublicLayout
       headerSection={
         <>
-          {/* hero section + banner image  */}
           <HeroSection />
-
-          {/* FOOTER SECTION  */}
           <FooterComponent />
         </>
       }
     >
-
-
-      {/* LATEST PROFILES  */}
-      <div style={{ marginTop: 30, }}>
+      <div style={{ marginTop: 30 }}>
         <ProfileContainer
-          title={'Latest Profiles'}
-          loading={loading}
-          data={userList || []}
+          title="Latest Profiles"
+          loading={isLoading}
+          data={userList}
           pagination={pagination}
-          getUsers={getUsers} />
+          getUsers={getUsers}
+        />
       </div>
     </PublicLayout>
   );

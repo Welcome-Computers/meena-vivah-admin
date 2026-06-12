@@ -8,7 +8,7 @@ import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation/services";
+import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
 import { Button, Col, Form, FormInstance, Row } from "antd";
 import { RefObject, useEffect } from "react";
 

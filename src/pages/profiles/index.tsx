@@ -1,37 +1,25 @@
-import { useCallback, useEffect } from "react";
 
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { getUsersAction } from "@/redux/features/profile/action";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useGetUsersQuery } from "@/redux/features/profile";
 import Title from "antd/es/typography/Title";
+import { useState } from "react";
 
 
 
 const Profiles = () => {
 
-  const dispatch = useAppDispatch();
+  const [page, setPage] = useState(1);
 
-  const {
-    loading,
-    userList,
-    pagination,
-  } = useAppSelector((state) => state.users);
+  const { data, isLoading, error, } = useGetUsersQuery({ page, limit: 10 });
 
+  const userList = data?.data || [];
+  const pagination = data?.pagination || {};
 
-  const getUsers = useCallback(
-    (page: number, limit = 10) => {
-      dispatch(getUsersAction({ page, limit }));
-    },
-    [dispatch]
-  );
-
-  useEffect(() => {
-    getUsers(1, 10);
-  }, [getUsers]);
-
-
+  const getUsers = (page: number) => {
+    setPage(page);
+  };
 
   return (
     <AdminLayout>
@@ -43,7 +31,7 @@ const Profiles = () => {
         <ProfileContainer
           defaultShow="table"
           showToggle={false}
-          loading={loading}
+          loading={isLoading}
           data={userList}
           pagination={pagination}
           getUsers={getUsers} />

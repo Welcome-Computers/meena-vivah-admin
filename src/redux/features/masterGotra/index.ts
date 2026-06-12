@@ -1,70 +1,60 @@
-import { IGotra, paginationInit } from "@/redux/types";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { GetGotraProps } from '@/lib/modules/master-gotra/master-gotra.types';
+
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { queryString } from "object-query-string";
+
+export const masterGotraApi = createApi({
+  reducerPath: "masterGotraApi",
+
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  }),
+
+  tagTypes: ["Gotras", "Occupations"],
+
+  endpoints: (builder) => ({
+    // GET USERS
+    getGotras: builder.query({
+      query: (params: GetGotraProps) => {
 
 
-interface IGotraState {
-  loading: boolean;
-  errorMsg: string | null;
+        return ({
+          url: `/api/master-gotra?${queryString(params)}`,
+          method: "GET",
 
-  gotraList: IGotra[];
+        })
+      },
 
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
+      providesTags: ["Gotras"],
+    }),
 
-const initialState: IGotraState = {
-  loading: false,
+    // CREATE USER
+    createGotra: builder.mutation({
+      query: (body) => ({
+        url: `/api/master-gotra`,
+        method: "POST",
+        body,
+      }),
 
-  errorMsg: null,
+      invalidatesTags: ["Gotras"],
+    }),
 
-  gotraList: [],
+    // DELETE USER
+    deleteGotra: builder.mutation({
+      query: (id) => ({
+        url: `/api/master-gotra/${id}`,
+        method: "DELETE",
+      }),
 
-  pagination: paginationInit,
-};
+      invalidatesTags: ["Gotras"],
+    }),
 
-const gotraSlice = createSlice({
-  name: "USER_SLICE",
-
-  initialState,
-
-  reducers: {
-    // LOADING
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
-    },
-
-    // ERROR
-    setError: (state, action: PayloadAction<string>) => {
-      state.errorMsg = action.payload;
-    },
-
-    // USERS
-    setGotraList: (state, action: PayloadAction<IGotra[]>) => {
-      state.gotraList = action.payload;
-    },
-
-    // PAGINATION
-    setPagination: (state, action: PayloadAction<any>) => {
-      state.pagination = action.payload;
-    },
-
-    // CLEAR USERS
-    clearGotras: (state) => {
-      state.gotraList = [];
-    },
-  },
+  }),
 });
 
 export const {
-  setLoading,
-  setError,
-  setGotraList,
-  setPagination,
-  clearGotras,
-} = gotraSlice.actions;
-
-export default gotraSlice.reducer;
+  useGetGotrasQuery,
+  useLazyGetGotrasQuery,
+  useCreateGotraMutation,
+  useDeleteGotraMutation,
+} = masterGotraApi;

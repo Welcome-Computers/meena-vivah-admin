@@ -1,7 +1,7 @@
 import ModalComp from "@/components/common/ModalComp";
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateUserMutation, useGetSingleProfileByIdQuery } from "@/redux/features/profile/services";
+import { useCreateUserMutation, useGetSingleProfileByIdQuery } from "@/redux/features/profile";
 import { Form } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";

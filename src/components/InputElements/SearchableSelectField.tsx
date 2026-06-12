@@ -85,6 +85,7 @@ const SearchableSelectField = memo((props: IProps) => {
       label={label}
       rules={rules}
       dependencies={dependencies}
+      shouldUpdate
       {...formItemProps}
     >
       <Select

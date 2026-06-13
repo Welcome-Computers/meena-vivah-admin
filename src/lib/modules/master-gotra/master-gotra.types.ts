@@ -11,5 +11,6 @@ export type UpdateGotraDto = {
 export type GetGotraProps = {
   page?: number;
   limit?: number;
+  
 
 };

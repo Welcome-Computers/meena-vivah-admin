@@ -15,6 +15,7 @@ export const getGotras =
       .from(masterGotra);
   };
 
+  
 export const getGotraById =
   async (id: number) => {
     const rows =
@@ -82,6 +83,7 @@ export const createGotra = async (data: CreateGotraDto | CreateGotraDto[]) => {
   });
 };
 
+
 export const updateGotra =
   async (
     data: UpdateGotraDto
@@ -98,6 +100,7 @@ export const updateGotra =
         )
       );
   };
+
 
 export const deleteGotra =
   async (id: number) => {

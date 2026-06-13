@@ -19,7 +19,6 @@ export const userApi = createApi({
         return ({
           url: `/api/profile?${queryString(params)}`,
           method: "GET",
-
         })
       },
 

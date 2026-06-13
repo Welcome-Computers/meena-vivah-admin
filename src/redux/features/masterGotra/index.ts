@@ -49,6 +49,19 @@ export const masterGotraApi = createApi({
       invalidatesTags: ["Gotras"],
     }),
 
+
+    // // Update USER
+    updateGotra: builder.mutation({
+      query: ({id,body}) => ({
+        url: `/api/master-gotra/${id}`,
+        method: "PUT",
+        body
+      }),
+
+      invalidatesTags: ["Gotras"],
+    }),
+
+    
   }),
 });
 
@@ -57,4 +70,5 @@ export const {
   useLazyGetGotrasQuery,
   useCreateGotraMutation,
   useDeleteGotraMutation,
+  useUpdateGotraMutation,
 } = masterGotraApi;

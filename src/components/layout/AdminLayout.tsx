@@ -46,7 +46,22 @@ export default function AdminLayout(props: AdminLayoutProps) {
         // },
       ],
     },
-
+ {
+      key: "gotra",
+      icon: <SettingOutlined />,
+      label: "Gotra",
+      children: [
+        {
+          key: "/gotra",
+          label: "All Gotra",
+        },
+          {
+          key: "/gotra/create_gotra",
+          label: "Create Gotra",
+        },
+       
+      ],
+    },
   ];
 
   return (

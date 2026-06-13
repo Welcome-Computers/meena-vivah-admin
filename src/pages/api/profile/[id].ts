@@ -5,14 +5,10 @@ import type {
 
 import { ZodError } from "zod";
 
-import {
-  updateUserSchema,
-} from "@/lib/modules/profile/profile.validation";
 
 import {
   getUserById,
-  suspendUser,
-  updateUser,
+  suspendUser
 } from "@/lib/modules/profile/profile.service";
 
 export default async function handler(
@@ -23,6 +19,9 @@ export default async function handler(
   try {
 
     const id = Number(req.query.id);
+    console.log("id", id)
+    console.log("method", req.method)
+    console.log("body", req.body)
 
     if (!id) {
       return res.status(400).json({
@@ -44,24 +43,21 @@ export default async function handler(
     }
 
     // UPDATE USER
-    if (req.method === "PUT") {
+    // if (req.method === "PUT") {
 
-      const validatedData =
-        updateUserSchema.parse({
-          ...req.body,
-          id,
-        });
+    //   const validatedData = updateUserSchema.parse({ ...req.body, id });
 
-      const result =
-        await updateUser(
-          validatedData
-        );
+    //   const result =
+    //     await updateUser(
+    //       id,
+    //       validatedData
+    //     );
 
-      return res.status(200).json({
-        success: true,
-        data: result,
-      });
-    }
+    //   return res.status(200).json({
+    //     success: true,
+    //     data: result,
+    //   });
+    // }
 
     // SUSPEND USER
     if (req.method === "PATCH") {
@@ -73,6 +69,7 @@ export default async function handler(
         message:
           "User suspended",
       });
+
     }
 
     return res.status(405).json({

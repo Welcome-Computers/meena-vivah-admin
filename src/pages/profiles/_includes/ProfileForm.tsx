@@ -6,6 +6,7 @@ import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
+import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
@@ -21,6 +22,7 @@ interface iProps {
   isLoadingCreateUser: any,
   formContainerRef: RefObject<HTMLDivElement | null>
   callingFrom: 'create' | "update"
+  isFetching?: boolean,
 }
 
 const ProfileForm = (props: iProps) => {
@@ -31,10 +33,10 @@ const ProfileForm = (props: iProps) => {
     handlePreviewButton,
     isLoadingCreateUser,
     formContainerRef,
-    callingFrom
+    isFetching
   } = props || {}
 
-  const { data: occupatonList, isLoading: isOccupationLoading, refetch } = useGetOccupationsQuery({});
+  const { data: occupatonList, isFetching: isOccupationLoading, refetch } = useGetOccupationsQuery({});
 
   const occupatonOptions = occupatonList?.map((item: any) => ({
     label: item.name,
@@ -74,77 +76,79 @@ const ProfileForm = (props: iProps) => {
 
   return (
     <div ref={formContainerRef}>
-
-      <Form
-        layout="horizontal"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 18 }}
-        labelAlign="left"
-        form={form}
-        onKeyDown={handleEnterNavigation}
-        onFinish={handleFromSubmit}
-        initialValues={{
-          sibling_details: [{}],
-          // other_mobile: [{}],
-          other_gotra: [{}],
-          address_details: [{ type: "common" }],
-        }}
-      >
-        <Row gutter={[40, 40]}>
-          <Col xs={24} md={12}>
-            <PersonalDetails
-              occupatonOptions={occupatonOptions}
-              handleOnBlurMobile={handleOnBlurMobile ? handleOnBlurMobile : null}
-              isOccupationLoading={isOccupationLoading}
-              handleCreateOccupation={handleCreateOccupation}
-              form={form} />
-            <FamilyDetails
-              occupatonOptions={occupatonOptions}
-              isOccupationLoading={isOccupationLoading}
-              handleCreateOccupation={handleCreateOccupation}
-              form={form} />
-            <SiblingDetails
-              occupatonOptions={occupatonOptions}
-              isOccupationLoading={isOccupationLoading}
-              handleCreateOccupation={handleCreateOccupation}
-              form={form} />
-          </Col>
-
-          <Col xs={24} md={12}>
-            <GotraDetials form={form} />
-            <AddressDetails form={form} />
-            <MobileDetails form={form} />
-            <OtherDetails />
-          </Col>
-        </Row>
-
-        {/* AT LAST IN RIGHT BOTTOM */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 10,
-          marginTop: "20px"
-        }}
+      {isFetching ?
+        <ProfileFormSkeleton />
+        :
+        <Form
+          layout="horizontal"
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 18 }}
+          labelAlign="left"
+          form={form}
+          onKeyDown={handleEnterNavigation}
+          onFinish={handleFromSubmit}
+          initialValues={{
+            sibling_details: [{}],
+            // other_mobile: [{}],
+            other_gotra: [{}],
+            address_details: [{ type: "common" }],
+          }}
         >
-          <Button
-            tabIndex={-1}
-            type="primary"
-            onClick={handlePreviewButton}>
-            Preview
-          </Button>
+          <Row gutter={[40, 40]}>
+            <Col xs={24} md={12}>
+              <PersonalDetails
+                occupatonOptions={occupatonOptions}
+                handleOnBlurMobile={handleOnBlurMobile ? handleOnBlurMobile : null}
+                isOccupationLoading={isOccupationLoading}
+                handleCreateOccupation={handleCreateOccupation}
+                form={form} />
+              <FamilyDetails
+                occupatonOptions={occupatonOptions}
+                isOccupationLoading={isOccupationLoading}
+                handleCreateOccupation={handleCreateOccupation}
+                form={form} />
+              <SiblingDetails
+                occupatonOptions={occupatonOptions}
+                isOccupationLoading={isOccupationLoading}
+                handleCreateOccupation={handleCreateOccupation}
+                form={form} />
+            </Col>
 
-          <Button
-            loading={isLoadingCreateUser}
-            iconPlacement="end"
-            type="primary"
-            htmlType="submit">
-            Confrom
-          </Button>
+            <Col xs={24} md={12}>
+              <GotraDetials form={form} />
+              <AddressDetails form={form} />
+              <MobileDetails form={form} />
+              <OtherDetails />
+            </Col>
+          </Row>
 
-        </div>
+          {/* AT LAST IN RIGHT BOTTOM */}
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 10,
+            marginTop: "20px"
+          }}
+          >
+            <Button
+              tabIndex={-1}
+              type="primary"
+              onClick={handlePreviewButton}>
+              Preview
+            </Button>
 
-      </Form>
+            <Button
+              loading={isLoadingCreateUser}
+              iconPlacement="end"
+              type="primary"
+              htmlType="submit">
+              Confrom
+            </Button>
+
+          </div>
+
+        </Form>}
     </div>
   )
 }

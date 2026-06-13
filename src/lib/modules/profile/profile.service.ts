@@ -781,26 +781,94 @@ export async function getUserById(
 }
 
 export async function updateUser(
+  userId: number,
   payload: UpdateUserInput
 ) {
+  return await db.transaction(async (tx) => {
 
-  await db
-    .update(users)
-    .set({
-      name:
-        payload.name,
+    /**
+     * USER
+     */
+    await tx
+      .update(users)
+      .set({
+        mobile: payload.mobile,
+        gender: payload.gender,
+        name: payload.name,
+        dob: payload.dob,
+        education: payload.education,
+        occupation: payload.occupation,
+        fathersname: payload.fathersname,
+        mothersname: payload.mothersname,
+        fathersoccupation: payload.fathersoccupation,
+        mothersoccupation: payload.mothersoccupation,
+        self_gotra: payload.self_gotra,
+        m_gotra: payload.m_gotra,
+        gm_gotra: payload.gm_gotra,
+        mat_gm_gotra: payload.mat_gm_gotra,
+        preferences: payload.preferences,
+        otherinfo: payload.other_details,
+      })
+      .where(eq(users.id, userId));
 
-      education:
-        payload.education,
+    /**
+     * ADDRESS
+     */
+    await tx
+      .delete(addresses)
+      .where(eq(addresses.user_id, userId));
 
-      occupation:
-        payload.occupation,
-    })
-    .where(
-      eq(users.id, payload.id)
-    );
+    if (payload.address_details?.length) {
+      await tx.insert(addresses).values(
+        payload.address_details.map((item) => ({
+          user_id: userId,
+          address: item.full_address,
+          state: item.state,
+          city: item.city,
+          pincode: item.pincode,
+          type: item.type,
+        }))
+      );
+    }
 
-  return true;
+    /**
+     * SIBLINGS
+     */
+    await tx
+      .delete(siblingDetails)
+      .where(eq(siblingDetails.user_id, userId));
+
+    if (payload.sibling_details?.length) {
+      await tx.insert(siblingDetails).values(
+        payload.sibling_details.map((item) => ({
+          user_id: userId,
+          relation: item.relation,
+          name: item.sibling_name,
+          education: item.sibling_education,
+          occupation: item.sibling_occupation,
+        }))
+      );
+    }
+
+    /**
+     * OTHER GOTRA
+     */
+    await tx
+      .delete(otherGotras)
+      .where(eq(otherGotras.user_id, userId));
+
+    if (payload.other_gotra?.length) {
+      await tx.insert(otherGotras).values(
+        payload.other_gotra.map((item) => ({
+          user_id: userId,
+          other_gotra_relation: item.other_gotra_relation,
+          other_gotra_name: item.other_gotra_name,
+        }))
+      );
+    }
+
+    return { id: userId };
+  });
 }
 
 export async function suspendUser(
@@ -811,6 +879,21 @@ export async function suspendUser(
     .update(users)
     .set({
       isSuspended: true,
+    })
+    .where(
+      eq(users.id, id)
+    );
+
+  return true;
+}
+export async function activeUser(
+  id: number
+) {
+
+  await db
+    .update(users)
+    .set({
+      isSuspended: false,
     })
     .where(
       eq(users.id, id)

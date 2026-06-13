@@ -1,11 +1,11 @@
 import ModalComp from "@/components/common/ModalComp";
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateUserMutation, useGetSingleProfileByIdQuery } from "@/redux/features/profile";
+import { useGetSingleProfileByIdQuery, useUpdateUserMutation } from "@/redux/features/profile";
 import { Form } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
@@ -25,7 +25,7 @@ const UpdateProfile = () => {
   // console.log(id);      // "43"
   // console.log(action);  // "update"
 
-  // const [trigger, { data: searchByMobileData, isLoading: isLoadingByMobile }] = useLazyGetProfilesByMobileQuery();
+  // const [trigger, { data: searchByMobileData, isFetching: isLoadingByMobile }] = useLazyGetProfilesByMobileQuery();
 
   // const handleOnBlurMobile = useCallback(
   //   async (
@@ -54,7 +54,7 @@ const UpdateProfile = () => {
 
   const {
     data,
-    isLoading,
+    isFetching,
     // isSuccess,
     // isError,
     // error,
@@ -64,9 +64,9 @@ const UpdateProfile = () => {
     skip: !id
   });
 
-  const [createUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useCreateUserMutation();
+  const [updateUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useUpdateUserMutation();
 
-  const handleFromSubmit = async () => {
+  const handleFromSubmit = useCallback(async () => {
 
     const { dob, ...rest } = form.getFieldsValue();
 
@@ -77,6 +77,7 @@ const UpdateProfile = () => {
       : null;
 
     const formData = {
+      id,
       ...rest,
       dob: formattedDob,
 
@@ -86,19 +87,25 @@ const UpdateProfile = () => {
       address_details: removeEmptyObjects(rest.address_details),
     };
 
-    // console.log("form data", formData);
+    console.log("form data", formData);
+
+    // return;
 
     try {
-      const res = await createUserAction(formData).unwrap();
+      const res = await updateUserAction(formData).unwrap();
 
       if (res.success) {
-        appMessage.success("Profile created successfully");
+        appMessage.success("Profile updated successfully");
         form.resetFields();
         firstComponentFocusHandler(formContainerRef);
 
+        if (action === "update") {
+          router.back();
+        }
+
       } else {
         appMessage.error(
-          res.message || "Profile not created"
+          res.message || "Profile not updated"
         );
       }
     } catch (error: any) {
@@ -109,7 +116,7 @@ const UpdateProfile = () => {
         "Something went wrong"
       );
     }
-  };
+  }, [id]);
 
   const handlePreviewButton = () => {
     const previewData = form.getFieldsValue();
@@ -151,6 +158,7 @@ const UpdateProfile = () => {
         handlePreviewButton={handlePreviewButton}
         isLoadingCreateUser={isLoadingCreateUser}
         callingFrom={'update'}
+        isFetching={isFetching}
       />
 
       <ModalComp

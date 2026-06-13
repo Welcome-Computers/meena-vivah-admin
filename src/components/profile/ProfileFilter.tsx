@@ -31,23 +31,23 @@ export const ProfileFilter = (props: iProps) => {
   const [form] = Form.useForm();
   const fromData = Form.useWatch(null, form)
 
-  const { exclude_gotra } = fromData || {};
+  const { exclude_gotra, req_occupation } = fromData || {};
 
-  const { data, isLoading: isGotraLoading } = useGetGotrasQuery({});
-  const { data: occupatonList, isLoading: isOccupationLoading } = useGetOccupationsQuery({});
+  const { data, isFetching: isGotraLoading } = useGetGotrasQuery({});
+  const { data: occupatonList, isFetching: isOccupationLoading } = useGetOccupationsQuery({});
 
   const gottraOptions =
     data?.map((item: any) => ({
       label: item.name,
       value: item.code,
-      disabled: exclude_gotra?.includes(item.code),
+      // disabled: exclude_gotra?.includes(item.code),
     })) || [];
 
   const occupatonOptions =
     occupatonList?.map((item: any) => ({
       label: item.name,
       value: item.code,
-      disabled: exclude_gotra?.includes(item.code),
+      // disabled: req_occupation?.includes(item.code),
     })) || [];
 
   /**
@@ -75,6 +75,7 @@ export const ProfileFilter = (props: iProps) => {
           layout="vertical"
           form={form}
           onFinish={handleSearch}>
+
           {/* GENDER */}
           <Col xs={24}>
             <SearchableSelectField
@@ -98,16 +99,21 @@ export const ProfileFilter = (props: iProps) => {
           </Col>
           {/* OCCUPATION */}
           {callingFrom === "profilePage" ?
-            <Col xs={24}>
-              <SearchableSelectField
-                mode="multiple"
-                name={"req_occupation"}
-                label={"Wanted occupation"}
-                options={occupatonOptions}
-                loading={isOccupationLoading}
-                placeholder="Select occupations"
-              />
-            </Col> : null}
+            <>
+              <Col xs={24}>
+                <SearchableSelectField
+                  mode="multiple"
+                  name={"req_occupation"}
+                  label={"Wanted occupation"}
+                  options={occupatonOptions}
+                  loading={isOccupationLoading}
+                  placeholder="Select occupations"
+                />
+              </Col>
+
+
+            </>
+            : null}
 
           {/* EXCLUDE GOTRA */}
           <Col xs={24}>
@@ -117,7 +123,7 @@ export const ProfileFilter = (props: iProps) => {
               label={"Exclude Gotra"}
               options={gottraOptions}
               loading={isGotraLoading}
-              placeholder="Select occupations"
+              placeholder="Select Gotra"
             />
           </Col>
 

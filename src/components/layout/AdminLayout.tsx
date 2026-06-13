@@ -2,12 +2,23 @@ import {
   DashboardOutlined,
   SettingOutlined
 } from "@ant-design/icons";
-import { Button, Layout, Menu } from "antd";
+import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
 import { useRouter } from "next/router";
+import { ReactNode } from "react";
 
 const { Header, Sider, Content } = Layout;
 
-export default function AdminLayout({ children }: any) {
+interface AdminLayoutProps {
+  title?: ReactNode;
+  headerRightSec?: ReactNode;
+  children: ReactNode;
+  breadcrumbItems?: BreadcrumbProps["items"];
+}
+
+export default function AdminLayout(props: AdminLayoutProps) {
+
+  const { children, title, headerRightSec, breadcrumbItems } = props || {}
+
   const router = useRouter();
 
   const menuItems = [
@@ -17,7 +28,7 @@ export default function AdminLayout({ children }: any) {
       label: "Dashboard",
     },
     {
-      key: "profiles",
+      key: "/profiles",
       icon: <SettingOutlined />,
       label: "Profiles",
       children: [
@@ -29,10 +40,10 @@ export default function AdminLayout({ children }: any) {
           key: "/profiles/create_profile",
           label: "Create Profiles",
         },
-        {
-          key: "/profiles/update_profile",
-          label: "Update Profiles",
-        },
+        // {
+        //   key: "/profiles/update_profile",
+        //   label: "Update Profiles",
+        // },
       ],
     },
 
@@ -76,13 +87,18 @@ export default function AdminLayout({ children }: any) {
 
         {/* Content */}
         <Content style={{ margin: "0px 0px 0px 0px " }}>
-          <div
-            style={{
-              padding: 20,
-              background: "#fff",
-              minHeight: 360,
-            }}
-          >
+
+          <div className="admin_header">
+            <div>
+              {breadcrumbItems?.length ? (
+                <Breadcrumb items={breadcrumbItems} />
+              ) : null}
+            </div>
+
+            {headerRightSec ? <div>{headerRightSec}</div> : null}
+          </div>
+
+          <div style={{ padding: 20, minHeight: 360 }}>
             {children}
           </div>
         </Content>

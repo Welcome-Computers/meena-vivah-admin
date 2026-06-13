@@ -23,6 +23,7 @@ interface iProps {
   title?: string;
   showToggle?: boolean;
   getUsers?: (page: number, limit?: number) => void
+  headerRightSec?: any;
 }
 
 const ProfileContainer = (props: iProps) => {
@@ -33,7 +34,7 @@ const ProfileContainer = (props: iProps) => {
     getUsers,
     defaultShow = "grid",
     title = "Profiles",
-    showToggle = true
+    showToggle = true,
   } = props;
 
   const [view, setView] = useState<"grid" | "table">(defaultShow);
@@ -46,30 +47,32 @@ const ProfileContainer = (props: iProps) => {
   };
 
   return (
-    <div style={{ padding: "0 20px" }}>
+    <div>
       {/* VIEW TOGGLE BUTTONS */}
       <div
-        style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}      >
-        <h3>{title} </h3>
+        style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
 
-        {showToggle ?
-          <Space>
-            <Button
-              type={view === "grid" ? "primary" : "default"}
-              icon={<AppstoreOutlined />}
-              onClick={() => setView("grid")}>
-              {/* Grid */}
-            </Button>
+        <div className="table_header">
+          <h3>{title} </h3>
 
-            <Button
-              type={view === "table" ? "primary" : "default"}
-              icon={<TableOutlined />}
-              onClick={() => setView("table")}>
-              {/* Table */}
-            </Button>
-          </Space>
-          : null}
+          {showToggle ?
+            <Space>
+              <Button
+                type={view === "grid" ? "primary" : "default"}
+                icon={<AppstoreOutlined />}
+                onClick={() => setView("grid")}>
+                {/* Grid */}
+              </Button>
 
+              <Button
+                type={view === "table" ? "primary" : "default"}
+                icon={<TableOutlined />}
+                onClick={() => setView("table")}>
+                {/* Table */}
+              </Button>
+            </Space>
+            : null}
+        </div>
       </div>
 
       {/* CONDITIONAL RENDER */}

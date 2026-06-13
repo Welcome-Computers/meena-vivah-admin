@@ -36,6 +36,16 @@ export const userApi = createApi({
 
       invalidatesTags: ["Users"],
     }),
+    // UPDATE USER
+    updateUser: builder.mutation({
+      query: (body) => ({
+        url: `/api/profile/update-user`,
+        method: "POST",
+        body,
+      }),
+
+      invalidatesTags: ["Users"],
+    }),
 
     // DELETE USER
     deleteUser: builder.mutation({
@@ -49,7 +59,6 @@ export const userApi = createApi({
 
     getSingleProfileById: builder.query({
       query: (id) => {
-        debugger;
         return ({
           url: `/api/profile/${id}`,
           method: "GET",
@@ -77,5 +86,6 @@ export const {
   useGetUsersQuery,
   useLazyGetUsersQuery,
   useCreateUserMutation,
+  useUpdateUserMutation,
   useDeleteUserMutation,
 } = userApi;

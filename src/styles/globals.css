@@ -44,3 +44,72 @@ a {
     color-scheme: dark;
   }
 }
+
+.login_page_container {
+  background-image: url("/images/loginBackground.png");
+  width: 100%;
+  height: inherit;
+  background-size: cover;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 8%;
+}
+
+.login_form_container {
+  max-width: 400px;
+  margin: 0;
+  padding: 24px;
+
+  /* Glassmorphism Effect */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.login_form_container,
+.login_form_container label,
+.login_form_container h1,
+.login_form_container h2,
+.login_form_container p {
+  color: #fff;
+}
+
+.login_form_container .ant-input-outlined,
+.login_form_container .ant-input-password,
+.login_form_container .ant-select-selector {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+.login_form_container .ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.login_form_container .ant-input-password input {
+  color: #fff !important;
+}
+
+.admin_header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  padding: 15px 20px;
+  background: #ebeff3;
+}
+
+.table_header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 15px 20px;
+}

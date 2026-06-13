@@ -103,7 +103,7 @@ const GotraDetials = memo((props: any) => {
     "mat_gm_gotra",
   ]
 
-  const { data, isLoading, refetch } = useGetGotrasQuery({});
+  const { data, isFetching, refetch } = useGetGotrasQuery({});
   const [createGotra] = useCreateGotraMutation();
 
 

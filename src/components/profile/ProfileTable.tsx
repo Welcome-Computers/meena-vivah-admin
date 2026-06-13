@@ -5,6 +5,7 @@ import { Avatar, Button, Space, Table, Tag, Tooltip } from "antd";
 
 import type { ColumnsType } from "antd/es/table";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 interface iProps {
   loading: boolean;
@@ -16,6 +17,8 @@ interface iProps {
 const ProfileTable = (props: iProps) => {
 
   const { loading, data, pagination, onPageChange } = props;
+
+  const router = useRouter();
 
   const columns: ColumnsType<IUser> = [{
     title: "#", key: "index",
@@ -289,57 +292,6 @@ const ProfileTable = (props: iProps) => {
       );
     },
   },
-
-  // {
-  //   title:
-  //     "Created",
-  //   dataIndex:
-  //     "createdAt",
-  //   key:
-  //     "createdAt",
-  //   width: 130,
-  //   render: (
-  //     value
-  //   ) =>
-  //     value
-  //       ? new Date(
-  //         value
-  //       ).toLocaleDateString(
-  //         "en-IN"
-  //       )
-  //       : "-",
-  // },
-
-  // {
-  //   title:
-  //     "Status",
-  //   dataIndex:
-  //     "isSuspended",
-  //   key:
-  //     "isSuspended",
-  //   width: 120,
-  //   fixed: "right",
-  //   render: (
-  //     value
-  //   ) =>
-  //     value ? (
-  //       <Tag color="red">
-  //         Suspended
-  //       </Tag>
-  //     ) : (
-  //       <Tag color="green">
-  //         Active
-  //       </Tag>
-  //     ),
-  // },
-
-  // {
-  //   title: "Mobile",
-  //   dataIndex: "mobile",
-  //   key: "mobile",
-  //   width: 140,
-  // },
-
   {
     title: "Mobile",
     dataIndex: "mobile",
@@ -361,16 +313,14 @@ const ProfileTable = (props: iProps) => {
     ) => (
       <Space>
         <Button
-          size="small"
-          type="primary"
-        >
-          View
-        </Button>
-        {/* <Button
-          size="small"
-        >
+          onClick={() => {
+            router.push(
+              `/profiles/update_profile?id=${record.id}&action=update`
+            );
+          }}
+          type="link">
           Edit
-        </Button> */}
+        </Button>
       </Space>
     ),
   },

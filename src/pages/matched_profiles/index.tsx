@@ -27,7 +27,7 @@ const MatchedProfilePage = () => {
   const [filters, setFilters] = useState<any>(searchfilters);
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, error, } = useGetUsersQuery({ ...filters, page, limit: 10 });
+  const { data, isFetching, error, } = useGetUsersQuery({ ...filters, page, limit: 10 });
 
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
@@ -58,7 +58,7 @@ const MatchedProfilePage = () => {
             filterDataHandler={filterDataHandler} />
           <div>
             <ProfileContainer
-              loading={isLoading}
+              loading={isFetching}
               data={userList}
               pagination={pagination}
               getUsers={getUsers} />

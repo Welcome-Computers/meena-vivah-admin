@@ -1,4 +1,15 @@
+
+// 1. searching  --Done
+// 2. gota name,code sorting a to z -- Done
+// 3. conformation popup ,at delete button --Done
+// 5. edit button,return error when value not changed --Done
+// 7. button on right side -- Done
+// 4. if gotra used in form ,then it cannot deleted --Done
+
+// 6. gotra must be show 50 in list ,count  
+
 import AdminLayout from "@/components/layout/AdminLayout";
+
 import GotraTable from "@/components/master-gotra/GotraTable";
 import { appMessage } from "@/lib/utility/message";
 import {
@@ -14,6 +25,7 @@ const Gotra = () => {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGotraId, setSelectedGotraId] = useState<number | null>(null);
+  const [selectedGotra, setSelectedGotra] = useState<string | null>(null);
 
   const [form] = Form.useForm();
 
@@ -41,6 +53,7 @@ const Gotra = () => {
       if (id) {
         setIsModalOpen(true);
         setSelectedGotraId(id);
+        setSelectedGotra(body.name);
       }
       form.setFieldsValue({
         "master-gotra": body?.name,
@@ -62,6 +75,7 @@ const Gotra = () => {
           setIsModalOpen={setIsModalOpen}
           form={form}
           selectedGotraId={selectedGotraId}
+          selectedGotra={selectedGotra}
         />
 
         <GotraTable
@@ -71,6 +85,7 @@ const Gotra = () => {
           data={gotraList}
           pagination={pagination}
         />
+
       </div>
     </AdminLayout>
   );

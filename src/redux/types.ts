@@ -83,8 +83,10 @@ export type GetUsersParams = {
 
 export type IGotra = {
   id?: number;
+  code?: string;
   name?: string;
 };
+
 
 export type IOccupation = {
   id?: number;

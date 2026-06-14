@@ -18,16 +18,19 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+
+
     if (req.method === "GET") {
       const data =
         await getGotras();
-
+        
       return res.status(200).json(data);
     }
 
 
     if (req.method === "POST") {
       try {
+
         // existing code
         const payload = Array.isArray(req.body)
           ? createGotrasSchema.parse(req.body)

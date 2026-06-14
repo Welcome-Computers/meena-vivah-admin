@@ -20,8 +20,10 @@ export default function GotraForm(props:any) {
                   label="Gotra Name"
                   rules={[{ max: 50, message: "Maximum 50 characters" }]}
                 />
-        
-                <Button htmlType="submit">Save</Button>
+        <div style={{display:"flex" ,justifyContent:"end"}}>
+
+                <Button htmlType="submit" >Save</Button>
+        </div>
               </Form>
         
         </>

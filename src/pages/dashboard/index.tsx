@@ -8,6 +8,7 @@ import {
 import TopStatics from "@/components/dashboard/TopStatics";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { useGetUsersQuery } from "@/redux/features/profile";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const { Title } = Typography;
@@ -20,10 +21,11 @@ const Dashboard = () => {
     matched: 18,
   };
 
+  const router = useRouter()
 
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, error, } = useGetUsersQuery({ page, limit: 10 });
+  const { data, isFetching, error, } = useGetUsersQuery({ page, limit: 10 });
 
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
@@ -35,12 +37,10 @@ const Dashboard = () => {
 
 
   return (
-    <AdminLayout>
+    <AdminLayout
+      title="Dashboard Overview"
+    >
       <div>
-        <Title level={4}>
-          Dashboard Overview
-        </Title>
-
         {/* ================= STATS ================= */}
         <Row gutter={16}>
           <TopStatics stats={stats} />
@@ -50,10 +50,11 @@ const Dashboard = () => {
         <div style={{ marginTop: 30, }}>
           <ProfileContainer
             defaultShow="table"
-            loading={isLoading}
+            loading={isFetching}
             title={'Last 15 Days New Registrations'}
             data={userList || []}
             pagination={pagination}
+            showAction={true}
             getUsers={getUsers} />
         </div>
 
@@ -61,10 +62,11 @@ const Dashboard = () => {
         <div style={{ marginTop: 30, }}>
           <ProfileContainer
             title={'Last 15 Days Updates'}
-            loading={isLoading}
+            loading={isFetching}
             defaultShow="table"
             data={userList || []}
             pagination={pagination}
+            showAction={true}
             getUsers={getUsers} />
         </div>
       </div>

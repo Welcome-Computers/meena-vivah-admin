@@ -1,26 +1,35 @@
-export const getAge = (dob?: string | null) => {
+export const getAge = (
+  dob?: string | null
+) => {
   if (!dob) return "-";
 
   const birthDate = new Date(dob);
   const today = new Date();
 
-  let age = today.getFullYear() - birthDate.getFullYear();
+  let years =
+    today.getFullYear() -
+    birthDate.getFullYear();
 
-  const monthDiff =
-    today.getMonth() - birthDate.getMonth();
+  let months =
+    today.getMonth() -
+    birthDate.getMonth();
 
-  const dayDiff =
-    today.getDate() - birthDate.getDate();
-
-  // if birthday not yet happened this year
+  // Birthday month/date not reached yet
   if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && dayDiff < 0)
+    today.getDate() <
+    birthDate.getDate()
   ) {
-    age--;
+    months--;
   }
 
-  return age;
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  return months > 0
+    ? `${years}.${months}`
+    : `${years}`;
 };
 
 

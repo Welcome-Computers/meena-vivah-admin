@@ -36,7 +36,7 @@ const DayMonthYearPicker = memo((props: Props) => {
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const months = Array.from({ length: 12 }, (_, i) => ({
-    label: dayjs().month(i).format("MMM"),
+    label: dayjs().month(i).format("MMMM"),
     value: i + 1,
   }));
 

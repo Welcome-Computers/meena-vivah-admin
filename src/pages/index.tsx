@@ -8,7 +8,7 @@ import { useState } from "react";
 const Home = () => {
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, error, } = useGetUsersQuery({ page, limit: 10 });
+  const { data, isFetching, error, } = useGetUsersQuery({ page, limit: 10 });
 
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
@@ -29,7 +29,7 @@ const Home = () => {
       <div style={{ marginTop: 30 }}>
         <ProfileContainer
           title="Latest Profiles"
-          loading={isLoading}
+          loading={isFetching}
           data={userList}
           pagination={pagination}
           getUsers={getUsers}

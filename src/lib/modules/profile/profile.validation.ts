@@ -1,4 +1,33 @@
+
 import { z } from "zod";
+
+// const addressSchema = z.object({
+//   full_address: z.string(),
+//   state: z.string(),
+//   city: z.string(),
+//   pincode: z.string(),
+//   type: z.string(),
+// });
+
+const addressSchema = z.object({
+  full_address: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  pincode: z.string().optional(),
+  type: z.string().optional(),
+});
+
+const siblingSchema = z.object({
+  relation: z.string(),
+  sibling_name: z.string(),
+  sibling_education: z.string(),
+  sibling_occupation: z.string(),
+});
+
+const otherGotraSchema = z.object({
+  other_gotra_relation: z.string(),
+  other_gotra_name: z.string(),
+});
 
 export const createUserSchema =
   z.object({
@@ -14,40 +43,40 @@ export const createUserSchema =
         .optional(),
 
     education:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     occupation:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     fathersname:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     mothersname:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     fathersoccupation:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     mothersoccupation:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     self_gotra:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     m_gotra:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     gm_gotra:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     mat_gm_gotra:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     preferences:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     other_details:
-      z.string().optional(),
+      z.string().nullable().optional(),
 
     /**
      * MOBILE DETAILS
@@ -65,74 +94,32 @@ export const createUserSchema =
 
     /**
      * ADDRESS DETAILS
-     */
-    address_details:
-      z.array(
-        z.object({
-          full_address:
-            z.string(),
-
-          state:
-            z.string(),
-
-          city:
-            z.string(),
-
-          pincode:
-            z.string(),
-
-          type:
-            z.string(),
-        })
-      ).optional(),
-
-    /**
      * SIBLING DETAILS
-     */
-    sibling_details:
-      z.array(
-        z.object({
-          relation:
-            z.string(),
-
-          sibling_name:
-            z.string(),
-
-          sibling_education:
-            z.string(),
-
-          sibling_occupation:
-            z.string(),
-        })
-      ).optional(),
-
-    /**
      * OTHER GOTRA
      */
-    other_gotra:
-      z.array(
-        z.object({
-          other_gotra_relation:
-            z.string(),
 
-          other_gotra_name:
-            z.string(),
-        })
-      ).optional(),
+    address_details: z.array(addressSchema).optional(),
+    sibling_details: z.array(siblingSchema).optional(),
+    other_gotra: z.array(otherGotraSchema).optional(),
+
   });
 
-export const updateUserSchema =
-  z.object({
-    id: z.number(),
+export const updateUserSchema = createUserSchema
+  .partial()
+  .extend({
+    id: z.coerce.number(),
 
-    name:
-      z.string().optional(),
+    address_details: z.array(
+      addressSchema.partial()
+    ).optional(),
 
-    education:
-      z.string().optional(),
+    sibling_details: z.array(
+      siblingSchema.partial()
+    ).optional(),
 
-    occupation:
-      z.string().optional(),
+    other_gotra: z.array(
+      otherGotraSchema.partial()
+    ).optional(),
   });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;

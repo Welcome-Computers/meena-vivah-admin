@@ -1,11 +1,9 @@
-import ModalComp from "@/components/common/ModalComp";
-import ModalByMobile from "@/components/profile/ModalByMobile";
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateUserMutation, useLazyGetProfilesByMobileQuery } from "@/redux/features/profile";
+import { useCreateUserMutation } from "@/redux/features/profile";
 import { Form } from "antd";
 import dayjs from "dayjs";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
@@ -14,36 +12,11 @@ const CreateProfile = () => {
   const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
   const [dataPreview, setDataPreview] = useState({});
 
 
-  const [trigger, { data: searchByMobileData, isLoading: isLoadingByMobile }] = useLazyGetProfilesByMobileQuery();
-
-  const handleOnBlurMobile = useCallback(
-    async (
-      e: React.FocusEvent<HTMLInputElement>
-    ) => {
-      try {
-        const mobile = e.target.value.trim();
-
-        if (mobile.length !== 10) {
-          return;
-        }
-
-        const result = await trigger(mobile).unwrap();
-
-        if (result?.success && !!result?.items?.length) {
-
-          setIsModalOpen(true)
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [trigger, setIsModalOpen]
-  );
 
   const [createUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useCreateUserMutation();
 
@@ -92,46 +65,30 @@ const CreateProfile = () => {
     }
   };
 
-  const handlePreviewButton = () => {
-    const previewData = form.getFieldsValue();
-    setDataPreview(previewData);
-    setisPreviewOpen(true);
-  };
-
-  const hanldeClosePreview = () => {
-    setisPreviewOpen(false);
-  };
-
 
 
 
   return (
-    <AdminLayout>
+    <AdminLayout
+      breadcrumbItems={[
+        {
+          title: "Dashboard",
+        },
+        {
+          title: "Create Profile",
+        },
+      ]}
+    >
       {/* Main form components */}
 
       <ProfileForm
         form={form}
         formContainerRef={formContainerRef}
         handleFromSubmit={handleFromSubmit}
-        handleOnBlurMobile={handleOnBlurMobile}
-        handlePreviewButton={handlePreviewButton}
         isLoadingCreateUser={isLoadingCreateUser}
         callingFrom={'create'}
       />
 
-      <ModalComp
-        title={"Preview Biodata"}
-        isOpen={isPreviewOpen}
-        data={dataPreview}
-        hanldeClose={hanldeClosePreview}
-      />
-
-      <ModalByMobile
-        title="Profile Found"
-        isOpen={isModalOpen}
-        data={searchByMobileData?.items || []}
-        hanldeClose={() => setIsModalOpen(false)}
-      />
 
     </AdminLayout>
   );

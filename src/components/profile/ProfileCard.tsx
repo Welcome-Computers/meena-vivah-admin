@@ -1,25 +1,29 @@
 import { getAge } from "@/lib/utility";
 import { IPagination, IUser } from "@/redux/types";
-import { Avatar, Pagination } from "antd";
+import { Avatar, Button, Pagination } from "antd";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import style from "./ProfileCard.module.css";
 
 interface iProps {
   data: IUser[],
   pagination: IPagination,
   onPageChange: any;
+  showAction?: boolean;
 }
 
 export const ProfileCard = (props: iProps) => {
-  const { data, pagination, onPageChange } = props || {}
+
+  const { data, pagination, onPageChange, showAction } = props || {}
+  const router = useRouter();
 
   return (
     <div>
       <div className={style.mainContainer}>
 
-        {data.map((user, index) => {
+        {data.map((record, index) => {
           const imageSrc =
-            user.gender ===
+            record?.gender ===
               "boy"
               ? "/images/groom.jpg"
               : "/images/bride.jpg";
@@ -27,7 +31,7 @@ export const ProfileCard = (props: iProps) => {
           return (
             <div key={index} className={style.card}>
               <div className={style.avatar}>
-                <Avatar size={80} icon={<Image src={imageSrc} alt={user.name}
+                <Avatar size={80} icon={<Image src={imageSrc} alt={record?.name}
                   width={140}
                   height={140}
                   className={style.profileImage}
@@ -35,21 +39,33 @@ export const ProfileCard = (props: iProps) => {
               </div>
 
               <div className={style.userInfo}>
-                <h4>{user.name}</h4>
-                <p className={style.profession}>{user.occupation}</p>
+                <h4>{record?.name}</h4>
+                <p className={style.profession}>{record?.occupation}</p>
                 <p>
-                  <strong>Age:</strong> {getAge(user.dob)}
+                  <strong>Age:</strong> {getAge(record?.dob)}
                 </p>
                 <p>
-                  <strong>Education:</strong> {user.education}
+                  <strong>Education:</strong> {record?.education}
                 </p>
                 <p>
-                  <strong>Contact:</strong> {user.mobile}
+                  <strong>Contact:</strong> {record?.mobile}
                 </p>
                 <p>
-                  <strong>Gotra:</strong> {user.self_gotra}/ {user.m_gotra}/ {user.gm_gotra}
+                  <strong>Gotra:</strong> {record?.self_gotra}/ {record?.m_gotra}/ {record?.gm_gotra}
                 </p>
               </div>
+
+              {showAction &&
+                <Button
+                  type="link"
+                  onClick={() => {
+                    router.push(
+                      `/profiles/update_profile?id=${record?.id}&action=update`
+                    );
+                  }}
+                >
+                  Edit
+                </Button>}
             </div>
           )
         }

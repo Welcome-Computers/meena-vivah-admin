@@ -1,4 +1,4 @@
-import { GetUsersProps } from "@/lib/modules/profile/profile.types";
+import { GetMatchedUsersProps } from "@/lib/modules/profile/profile.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { queryString } from "object-query-string";
 
@@ -14,7 +14,7 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     // GET USERS
     getUsers: builder.query({
-      query: (params: GetUsersProps) => {
+      query: (params: GetMatchedUsersProps) => {
 
         return ({
           url: `/api/profile?${queryString(params)}`,
@@ -35,6 +35,16 @@ export const userApi = createApi({
 
       invalidatesTags: ["Users"],
     }),
+    // UPDATE USER
+    updateUser: builder.mutation({
+      query: (body) => ({
+        url: `/api/profile/update-user`,
+        method: "POST",
+        body,
+      }),
+
+      invalidatesTags: ["Users"],
+    }),
 
     // DELETE USER
     deleteUser: builder.mutation({
@@ -48,7 +58,6 @@ export const userApi = createApi({
 
     getSingleProfileById: builder.query({
       query: (id) => {
-        debugger;
         return ({
           url: `/api/profile/${id}`,
           method: "GET",
@@ -76,5 +85,6 @@ export const {
   useGetUsersQuery,
   useLazyGetUsersQuery,
   useCreateUserMutation,
+  useUpdateUserMutation,
   useDeleteUserMutation,
 } = userApi;

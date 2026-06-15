@@ -3,6 +3,7 @@ import { memo } from "react";
 import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import DobField from "../InputElements/DobField";
+import HeightField from "../InputElements/HeightField";
 import InputField from "../InputElements/InputField";
 import SearchableSelectField from "../InputElements/SearchableSelectField";
 import TextAreaField from "../InputElements/TextAreaField";
@@ -16,7 +17,7 @@ const PersonalDetails = memo((props: any) => {
         name="mobile"
         label="Mobile"
         onBlur={(e) => handleOnBlurMobile?.(e)}
-        placeholder="e.g. 000-000-0000"
+        placeholder="e.g. 9988771234"
         rules={[
           {
             validator: (_: RuleObject, val: any) => {
@@ -62,6 +63,11 @@ const PersonalDetails = memo((props: any) => {
       <DobField
         name="dob"
         label="Date of Birth"
+      />
+
+      <HeightField
+        name="height"
+        label="Height"
       />
 
       <SearchableSelectField

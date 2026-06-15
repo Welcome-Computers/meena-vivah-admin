@@ -1,27 +1,27 @@
 import { appMessage } from "@/lib/utility/message";
-import { useCreateGotraMutation } from "@/redux/features/masterGotra";
-import { FormInstance } from "antd/es/form/Form";
+import  { FormInstance } from "antd/es/form/Form";
 import AdminLayout from "@/components/layout/AdminLayout";
 import Title from "antd/es/typography/Title";
+import { useCreateOccupationMutation } from "../../redux/features/masterOccupation";
 import GenericForm from "@/components/common/GenericForm";
 
 interface iProps {
   form: FormInstance;
 }
 
-const CreateGotra = (props: iProps) => {
+const CreateOccupation = (props: iProps) => {
   const { form } = props || {};
 
-  const [createGotra] = useCreateGotraMutation();
+  const [createOccupation] = useCreateOccupationMutation();
 
-  const handleCreateGotra = async (value: any) => {
+  const handleCreateOccupation = async (value: any) => {
     try {
-      const res = await createGotra({
-        name: value["master-gotra"],
+      const res = await createOccupation({
+        name: value["master-occupation"],
       }).unwrap();
 
       if (res?.success) {
-        appMessage.success("Gotra added successfully");
+        appMessage.success("Occupation added successfully");
 
         return {
           label: res?.data?.[0]?.name,
@@ -29,7 +29,7 @@ const CreateGotra = (props: iProps) => {
         };
       }
     } catch (error: any) {
-      appMessage.error(error?.data?.message || "Failed to add gotra");
+      appMessage.error(error?.data?.message || "Failed to add Occupation");
     }
   };
 
@@ -37,17 +37,18 @@ const CreateGotra = (props: iProps) => {
     <AdminLayout>
       <div style={{ maxWidth: 600, margin: "0 auto" }}>
         <Title level={3} className="mb-4">
-          Create Gotra
+          Create Occupation
         </Title>
+
         <GenericForm
-          handleOnSubmit={handleCreateGotra}
+          handleOnSubmit={handleCreateOccupation}
           form={form}
-          name="master-gotra"
-          label="Create Gotra"
+          name="master-occupation"
+          label="Create Occupation"
         />
       </div>
     </AdminLayout>
   );
 };
 
-export default CreateGotra;
+export default CreateOccupation;

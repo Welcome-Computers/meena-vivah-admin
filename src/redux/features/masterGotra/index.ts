@@ -16,15 +16,11 @@ export const masterGotraApi = createApi({
     // GET USERS
     getGotras: builder.query({
       query: (params: GetGotraProps) => {
-
-
         return ({
           url: `/api/master-gotra?${queryString(params)}`,
           method: "GET",
-
         })
       },
-
       providesTags: ["Gotras"],
     }),
 
@@ -35,7 +31,6 @@ export const masterGotraApi = createApi({
         method: "POST",
         body,
       }),
-
       invalidatesTags: ["Gotras"],
     }),
 

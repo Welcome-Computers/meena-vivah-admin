@@ -1,44 +1,58 @@
-import {  Select, Space, Table } from "antd";
+import { Button, Col, Row, Select, Space, Table } from "antd";
 import Text from "antd/es/typography/Text";
 import { useState } from "react";
+import InputField from "../InputElements/InputField";
 
 interface GenericTableProps {
   data: any[];
   loading: boolean;
   columns: any;
   pagination: any;
+  handleSearch: any;
+  handleSort: any;
 }
 
 export const GenericTable = (props: GenericTableProps) => {
-  const { data, loading, columns, pagination } = props;
+  const { data, loading, columns, pagination, handleSearch,handleSort } = props;
 
-  const [selectedValue,setSelectedValue ] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
-//   console.log("GotraTable data:", data);
-
-  const filterData = selectedValue
-    ? data.filter((item) => item.name === selectedValue)
-    : data;
+ 
 
   return (
     <>
       <Space direction="vertical" size={4} style={{ marginBottom: "1rem" }}>
         <Text strong>Search Gotra</Text>
-        <Select
-          style={{ width: "500px" }}
-          allowClear
-          showSearch
-          onChange={(value) => setSelectedValue(value)}
-          options={data.map((item) => ({ value: item.name }))}
+        <Row>
+          <Col>
+           <InputField
+           style={{height:"1.5rem"}}
+          name="Search"
+          label={null}
+          onChange={(v) => setInputValue(v.target.value)}
         />
+          </Col>
+          <Col>
+        <Button type="primary" onClick={() => handleSearch(inputValue)} style={{height:"1.5rem" ,margin:".2rem"}}>Go</Button>
+          
+          </Col>
+        </Row>
+       
       </Space>
 
+
+
+      
+
       <Table
+      onChange={(pagination, filters, sorter) => {
+        handleSort(sorter)
+  }}
         rowKey="id"
         bordered
         size="small"
         loading={loading}
-        dataSource={filterData}
+        dataSource={data}
         columns={columns}
         pagination={{
           current: pagination.page,

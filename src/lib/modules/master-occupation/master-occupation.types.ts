@@ -11,5 +11,7 @@ export type UpdateOccupationDto = {
 export type GetOccupationProps = {
   page?: number;
   limit?: number;
-
+  search?:string;
+   sortField?: string;
+  sortOrder?: string;
 };

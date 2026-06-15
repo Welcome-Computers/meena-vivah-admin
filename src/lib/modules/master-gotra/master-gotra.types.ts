@@ -11,6 +11,8 @@ export type UpdateGotraDto = {
 export type GetGotraProps = {
   page?: number;
   limit?: number;
-  
+   search?:string;
+   sortField?: string;
+  sortOrder?: string;
 
 };

@@ -11,7 +11,7 @@ import UpdateOccupation from "./_includes/UpdateOccupation";
 import { appMessage } from "@/lib/utility/message";
 
 const Occupation = () => {
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [occupationId, setOccupationId] = useState<number | null>(null);
   const [selectedOccupation, setSelectedOccupation] = useState<string | null>(
@@ -21,12 +21,13 @@ const Occupation = () => {
   const [form] = Form.useForm();
 
   // get occupation list
-  const { data, isLoading, error } = useGetOccupationsQuery({
-    page,
-    limit: 10,
-  });
-  const occupationList = data || [];
-  const pagination = data?.pagination || {};
+  // const { data, isLoading, error } = useGetOccupationsQuery({
+  //   page,
+  //   limit: 10,
+  // });
+  // const occupationList = data || [];
+  // const pagination = data?.pagination || {};
+
 
   // delet occupation
   const [deleteOccupation] = useDeleteOccupationMutation();
@@ -73,9 +74,6 @@ const Occupation = () => {
           form={form}
         />
         <OccupationTable
-          loading={isLoading}
-          data={occupationList}
-          pagination={pagination}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
         />

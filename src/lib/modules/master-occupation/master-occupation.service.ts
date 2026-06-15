@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { asc, desc, eq, ilike, like } from "drizzle-orm";
 import { masterOccupation } from '../../schema/masterOccupation';
 
 
@@ -8,12 +8,37 @@ import {
   UpdateOccupationDto,
 } from "./master-occupation.types";
 
+
+// export const getOccupations =
+//   async (search?:string) => {
+//     if(search){
+//       return db.select().from(masterOccupation)
+//       .where(like(masterOccupation.name,`%${search}%`))
+//     }
+//     return db
+//       .select()
+//       .from(masterOccupation);
+//   };
+
 export const getOccupations =
-  async () => {
-    return db
-      .select()
-      .from(masterOccupation);
+  async ({search ,sortField,sortOrder}:{search:string ,sortField:string,sortOrder:string}) => {
+    let query=db.select().from(masterOccupation).$dynamic();
+    if(search){
+      query=query.where(like(masterOccupation.name,`%${search}%`))
+    }
+
+     if(sortField == "name"){
+      query=query.orderBy((sortOrder === "ascend") ?asc(masterOccupation.name) : desc(masterOccupation.name))
+    }
+
+     if(sortField == "code"){
+      query=query.orderBy((sortOrder === "ascend") ?asc(masterOccupation.code) : desc(masterOccupation.code))
+    }
+
+    return query;
   };
+
+
 
 export const getOccupationById =
   async (id: number) => {

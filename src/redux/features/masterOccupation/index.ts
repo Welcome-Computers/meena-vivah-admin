@@ -1,4 +1,4 @@
-import { GetOccupationProps } from '@/lib/modules/master-occupation/master-occupation.types';
+import { GetOccupationProps } from "@/lib/modules/master-occupation/master-occupation.types";
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { queryString } from "object-query-string";
@@ -16,13 +16,10 @@ export const masterOccupationApi = createApi({
     // GET USERS
     getOccupations: builder.query({
       query: (params: GetOccupationProps) => {
-
-
-        return ({
+        return {
           url: `/api/master-occupation?${queryString(params)}`,
           method: "GET",
-
-        })
+        };
       },
 
       providesTags: ["Occupations"],
@@ -49,6 +46,15 @@ export const masterOccupationApi = createApi({
       invalidatesTags: ["Occupations"],
     }),
 
+    // UPDATE OCCUPATION
+    updateOccupation: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `api/master-occupation/${id}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Occupations"],
+    }),
   }),
 });
 
@@ -57,4 +63,5 @@ export const {
   useLazyGetOccupationsQuery,
   useCreateOccupationMutation,
   useDeleteOccupationMutation,
+  useUpdateOccupationMutation,
 } = masterOccupationApi;

@@ -1,13 +1,4 @@
 
-// 1. searching  --Done
-// 2. gota name,code sorting a to z -- Done
-// 3. conformation popup ,at delete button --Done
-// 5. edit button,return error when value not changed --Done
-// 7. button on right side -- Done
-// 4. if gotra used in form ,then it cannot deleted --Done
-
-// 6. gotra must be show 50 in list ,count  
-
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import GotraTable from "@/components/master-gotra/GotraTable";

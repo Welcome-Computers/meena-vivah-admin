@@ -51,6 +51,24 @@ export default function AdminLayout({ children }: any) {
        
       ],
     },
+ {
+      key: "master-occupation",
+      icon: <SettingOutlined />,
+      label: "Occupation",
+      children: [
+        {
+          key: "/master-occupation",
+          label: "All Occupation",
+        },
+          {
+          key: "/master-occupation/create_occupation",
+          label: "Create Occupation",
+        },
+       
+      ],
+    },
+
+
   ];
 
   return (

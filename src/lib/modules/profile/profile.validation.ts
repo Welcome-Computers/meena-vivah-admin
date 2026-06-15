@@ -29,7 +29,7 @@ const otherGotraSchema = z.object({
   other_gotra_name: z.string(),
 });
 
-export const createUserSchema =
+export const createProfileSchema =
   z.object({
     name:
       z.string().min(2),
@@ -104,7 +104,7 @@ export const createUserSchema =
 
   });
 
-export const updateUserSchema = createUserSchema
+export const updateProfileSchema = createProfileSchema
   .partial()
   .extend({
     id: z.coerce.number(),
@@ -122,6 +122,6 @@ export const updateUserSchema = createUserSchema
     ).optional(),
   });
 
-export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type CreateProfileInput = z.infer<typeof createProfileSchema>;
 
-export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

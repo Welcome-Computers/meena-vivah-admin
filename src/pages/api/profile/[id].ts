@@ -7,8 +7,8 @@ import { ZodError } from "zod";
 
 
 import {
-  getUserById,
-  suspendUser
+  getProfileById,
+  suspendProfile
 } from "@/lib/modules/profile/profile.service";
 
 export default async function handler(
@@ -30,25 +30,25 @@ export default async function handler(
       });
     }
 
-    // GET SINGLE USER
+    // GET SINGLE PROFILE
     if (req.method === "GET") {
 
-      const user =
-        await getUserById(id);
+      const profile =
+        await getProfileById(id);
 
       return res.status(200).json({
         success: true,
-        data: user,
+        data: profile,
       });
     }
 
-    // UPDATE USER
+    // UPDATE PROFILE
     // if (req.method === "PUT") {
 
-    //   const validatedData = updateUserSchema.parse({ ...req.body, id });
+    //   const validatedData = updateProfileSchema.parse({ ...req.body, id });
 
     //   const result =
-    //     await updateUser(
+    //     await updateProfile(
     //       id,
     //       validatedData
     //     );
@@ -59,15 +59,15 @@ export default async function handler(
     //   });
     // }
 
-    // SUSPEND USER
+    // SUSPEND PROFILE
     if (req.method === "PATCH") {
 
-      await suspendUser(id);
+      await suspendProfile(id);
 
       return res.status(200).json({
         success: true,
         message:
-          "User suspended",
+          "Profile suspended",
       });
 
     }

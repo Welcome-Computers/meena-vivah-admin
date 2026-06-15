@@ -8,7 +8,7 @@ import {
 import {
   HeartOutlined,
   ManOutlined,
-  UserOutlined,
+  ProfileOutlined,
   WomanOutlined,
 } from "@ant-design/icons";
 
@@ -29,7 +29,7 @@ const TopStatics = (props: iProps) => {
       <Col span={6}>
         <Card>
           <Space>
-            <UserOutlined />
+            <ProfileOutlined />
             <div>
               <h3>
                 {

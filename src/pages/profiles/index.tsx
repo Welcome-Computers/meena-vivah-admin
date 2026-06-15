@@ -20,7 +20,7 @@ const Profiles = () => {
   const profilsList = data?.data || [];
   const pagination = data?.pagination || {};
 
-  const getUsers = (page: number) => {
+  const getProfiles = (page: number) => {
     setPage(page);
   };
 
@@ -47,7 +47,7 @@ const Profiles = () => {
           data={profilsList}
           pagination={pagination}
           showAction={true}
-          getUsers={getUsers} />
+          getProfiles={getProfiles} />
 
       </div>
     </AdminLayout>

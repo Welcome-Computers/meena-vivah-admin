@@ -1,12 +1,12 @@
 import { getAge } from "@/lib/utility";
-import { IPagination, IUser } from "@/redux/types";
+import { IPagination, IProfile } from "@/redux/types";
 import { Avatar, Button, Pagination } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import style from "./ProfileCard.module.css";
 
 interface iProps {
-  data: IUser[],
+  data: IProfile[],
   pagination: IPagination,
   onPageChange: any;
   showAction?: boolean;
@@ -38,7 +38,7 @@ export const ProfileCard = (props: iProps) => {
                 />} />
               </div>
 
-              <div className={style.userInfo}>
+              <div className={style.profileInfo}>
                 <h4>{record?.name}</h4>
                 <p className={style.profession}>{record?.occupation}</p>
                 <p>

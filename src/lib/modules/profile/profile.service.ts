@@ -15,13 +15,13 @@ import { db } from "@/lib/db";
 import { addresses } from "@/lib/schema/address";
 import { masterGotra } from "@/lib/schema/masterGotra";
 import { otherGotras } from '@/lib/schema/otherGotra';
-import { users } from "@/lib/schema/profile";
+import { profiles } from "@/lib/schema/profile";
 import { siblingDetails } from "@/lib/schema/sibling";
 
 import { masterOccupation } from "@/lib/schema/masterOccupation";
 import { alias } from "drizzle-orm/mysql-core";
-import { GetMatchedUsersProps, GetUsersProps } from "./profile.types";
-import { CreateUserInput, UpdateUserInput } from "./profile.validation";
+import { GetMatchedProfilesProps, GetProfilesProps } from "./profile.types";
+import { CreateProfileInput, UpdateProfileInput } from "./profile.validation";
 
 const fatherOccupation = alias(masterOccupation, "fatherOccupation");
 const motherOccupation = alias(masterOccupation, "motherOccupation");
@@ -32,15 +32,15 @@ const grandmotherGotra = alias(masterGotra, "grandmotherGotra");
 const maternalGrandmotherGotra = alias(masterGotra, "maternalGrandmotherGotra");
 
 export const userSelect = {
-  id: users.id,
-  mobile: users.mobile,
-  gender: users.gender,
-  name: users.name,
-  dob: users.dob,
-  education: users.education,
+  id: profiles.id,
+  mobile: profiles.mobile,
+  gender: profiles.gender,
+  name: profiles.name,
+  dob: profiles.dob,
+  education: profiles.education,
 
-  fathersname: users.fathersname,
-  mothersname: users.mothersname,
+  fathersname: profiles.fathersname,
+  mothersname: profiles.mothersname,
 
   fathersoccupation:
     fatherOccupation.name,
@@ -49,16 +49,16 @@ export const userSelect = {
     motherOccupation.name,
 
   preferences:
-    users.preferences,
+    profiles.preferences,
 
   otherinfo:
-    users.otherinfo,
+    profiles.otherinfo,
 
   isSuspended:
-    users.isSuspended,
+    profiles.isSuspended,
 
   createdAt:
-    users.createdAt,
+    profiles.createdAt,
 
   occupation:
     masterOccupation.name,
@@ -76,7 +76,7 @@ export const userSelect = {
     maternalGrandmotherGotra.name,
 };
 
-async function getBaseUsers(
+async function getBaseProfiles(
   conditions: any[],
   page: number,
   limit: number
@@ -86,50 +86,50 @@ async function getBaseUsers(
 
   return await db
     .select(userSelect)
-    .from(users)
+    .from(profiles)
 
     .leftJoin(
       masterOccupation,
-      sql`${users.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
+      sql`${profiles.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
     )
 
     .leftJoin(
       fatherOccupation,
-      sql`${users.fathersoccupation} COLLATE utf8mb4_unicode_ci = ${fatherOccupation.code}`
+      sql`${profiles.fathersoccupation} COLLATE utf8mb4_unicode_ci = ${fatherOccupation.code}`
     )
 
     .leftJoin(
       motherOccupation,
-      sql`${users.mothersoccupation} COLLATE utf8mb4_unicode_ci = ${motherOccupation.code}`
+      sql`${profiles.mothersoccupation} COLLATE utf8mb4_unicode_ci = ${motherOccupation.code}`
     )
 
     .leftJoin(
       selfGotra,
-      sql`${users.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
+      sql`${profiles.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
     )
 
     .leftJoin(
       motherGotra,
-      sql`${users.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
+      sql`${profiles.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
     )
 
     .leftJoin(
       grandmotherGotra,
-      sql`${users.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
+      sql`${profiles.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
     )
 
     .leftJoin(
       maternalGrandmotherGotra,
-      sql`${users.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
+      sql`${profiles.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
     )
 
     .where(and(...conditions))
-    .orderBy(desc(users.id))
+    .orderBy(desc(profiles.id))
     .limit(limit)
     .offset(offset);
 }
 
-async function attachUserRelations(
+async function attachProfileRelations(
   data: any[]
 ) {
   const userIds =
@@ -285,29 +285,29 @@ async function attachUserRelations(
   );
 
   return data.map(
-    (user) => ({
-      ...user,
+    (profile) => ({
+      ...profile,
 
       address_details:
         addressMap.get(
-          user.id
+          profile.id
         ) || [],
 
       sibling_details:
         siblingMap.get(
-          user.id
+          profile.id
         ) || [],
 
       other_gotra:
         otherGotraMap.get(
-          user.id
+          profile.id
         ) || [],
     })
   );
 }
 
-export async function getUsers(
-  params: GetUsersProps
+export async function getProfiles(
+  params: GetProfilesProps
 ) {
   const {
     page = 1,
@@ -317,20 +317,20 @@ export async function getUsers(
   // console.log("profile default ", params)
 
   const conditions = [
-    eq(users.isSuspended, false),
+    eq(profiles.isSuspended, false),
   ];
 
   // filters add here...
 
   const data =
-    await getBaseUsers(
+    await getBaseProfiles(
       conditions,
       page,
       limit
     );
 
   const finalData =
-    await attachUserRelations(
+    await attachProfileRelations(
       data
     );
 
@@ -340,7 +340,7 @@ export async function getUsers(
         count:
           sql<number>`count(*)`,
       })
-      .from(users)
+      .from(profiles)
       .where(
         and(...conditions)
       );
@@ -364,7 +364,7 @@ export async function getUsers(
 }
 
 export async function getProfileMatches(
-  params: GetMatchedUsersProps
+  params: GetMatchedProfilesProps
 ) {
   const {
     page = 1,
@@ -377,7 +377,7 @@ export async function getProfileMatches(
   } = params;
 
   const conditions = [
-    eq(users.isSuspended, false),
+    eq(profiles.isSuspended, false),
   ];
 
   /**
@@ -389,7 +389,7 @@ export async function getProfileMatches(
   ) {
     conditions.push(
       inArray(
-        users.occupation,
+        profiles.occupation,
         req_occupation
       )
     );
@@ -401,7 +401,7 @@ export async function getProfileMatches(
   if (looking_for) {
     conditions.push(
       ne(
-        users.gender,
+        profiles.gender,
         looking_for
       )
     );
@@ -416,28 +416,28 @@ export async function getProfileMatches(
   ) {
     conditions.push(
       notInArray(
-        users.self_gotra,
+        profiles.self_gotra,
         exclude_gotra
       )
     );
 
     conditions.push(
       notInArray(
-        users.m_gotra,
+        profiles.m_gotra,
         exclude_gotra
       )
     );
 
     conditions.push(
       notInArray(
-        users.gm_gotra,
+        profiles.gm_gotra,
         exclude_gotra
       )
     );
 
     conditions.push(
       notInArray(
-        users.mat_gm_gotra,
+        profiles.mat_gm_gotra,
         exclude_gotra
       )
     );
@@ -474,14 +474,14 @@ export async function getProfileMatches(
 
     conditions.push(
       gte(
-        users.dob,
+        profiles.dob,
         minDob
       )
     );
 
     conditions.push(
       lte(
-        users.dob,
+        profiles.dob,
         maxDob
       )
     );
@@ -498,14 +498,14 @@ export async function getProfileMatches(
   );
 
   const data =
-    await getBaseUsers(
+    await getBaseProfiles(
       conditions,
       page,
       limit
     );
 
   const finalData =
-    await attachUserRelations(
+    await attachProfileRelations(
       data
     );
 
@@ -515,7 +515,7 @@ export async function getProfileMatches(
         count:
           sql<number>`count(*)`,
       })
-      .from(users)
+      .from(profiles)
       .where(
         and(...conditions)
       );
@@ -538,19 +538,19 @@ export async function getProfileMatches(
   };
 }
 
-export async function createUser(
-  payload: CreateUserInput
+export async function createProfile(
+  payload: CreateProfileInput
 ) {
 
   return await db.transaction(
     async (tx) => {
 
       /**
-       * USER
+       * PROFILE
        */
       const [userResult] =
         await tx
-          .insert(users)
+          .insert(profiles)
           .values({
             // other_mobile:
             //   payload.other_mobile,
@@ -708,30 +708,30 @@ export async function createUser(
   );
 }
 
-export async function getUserById(
+export async function getProfileById(
   id: number
 ) {
 
-  // return await db.query.users
+  // return await db.query.profiles
   //   .findFirst({
-  //     where: eq(users.id, id),
+  //     where: eq(profiles.id, id),
   //   });
 
-  const [user] = await db.select({
-    id: users.id,
-    mobile: users.mobile,
-    gender: users.gender,
-    name: users.name,
-    dob: users.dob,
-    education: users.education,
+  const [profile] = await db.select({
+    id: profiles.id,
+    mobile: profiles.mobile,
+    gender: profiles.gender,
+    name: profiles.name,
+    dob: profiles.dob,
+    education: profiles.education,
 
-    fathersname: users.fathersname,
-    mothersname: users.mothersname,
-    fathersoccupation: users.fathersoccupation,
-    mothersoccupation: users.mothersoccupation,
+    fathersname: profiles.fathersname,
+    mothersname: profiles.mothersname,
+    fathersoccupation: profiles.fathersoccupation,
+    mothersoccupation: profiles.mothersoccupation,
 
-    preferences: users.preferences,
-    otherinfo: users.otherinfo,
+    preferences: profiles.preferences,
+    otherinfo: profiles.otherinfo,
 
     occupationFull: masterOccupation,
     occupation: masterOccupation.name,
@@ -742,51 +742,51 @@ export async function getUserById(
     mat_gm_gotra:
       maternalGrandmotherGotra.name,
   })
-    .from(users)
+    .from(profiles)
 
     .leftJoin(
       masterOccupation,
-      sql`${users.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
+      sql`${profiles.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
     )
 
     .leftJoin(
       selfGotra,
-      sql`${users.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
+      sql`${profiles.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
     )
 
     .leftJoin(
       motherGotra,
-      sql`${users.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
+      sql`${profiles.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
     )
 
     .leftJoin(
       grandmotherGotra,
-      sql`${users.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
+      sql`${profiles.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
     )
 
     .leftJoin(
       maternalGrandmotherGotra,
-      sql`${users.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
+      sql`${profiles.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
     )
 
-    .where(eq(users.id, id))
+    .where(eq(profiles.id, id))
     .limit(1);
   // .then(rows => rows[0] ?? null);
 
-  return user;
+  return profile;
 }
 
-export async function updateUser(
+export async function updateProfile(
   userId: number,
-  payload: UpdateUserInput
+  payload: UpdateProfileInput
 ) {
   return await db.transaction(async (tx) => {
 
     /**
-     * USER
+     * PROFILE
      */
     await tx
-      .update(users)
+      .update(profiles)
       .set({
         mobile: payload.mobile,
         gender: payload.gender,
@@ -805,7 +805,7 @@ export async function updateUser(
         preferences: payload.preferences,
         otherinfo: payload.other_details,
       })
-      .where(eq(users.id, userId));
+      .where(eq(profiles.id, userId));
 
     /**
      * ADDRESS
@@ -867,59 +867,59 @@ export async function updateUser(
   });
 }
 
-export async function suspendUser(
+export async function suspendProfile(
   id: number
 ) {
 
   await db
-    .update(users)
+    .update(profiles)
     .set({
       isSuspended: true,
     })
     .where(
-      eq(users.id, id)
+      eq(profiles.id, id)
     );
 
   return true;
 }
-export async function activeUser(
+export async function activeProfile(
   id: number
 ) {
 
   await db
-    .update(users)
+    .update(profiles)
     .set({
       isSuspended: false,
     })
     .where(
-      eq(users.id, id)
+      eq(profiles.id, id)
     );
 
   return true;
 }
 
 
-export async function getUserByMobile(
+export async function getProfileByMobile(
   mobile: string
 ) {
   const data = await db
     .select({
-      id: users.id,
-      name: users.name,
-      mobile: users.mobile,
-      gender: users.gender,
-      dob: users.dob,
+      id: profiles.id,
+      name: profiles.name,
+      mobile: profiles.mobile,
+      gender: profiles.gender,
+      dob: profiles.dob,
       occupation: masterOccupation.name,
     })
-    .from(users)
+    .from(profiles)
     .leftJoin(
       masterOccupation,
-      sql`${users.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
+      sql`${profiles.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
     )
     .where(
       and(
-        eq(users.mobile, mobile),
-        eq(users.isSuspended, false)
+        eq(profiles.mobile, mobile),
+        eq(profiles.isSuspended, false)
       )
     );
 

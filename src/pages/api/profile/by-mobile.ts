@@ -3,7 +3,7 @@ import type {
   NextApiResponse,
 } from "next";
 
-import { getUserByMobile } from "@/lib/modules/profile/profile.service";
+import { getProfileByMobile } from "@/lib/modules/profile/profile.service";
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,7 +26,7 @@ export default async function handler(
       });
     }
 
-    const data = await getUserByMobile(mobile);
+    const data = await getProfileByMobile(mobile);
 
     return res.status(200).json({
       success: true,

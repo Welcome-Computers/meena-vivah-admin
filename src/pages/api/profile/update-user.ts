@@ -3,8 +3,8 @@ import type {
   NextApiResponse,
 } from "next";
 
-import { updateUser } from "@/lib/modules/profile/profile.service";
-import { updateUserSchema } from "@/lib/modules/profile/profile.validation";
+import { updateProfile } from "@/lib/modules/profile/profile.service";
+import { updateProfileSchema } from "@/lib/modules/profile/profile.validation";
 import { ZodError } from "zod";
 
 export default async function handler(
@@ -20,21 +20,21 @@ export default async function handler(
     }
 
 
-    const userId = req.body.id as string;
+    const profileId = req.body.id as string;
 
 
-    if (!userId) {
+    if (!profileId) {
       return res.status(400).json({
         success: false,
-        message: "UserId is required",
+        message: "ProfileId is required",
       });
     }
 
-    const validatedData = updateUserSchema.parse(req.body);
+    const validatedData = updateProfileSchema.parse(req.body);
 
     const result =
-      await updateUser(
-        Number(userId),
+      await updateProfile(
+        Number(profileId),
         validatedData
       );
 

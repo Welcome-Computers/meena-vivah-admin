@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { db } from "@/lib/db";
 import {
   deleteGotra,
   getGotraById,
   updateGotra,
 } from "@/lib/modules/master-gotra/master-gotra.service";
-import { db } from "@/lib/db";
+import { profiles } from "@/lib/schema/profile";
 import { eq, or } from "drizzle-orm";
-import { users } from "@/lib/schema/profile";
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,14 +37,14 @@ export default async function handler(
 
       // check if gotra is used , then disabled delet
       const used = await db
-        .select({ id: users.id })
-        .from(users)
+        .select({ id: profiles.id })
+        .from(profiles)
         .where(
           or(
-            eq(users.self_gotra, gotra.code),
-            eq(users.m_gotra, gotra.code),
-            eq(users.gm_gotra, gotra.code),
-            eq(users.mat_gm_gotra, gotra.code),
+            eq(profiles.self_gotra, gotra.code),
+            eq(profiles.m_gotra, gotra.code),
+            eq(profiles.gm_gotra, gotra.code),
+            eq(profiles.mat_gm_gotra, gotra.code),
           ),
         );
       if (used.length > 0) {

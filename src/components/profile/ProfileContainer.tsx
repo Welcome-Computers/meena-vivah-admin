@@ -9,7 +9,7 @@ import {
 
 import {
   IPagination,
-  IUser,
+  IProfile,
 } from "@/redux/types";
 
 import { ProfileCard } from "./ProfileCard";
@@ -17,12 +17,12 @@ import ProfileTable from "./ProfileTable";
 
 interface iProps {
   loading: boolean;
-  data: IUser[];
+  data: IProfile[];
   pagination: IPagination;
   defaultShow?: "grid" | "table";
   title?: string;
   showToggle?: boolean;
-  getUsers?: (page: number, limit?: number) => void
+  getProfiles?: (page: number, limit?: number) => void
   headerRightSec?: any;
   showAction?: boolean;
 }
@@ -32,7 +32,7 @@ const ProfileContainer = (props: iProps) => {
     loading,
     data,
     pagination,
-    getUsers,
+    getProfiles,
     defaultShow = "grid",
     title = "Profiles",
     showToggle = true,
@@ -45,7 +45,7 @@ const ProfileContainer = (props: iProps) => {
     page: number,
     pageSize?: number
   ) => {
-    getUsers?.(page, pageSize);
+    getProfiles?.(page, pageSize);
   };
 
   return (

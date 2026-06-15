@@ -1,4 +1,4 @@
-export type GetUsersProps = {
+export type GetProfilesProps = {
   action?: "matches" | "list" | undefined,
 
   page?: number;
@@ -19,7 +19,7 @@ export type GetUsersProps = {
 };
 
 
-export type GetMatchedUsersProps = {
+export type GetMatchedProfilesProps = {
   page?: number;
   limit?: number;
   action?: string;

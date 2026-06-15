@@ -13,7 +13,7 @@ const Home = () => {
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
 
-  const getUsers = (page: number) => {
+  const getProfiles = (page: number) => {
     setPage(page);
   };
 
@@ -32,7 +32,7 @@ const Home = () => {
           loading={isFetching}
           data={userList}
           pagination={pagination}
-          getUsers={getUsers}
+          getProfiles={getProfiles}
         />
       </div>
     </PublicLayout>

@@ -27,7 +27,7 @@ export interface IOtherGotra {
   string | null;
 }
 
-export interface IUser {
+export interface IProfile {
   id: number;
   mobile: string;
   gender: string;
@@ -62,9 +62,9 @@ export interface IPagination {
   totalPages: number;
 }
 
-export interface IUserApiResponse {
+export interface IProfileApiResponse {
   success: boolean;
-  data: IUser[];
+  data: IProfile[];
   pagination: IPagination;
 }
 
@@ -76,7 +76,7 @@ export const paginationInit = {
   totalPages: 1,
 };
 
-export type GetUsersParams = {
+export type GetProfilesParams = {
   page?: number;
   limit?: number;
 };

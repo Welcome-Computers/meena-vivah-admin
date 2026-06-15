@@ -2,8 +2,8 @@ import PublicLayout from "@/components/layout/PublicLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { ProfileFilter } from "@/components/profile/ProfileFilter";
 import {
-  GetMatchedUsersProps,
-  GetUsersProps,
+  GetMatchedProfilesProps,
+  GetProfilesProps,
 } from "@/lib/modules/profile/profile.types";
 import { useGetUsersQuery } from "@/redux/features/profile";
 import { useSearchParams } from "next/navigation";
@@ -18,7 +18,7 @@ import style from "./Profile.module.css";
 const MatchedProfilePage = () => {
   const searchParams = useSearchParams();
 
-  const initialFilters = useMemo<GetMatchedUsersProps>(() => {
+  const initialFilters = useMemo<GetMatchedProfilesProps>(() => {
     const ageValues = searchParams
       .getAll("preferredAge[]")
       .map(Number);
@@ -43,7 +43,7 @@ const MatchedProfilePage = () => {
 
   const [page, setPage] = useState(1);
 
-  const [filters, setFilters] = useState<GetMatchedUsersProps>(initialFilters);
+  const [filters, setFilters] = useState<GetMatchedProfilesProps>(initialFilters);
 
   /**
    * Sync URL filters when URL changes
@@ -68,7 +68,7 @@ const MatchedProfilePage = () => {
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
 
-  const getUsers = useCallback(
+  const getProfiles = useCallback(
     (newPage: number) => {
       setPage(newPage);
     },
@@ -76,7 +76,7 @@ const MatchedProfilePage = () => {
   );
 
   const filterDataHandler = useCallback(
-    (query: GetUsersProps) => {
+    (query: GetProfilesProps) => {
       setPage(1);
 
       setFilters({
@@ -106,7 +106,7 @@ const MatchedProfilePage = () => {
             loading={isFetching}
             data={userList}
             pagination={pagination}
-            getUsers={getUsers}
+            getProfiles={getProfiles}
           />
         </div>
       </section>

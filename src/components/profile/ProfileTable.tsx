@@ -1,5 +1,5 @@
 import { getAge } from "@/lib/utility";
-import { IPagination, IUser } from "@/redux/types";
+import { IPagination, IProfile } from "@/redux/types";
 
 import { Avatar, Button, Space, Table, Tag } from "antd";
 
@@ -11,7 +11,7 @@ import ProfileData from "./ProfileData";
 interface iProps {
   loading: boolean;
   showAction?: boolean;
-  data: IUser[];
+  data: IProfile[];
   pagination: IPagination;
   onPageChange: any;
 }
@@ -22,7 +22,7 @@ const ProfileTable = (props: iProps) => {
 
   const router = useRouter();
 
-  const columns: ColumnsType<IUser> = [{
+  const columns: ColumnsType<IProfile> = [{
     title: "#", key: "index",
     width: 70, fixed: "left", render: (_, __, index) => (pagination.page - 1) * pagination.limit + index + 1,
   },

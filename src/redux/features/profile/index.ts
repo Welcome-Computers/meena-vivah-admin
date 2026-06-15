@@ -1,9 +1,9 @@
-import { GetMatchedUsersProps } from "@/lib/modules/profile/profile.types";
+import { GetMatchedProfilesProps } from "@/lib/modules/profile/profile.types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { queryString } from "object-query-string";
 
-export const userApi = createApi({
-  reducerPath: "userApi",
+export const profileApi = createApi({
+  reducerPath: "profileApi",
 
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -14,7 +14,7 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     // GET USERS
     getUsers: builder.query({
-      query: (params: GetMatchedUsersProps) => {
+      query: (params: GetMatchedProfilesProps) => {
 
         return ({
           url: `/api/profile?${queryString(params)}`,
@@ -87,4 +87,4 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
-} = userApi;
+} = profileApi;

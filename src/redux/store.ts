@@ -2,12 +2,12 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { masterGotraApi } from "./features/masterGotra";
 import { masterOccupationApi } from "./features/masterOccupation";
-import { userApi } from "./features/profile";
+import { profileApi } from "./features/profile";
 
 export const store = configureStore({
   reducer: {
 
-    [userApi.reducerPath]: userApi.reducer,
+    [profileApi.reducerPath]: profileApi.reducer,
     [masterGotraApi.reducerPath]: masterGotraApi.reducer,
     [masterOccupationApi.reducerPath]: masterOccupationApi.reducer,
   },
@@ -15,7 +15,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(
-        userApi.middleware,
+        profileApi.middleware,
         masterGotraApi.middleware,
         masterOccupationApi.middleware
       ),

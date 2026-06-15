@@ -6,13 +6,13 @@ import type {
 import { ZodError } from "zod";
 
 import {
-  createUser,
+  createProfile,
   getProfileMatches,
-  getUsers,
+  getProfiles,
 } from "@/lib/modules/profile/profile.service";
 
 import {
-  createUserSchema,
+  createProfileSchema,
 } from "@/lib/modules/profile/profile.validation";
 
 export default async function handler(
@@ -23,13 +23,13 @@ export default async function handler(
   try {
 
     /**
-     * CREATE USER
+     * CREATE PROFILE
      */
     if (req.method === "POST") {
 
 
-      const validatedData = createUserSchema.parse(req.body);
-      const result = await createUser(validatedData);
+      const validatedData = createProfileSchema.parse(req.body);
+      const result = await createProfile(validatedData);
 
       return res.status(201).json({ success: true, data: result });
     }
@@ -116,7 +116,7 @@ export default async function handler(
         });
       } else {
 
-        const result = await getUsers({
+        const result = await getProfiles({
           page,
           limit,
           occupation,

@@ -34,6 +34,7 @@ export const getAge = (
 
 
 export const removeEmptyObjects = (arr: any[] = []) => {
+   if (!Array.isArray(arr)) return [];
   return arr.filter(
     (item) =>
       item &&

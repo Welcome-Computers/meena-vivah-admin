@@ -1,16 +1,24 @@
 import Modal from "antd/es/modal/Modal";
-import  GotraForm  from "./GotraForm";
 import { useUpdateGotraMutation } from "@/redux/features/masterGotra";
 import { appMessage } from "@/lib/utility/message";
+import GenericForm from "@/components/common/GenericForm";
 
-  export default function UpdateGotra(props: any) {
-  const { isModalOpen, setIsModalOpen, form, selectedGotraId } = props;
+export default function UpdateGotra(props: any) {
+  const { isModalOpen, setIsModalOpen, form, selectedGotraId, selectedGotra } =
+    props;
 
   // update gotra
   const [handleUpdateGotra] = useUpdateGotraMutation();
 
   const handleUpdate = async (value: any) => {
     try {
+      // check update value is chnaged or not
+      if (selectedGotra?.trim() === value["master-gotra"]?.trim()) {
+        appMessage.error("Failed to update same value");
+        setIsModalOpen(false);
+        return;
+      }
+
       await handleUpdateGotra({
         id: selectedGotraId,
         body: {
@@ -19,7 +27,7 @@ import { appMessage } from "@/lib/utility/message";
       }).unwrap();
 
       appMessage.success("Gotra Updated successfully");
-        setIsModalOpen(false);
+      setIsModalOpen(false);
     } catch (error: any) {
       console.log("UPDATE ERROR", error);
       appMessage.error(error?.data?.message || "Failed to update gotra");
@@ -36,8 +44,13 @@ import { appMessage } from "@/lib/utility/message";
         footer={null}
         title="Update Gotra"
       >
-        <GotraForm form={form} handleOnSubmit={handleUpdate} />
+         <GenericForm
+               handleOnSubmit={handleUpdate} 
+               form={form} 
+               name="master-gotra"
+               label="Create Gotra"
+               />
       </Modal>
     </>
   );
-};
+}

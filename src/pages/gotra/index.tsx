@@ -1,4 +1,6 @@
+
 import AdminLayout from "@/components/layout/AdminLayout";
+
 import GotraTable from "@/components/master-gotra/GotraTable";
 import { appMessage } from "@/lib/utility/message";
 import {
@@ -14,6 +16,7 @@ const Gotra = () => {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGotraId, setSelectedGotraId] = useState<number | null>(null);
+  const [selectedGotra, setSelectedGotra] = useState<string | null>(null);
 
   const [form] = Form.useForm();
 
@@ -41,6 +44,7 @@ const Gotra = () => {
       if (id) {
         setIsModalOpen(true);
         setSelectedGotraId(id);
+        setSelectedGotra(body.name);
       }
       form.setFieldsValue({
         "master-gotra": body?.name,
@@ -62,6 +66,7 @@ const Gotra = () => {
           setIsModalOpen={setIsModalOpen}
           form={form}
           selectedGotraId={selectedGotraId}
+          selectedGotra={selectedGotra}
         />
 
         <GotraTable
@@ -71,6 +76,7 @@ const Gotra = () => {
           data={gotraList}
           pagination={pagination}
         />
+
       </div>
     </AdminLayout>
   );

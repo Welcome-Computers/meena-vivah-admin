@@ -50,7 +50,7 @@ const MobileDetails = memo((props: any) => {
           },
         ]}
         label="Other Mobile"
-        placeholder="e.g. 000-000-0000"
+        placeholder="e.g. 9988771234"
       />
 
     </div>

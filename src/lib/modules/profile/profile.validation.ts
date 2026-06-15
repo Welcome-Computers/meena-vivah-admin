@@ -1,12 +1,20 @@
 
 import { z } from "zod";
 
+// const addressSchema = z.object({
+//   full_address: z.string(),
+//   state: z.string(),
+//   city: z.string(),
+//   pincode: z.string(),
+//   type: z.string(),
+// });
+
 const addressSchema = z.object({
-  full_address: z.string(),
-  state: z.string(),
-  city: z.string(),
-  pincode: z.string(),
-  type: z.string(),
+  full_address: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  pincode: z.string().optional(),
+  type: z.string().optional(),
 });
 
 const siblingSchema = z.object({

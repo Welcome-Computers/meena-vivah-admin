@@ -44,57 +44,66 @@ export const OtheGotraDetails = memo((props: any) => {
   };
 
   return (
-    <FormListComponent formListName="other_gotra" isDisabled={isDisabled}>
+    <FormListComponent formListName="other_gotra" style={{ marginBottom: 16 }} isDisabled={isDisabled}>
       {(value: any) => (
-        <div className="otherGotraSection" style={{ display: "grid", gridTemplateColumns: "6fr 3fr" }}>
-          <SearchableSelectField
-            className="otherGotraSection_type"
-            label={"Gotra Name"}
-            name={[value.name, "other_gotra_relation"]}
-            options={[
-              { label: "Step Mother", value: "step_mother" },
-              { label: "Step Grand Mother", value: "step_grand_mother" },
-            ]}
-            dependencies={[["other_gotra", value.name, "other_gotra_name"]]}
-            rules={[
-              {
-                validator: (_: RuleObject, inputVal: any) => {
-                  const gotra_name = form.getFieldValue([
-                    "other_gotra",
-                    value.name,
-                    "other_gotra_name",
-                  ]);
+        <>
+          <div className="otherGotraSection"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "12px",
+            }}>
+            <div className="otherGotraSection_type">
+              <label>Gotra Name</label>
+              <SearchableSelectField
+                // className="otherGotraSection_type"
+                // label={"Gotra Name"}
+                name={[value.name, "other_gotra_relation"]}
+                options={[
+                  { label: "Step Mother", value: "step_mother" },
+                  { label: "Step Grand Mother", value: "step_grand_mother" },
+                ]}
+                dependencies={[["other_gotra", value.name, "other_gotra_name"]]}
+                rules={[
+                  {
+                    validator: (_: RuleObject, inputVal: any) => {
+                      const gotra_name = form.getFieldValue([
+                        "other_gotra",
+                        value.name,
+                        "other_gotra_name",
+                      ]);
 
-                  if ((inputVal && !gotra_name) || (!inputVal && gotra_name)) {
-                    return Promise.reject(new Error("enter both fields"));
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-            placeholder="Select"
-          />
+                      if ((inputVal && !gotra_name) || (!inputVal && gotra_name)) {
+                        return Promise.reject(new Error("enter both fields"));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                placeholder="Select"
+              />
+            </div>
 
-          <SearchableSelectField
-            // mode="tags"
-            className="otherGotraSection_name"
-            allowCreate
-            onCreateOption={handleCreateGotra}
-            name={[value.name, "other_gotra_name"]}
-            label={"Gotra Name"}
-            options={gottraOptions}
-            loading={isGotraLoading}
-            dependencies={dependencies}
-            onChange={(gotraCode) => {
-              handleInputValue(gotraCode, name)
-            }}
-            placeholder="Select occupations"
-            rules={[
-              { validator: otherGotraRules },
-            ]}
-          />
-
-        </div>
+            <SearchableSelectField
+              // mode="tags"
+              className="otherGotraSection_name"
+              label={"Gotra Name"}
+              allowCreate
+              onCreateOption={handleCreateGotra}
+              name={[value.name, "other_gotra_name"]}
+              options={gottraOptions}
+              loading={isGotraLoading}
+              dependencies={dependencies}
+              onChange={(gotraCode) => {
+                handleInputValue(gotraCode, name)
+              }}
+              placeholder="Select occupations"
+              rules={[
+                { validator: otherGotraRules },
+              ]}
+            />
+          </div>
+        </>
       )}
     </FormListComponent>
   );

@@ -24,6 +24,7 @@ interface iProps {
   showToggle?: boolean;
   getUsers?: (page: number, limit?: number) => void
   headerRightSec?: any;
+  showAction?: boolean;
 }
 
 const ProfileContainer = (props: iProps) => {
@@ -35,6 +36,7 @@ const ProfileContainer = (props: iProps) => {
     defaultShow = "grid",
     title = "Profiles",
     showToggle = true,
+    showAction = false,
   } = props;
 
   const [view, setView] = useState<"grid" | "table">(defaultShow);
@@ -80,6 +82,7 @@ const ProfileContainer = (props: iProps) => {
         <ProfileCard
           data={data}
           onPageChange={handlePaginationChange}
+          showAction={showAction}
           pagination={
             pagination
           }
@@ -88,6 +91,7 @@ const ProfileContainer = (props: iProps) => {
         <ProfileTable
           loading={loading}
           data={data}
+          showAction={showAction}
           onPageChange={handlePaginationChange}
           pagination={
             pagination

@@ -1,3 +1,4 @@
+import ModalComp from "@/components/common/ModalComp";
 import AddressDetails from "@/components/formComponents/AddressDetails";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
 import GotraDetials from "@/components/formComponents/GotraDetails";
@@ -6,19 +7,19 @@ import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
+import ModalByMobile from "@/components/profile/ModalByMobile";
 import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
+import { useLazyGetProfilesByMobileQuery } from "@/redux/features/profile";
 import { Button, Col, Form, FormInstance, Row } from "antd";
-import { RefObject, useEffect } from "react";
+import { RefObject, useCallback, useEffect, useState } from "react";
 
 
 interface iProps {
   form: FormInstance,
   handleFromSubmit: any,
-  handleOnBlurMobile?: any,
-  handlePreviewButton: any,
   isLoadingCreateUser: any,
   formContainerRef: RefObject<HTMLDivElement | null>
   callingFrom: 'create' | "update"
@@ -29,12 +30,15 @@ const ProfileForm = (props: iProps) => {
   const {
     form,
     handleFromSubmit,
-    handleOnBlurMobile,
-    handlePreviewButton,
     isLoadingCreateUser,
     formContainerRef,
-    isFetching
+    isFetching,
+    callingFrom
   } = props || {}
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
+  const [dataPreview, setDataPreview] = useState({});
 
   const { data: occupatonList, isFetching: isOccupationLoading, refetch } = useGetOccupationsQuery({});
 
@@ -44,6 +48,32 @@ const ProfileForm = (props: iProps) => {
   })) || [];
 
   const [createOccupation] = useCreateOccupationMutation()
+
+  const [trigger, { data: searchByMobileData, isFetching: isLoadingByMobile }] = useLazyGetProfilesByMobileQuery();
+
+  const handleOnBlurMobile = useCallback(
+    async (
+      e: React.FocusEvent<HTMLInputElement>
+    ) => {
+      try {
+        const mobile = e.target.value.trim();
+
+        if (mobile.length !== 10) {
+          return;
+        }
+
+        const result = await trigger(mobile).unwrap();
+
+        if (result?.success && !!result?.items?.length) {
+
+          setIsModalOpen(true)
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [trigger, setIsModalOpen]
+  );
 
   const handleCreateOccupation = async (value: string): Promise<SelectOption | void> => {
     try {
@@ -74,6 +104,17 @@ const ProfileForm = (props: iProps) => {
     firstComponentFocusHandler(formContainerRef)
   }, [formContainerRef]);
 
+
+  const handlePreviewButton = () => {
+    const previewData = form.getFieldsValue();
+    setDataPreview(previewData);
+    setisPreviewOpen(true);
+  };
+
+  const hanldeClosePreview = () => {
+    setisPreviewOpen(false);
+  };
+
   return (
     <div ref={formContainerRef}>
       {isFetching ?
@@ -98,7 +139,7 @@ const ProfileForm = (props: iProps) => {
             <Col xs={24} md={12}>
               <PersonalDetails
                 occupatonOptions={occupatonOptions}
-                handleOnBlurMobile={handleOnBlurMobile ? handleOnBlurMobile : null}
+                handleOnBlurMobile={handleOnBlurMobile}
                 isOccupationLoading={isOccupationLoading}
                 handleCreateOccupation={handleCreateOccupation}
                 form={form} />
@@ -149,6 +190,21 @@ const ProfileForm = (props: iProps) => {
           </div>
 
         </Form>}
+
+      <ModalByMobile
+        title="Profile Found"
+        isOpen={isModalOpen}
+        data={searchByMobileData?.items || []}
+        hanldeClose={() => setIsModalOpen(false)}
+      />
+
+      <ModalComp
+        title={"Preview Biodata"}
+        isOpen={isPreviewOpen}
+        data={dataPreview}
+        hanldeClose={hanldeClosePreview}
+      />
+
     </div>
   )
 }

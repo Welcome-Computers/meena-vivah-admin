@@ -22,6 +22,7 @@ export type GetUsersProps = {
 export type GetMatchedUsersProps = {
   page?: number;
   limit?: number;
+  action?: string;
 
   looking_for?: string;
 

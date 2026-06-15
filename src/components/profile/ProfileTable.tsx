@@ -1,14 +1,16 @@
 import { getAge } from "@/lib/utility";
 import { IPagination, IUser } from "@/redux/types";
 
-import { Avatar, Button, Space, Table, Tag, Tooltip } from "antd";
+import { Avatar, Button, Space, Table, Tag } from "antd";
 
 import type { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import ProfileData from "./ProfileData";
 
 interface iProps {
   loading: boolean;
+  showAction?: boolean;
   data: IUser[];
   pagination: IPagination;
   onPageChange: any;
@@ -16,7 +18,7 @@ interface iProps {
 
 const ProfileTable = (props: iProps) => {
 
-  const { loading, data, pagination, onPageChange } = props;
+  const { showAction, loading, data, pagination, onPageChange } = props;
 
   const router = useRouter();
 
@@ -34,7 +36,7 @@ const ProfileTable = (props: iProps) => {
       return (
         <Space orientation="horizontal" size={0}>
           <Avatar size={50}
-            icon={<Image src={imageSrc} alt={value.name}
+            icon={<Image src={imageSrc} alt={value}
               width={60}
               height={60}
             />} />
@@ -42,13 +44,21 @@ const ProfileTable = (props: iProps) => {
             orientation="vertical"
             size={0}
             style={{ marginLeft: "10px" }}>
-            <span>{value}</span>
+            <div style={{}}>
+              {value}{"   "}
+              <Space
+                orientation="horizontal"
+                size={0}>
+                <small>
+                  (<em color="blue">
+                    {`${record?.occupation}`}
+                  </em>)
+                </small>
+              </Space>
+            </div>
             <Space
               orientation="horizontal"
               size={0}>
-              {/* <Tag color={record.gender === "boy" ? "blue" : "magenta"}        >
-                {record.gender?.toUpperCase()}
-              </Tag> */}
               <Tag color={"black"}>
                 {getAge(record.dob)}
               </Tag>
@@ -59,28 +69,15 @@ const ProfileTable = (props: iProps) => {
     },
   },
 
-  {
-    title: "Occupation",
-    dataIndex: "occupation",
-    key: "occupation",
-    width: 180,
-    fixed: "left"
-  },
-
 
   {
     title: "DOB",
     dataIndex: "dob",
     key: "dob",
     width: 120,
-    render: (value) =>
-      value
-        ? new Date(
-          value
-        ).toLocaleDateString(
-          "en-IN"
-        )
-        : "-",
+    render: (value) => {
+      return getAge(value)
+    }
   },
 
   {
@@ -89,7 +86,6 @@ const ProfileTable = (props: iProps) => {
     key: "education",
     width: 180,
   },
-
 
   {
     title: "Gotra",
@@ -128,14 +124,50 @@ const ProfileTable = (props: iProps) => {
       "fathersname",
     key: "fathersname",
     width: 180,
+    render: (value, record) => {
+      return (
+        <Space orientation="horizontal" size={0}>
+          <Space
+            orientation="vertical"
+            size={0}
+            style={{ marginLeft: "10px" }}>
+            <small>
+              {value}
+
+              <em color="blue">
+                {` ${record?.fathersoccupation}`}
+              </em>
+            </small>
+          </Space>
+        </Space>
+      )
+    },
+
   },
 
   {
     title: "Mother",
-    dataIndex:
-      "mothersname",
+    dataIndex: "mothersname",
     key: "mothersname",
     width: 180,
+    render: (value, record) => {
+      return (
+        <Space orientation="horizontal" size={0}>
+          <Space
+            orientation="vertical"
+            size={0}
+            style={{ marginLeft: "10px" }}>
+            <small>
+              {value}
+
+              <em color="blue">
+                {` ${record?.mothersoccupation}`}
+              </em>
+            </small>
+          </Space>
+        </Space>
+      )
+    },
   },
 
   {
@@ -144,154 +176,27 @@ const ProfileTable = (props: iProps) => {
     width: 250,
     render: (_, record) => {
       const address = record?.address_details?.[0];
-      if (!address)
-        return "-";
+
+      if (!address) return "-";
+
       return (
-        <Space
-          orientation="vertical"
-          size={0}
-        >
-          <span>
-            {
-              address.address
-            }
-          </span>
-          <small>
-            {
-              address.city
-            }
-            ,
-            {" "}
-            {
-              address.state
-            }
+        <div>
+          <div>{address.address}</div>
+
+          <small
+            style={{
+              color: "#888",
+            }}
+          >
+            {[address.city, address.state, address.pincode]
+              .filter(Boolean)
+              .join(", ")}
           </small>
-        </Space>
+        </div>
       );
     },
   },
 
-  {
-    title: "Siblings",
-    key: "siblings",
-    width: 220,
-    render: (_, record) => {
-      if (
-        !record
-          ?.sibling_details
-          ?.length
-      ) {
-        return "-";
-      }
-      return (
-        <Space
-          orientation="vertical"
-          size={2}
-        >
-          {record.sibling_details.map(
-            (
-              item,
-              index
-            ) => (
-              <Tag
-                key={
-                  index
-                }
-              >
-                {
-                  item.relation
-                }
-                :
-                {" "}
-                {
-                  item.name
-                }
-              </Tag>
-            )
-          )}
-        </Space>
-      );
-    },
-  },
-
-  {
-    title:
-      "Other Gotra",
-    key:
-      "other_gotra",
-    width: 220,
-    render: (_, record) => {
-      if (
-        !record
-          ?.other_gotra
-          ?.length
-      ) {
-        return "-";
-      }
-      return (
-        <Space
-          orientation="vertical"
-          size={2}
-        >
-          {record.other_gotra.map(
-            (
-              item,
-              index
-            ) => (
-              <Tag
-                key={
-                  index
-                }
-                color="purple"
-              >
-                {
-                  item.other_gotra_relation
-                }
-                :
-                {" "}
-                {
-                  item.other_gotra_name
-                }
-              </Tag>
-            )
-          )}
-        </Space>
-      );
-    },
-  },
-
-  {
-    title:
-      "Preferences",
-    dataIndex:
-      "preferences",
-    key:
-      "preferences",
-    width: 250,
-    render: (
-      value
-    ) => {
-      if (!value)
-        return "-";
-      return (
-        <Tooltip
-          title={
-            value
-          }
-        >
-          <span>
-            {value.slice(
-              0,
-              40
-            )}
-            {value.length >
-              40 &&
-              "..."}
-          </span>
-        </Tooltip>
-      );
-    },
-  },
   {
     title: "Mobile",
     dataIndex: "mobile",
@@ -299,31 +204,31 @@ const ProfileTable = (props: iProps) => {
     width: 120,
     fixed: "right",
   },
+  ...(showAction
+    ? [
+      {
+        title: "Action",
+        key: "action",
+        width: 100,
+        fixed: "right" as const,
+        render: (_: any, record: any) => (
+          <Space>
+            <Button
+              type="link"
+              onClick={() => {
+                router.push(
+                  `/profiles/update_profile?id=${record.id}&action=update`
+                );
+              }}
+            >
+              Edit
+            </Button>
+          </Space>
+        ),
+      },
+    ]
+    : [])
 
-  {
-    title:
-      "Action",
-    key:
-      "action",
-    width: 100,
-    fixed: "right",
-    render: (
-      _,
-      record
-    ) => (
-      <Space>
-        <Button
-          onClick={() => {
-            router.push(
-              `/profiles/update_profile?id=${record.id}&action=update`
-            );
-          }}
-          type="link">
-          Edit
-        </Button>
-      </Space>
-    ),
-  },
   ];
 
   return (
@@ -348,276 +253,7 @@ const ProfileTable = (props: iProps) => {
         expandedRowRender: (
           record
         ) => (
-          <div
-            style={{
-              padding: 12,
-            }}
-          >
-            {/* Parents */}
-            <div
-              style={{
-                marginBottom: 16,
-              }}
-            >
-              <h4>
-                Family Details
-              </h4>
-              <p>
-                <b>
-                  Father:
-                </b>{" "}
-                {
-                  record.fathersname
-                }
-              </p>
-              <p>
-                <b>
-                  Father Occupation:
-                </b>{" "}
-                {
-                  record.fathersoccupation
-                }
-              </p>
-              <p>
-                <b>
-                  Mother:
-                </b>{" "}
-                {
-                  record.mothersname
-                }
-              </p>
-              <p>
-                <b>
-                  Mother Occupation:
-                </b>{" "}
-                {
-                  record.mothersoccupation
-                }
-              </p>
-            </div>
-            {/* Gotra */}
-            <div
-              style={{
-                marginBottom: 16,
-              }}
-            >
-              <h4>
-                Gotra Details
-              </h4>
-              <Space wrap>
-                <Tag>
-                  Self:
-                  {" "}
-                  {
-                    record.self_gotra
-                  }
-                </Tag>
-                <Tag>
-                  Mother:
-                  {" "}
-                  {
-                    record.m_gotra
-                  }
-                </Tag>
-                <Tag>
-                  Grandmother:
-                  {" "}
-                  {
-                    record.gm_gotra
-                  }
-                </Tag>
-                <Tag>
-                  Maternal GM:
-                  {" "}
-                  {
-                    record.mat_gm_gotra
-                  }
-                </Tag>
-              </Space>
-            </div>
-            {/* Address */}
-            <div
-              style={{
-                marginBottom: 16,
-              }}
-            >
-              <h4>
-                Address Details
-              </h4>
-              {record
-                ?.address_details
-                ?.length ? (
-                record.address_details.map(
-                  (
-                    item,
-                    index
-                  ) => (
-                    <div
-                      key={
-                        index
-                      }
-                      style={{
-                        marginBottom: 10,
-                      }}
-                    >
-                      <p>
-                        <b>
-                          Address:
-                        </b>{" "}
-                        {
-                          item.address
-                        }
-                      </p>
-                      <p>
-                        <b>
-                          City:
-                        </b>{" "}
-                        {
-                          item.city
-                        }
-                      </p>
-                      <p>
-                        <b>
-                          State:
-                        </b>{" "}
-                        {
-                          item.state
-                        }
-                      </p>
-
-                      <p>
-                        <b>
-                          Pincode:
-                        </b>{" "}
-                        {
-                          item.pincode
-                        }
-                      </p>
-                    </div>
-                  )
-                )
-              ) : (
-                <p>
-                  No Address
-                </p>
-              )}
-            </div>
-
-            {/* Siblings */}
-            <div
-              style={{
-                marginBottom: 16,
-              }}
-            >
-              <h4>
-                Sibling Details
-              </h4>
-
-              {record
-                ?.sibling_details
-                ?.length ? (
-                record.sibling_details.map(
-                  (
-                    item,
-                    index
-                  ) => (
-                    <div
-                      key={
-                        index
-                      }
-                    >
-                      <Tag color="blue">
-                        {
-                          item.relation
-                        }
-                      </Tag>
-
-                      {item.name}
-                      {" - "}
-                      {
-                        item.education
-                      }
-                      {" - "}
-                      {
-                        item.occupation
-                      }
-                    </div>
-                  )
-                )
-              ) : (
-                <p>
-                  No Siblings
-                </p>
-              )}
-            </div>
-
-            {/* Other Gotra */}
-            <div
-              style={{
-                marginBottom: 16,
-              }}
-            >
-              <h4>
-                Other Gotra
-              </h4>
-
-              {record
-                ?.other_gotra
-                ?.length ? (
-                record.other_gotra.map(
-                  (
-                    item,
-                    index
-                  ) => (
-                    <Tag
-                      key={
-                        index
-                      }
-                      color="purple"
-                    >
-                      {
-                        item.other_gotra_relation
-                      }
-                      :
-                      {" "}
-                      {
-                        item.other_gotra_name
-                      }
-                    </Tag>
-                  )
-                )
-              ) : (
-                <p>
-                  No Other Gotra
-                </p>
-              )}
-            </div>
-
-            {/* Preferences */}
-            <div>
-              <h4>
-                Preferences
-              </h4>
-
-              <p>
-                {
-                  record.preferences ||
-                  "-"
-                }
-              </p>
-
-              <h4>
-                Other Info
-              </h4>
-
-              <p>
-                {
-                  record.otherinfo ||
-                  "-"
-                }
-              </p>
-            </div>
-          </div>
+          <ProfileData record={record} />
         ),
       }}
     />

@@ -113,3 +113,38 @@ a {
   align-items: center;
   margin-bottom: 15px 20px;
 }
+
+
+.otherGotraSection {
+  display: grid;
+  gap: 12px;
+
+  .ant-form-item {
+    margin: 0;
+  }
+}
+
+.otherGotraSection_type {
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  gap: 12px;
+
+  label {
+    font-size: 14px;
+    line-height: 2;
+  }
+
+  .ant-form-item {
+    flex: 1;
+
+    .ant-row {
+      width: 100%;
+    }
+  }
+}
+
+.otherGotraSection_name {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+}

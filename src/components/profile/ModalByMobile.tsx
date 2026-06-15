@@ -47,7 +47,7 @@ const ModalByMobile = memo((props: iProps) => {
       dataIndex: "dob",
       key: "dob",
       render: (value: string) =>
-        dayjs(value).format("DD MMM YYYY"),
+        dayjs(value).format("DD MMMM YYYY"),
     },
     {
       title: "Occupation",
@@ -77,7 +77,15 @@ const ModalByMobile = memo((props: iProps) => {
     <Modal
       open={isOpen}
       onCancel={hanldeClose}
-      footer={null}
+      footer={[
+        <Button
+          key="continue"
+          type="primary"
+          onClick={hanldeClose}
+        >
+          Continue
+        </Button>,
+      ]}
       title={title}
       width={800}
     >

@@ -46,6 +46,7 @@ const Profiles = () => {
           loading={isFetching}
           data={profilsList}
           pagination={pagination}
+          showAction={true}
           getUsers={getUsers} />
 
       </div>

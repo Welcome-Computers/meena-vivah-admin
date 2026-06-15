@@ -54,6 +54,7 @@ const Dashboard = () => {
             title={'Last 15 Days New Registrations'}
             data={userList || []}
             pagination={pagination}
+            showAction={true}
             getUsers={getUsers} />
         </div>
 
@@ -65,6 +66,7 @@ const Dashboard = () => {
             defaultShow="table"
             data={userList || []}
             pagination={pagination}
+            showAction={true}
             getUsers={getUsers} />
         </div>
       </div>

@@ -6,9 +6,12 @@ const FormListComponent = memo((props: any) => {
 
 
   return (
-    <Form.List name={formListName}>
+    <Form.List
+      name={formListName}>
       {(fields, { add, remove }) => (
-        <div>
+        <div
+          style={{ marginBottom: 16 }}
+        >
           {fields.map((value) => (
             <div
               key={value.key}

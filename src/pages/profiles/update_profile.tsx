@@ -1,11 +1,10 @@
-import ModalComp from "@/components/common/ModalComp";
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
 import { useGetSingleProfileByIdQuery, useUpdateUserMutation } from "@/redux/features/profile";
 import { Form } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
@@ -14,43 +13,12 @@ const UpdateProfile = () => {
   const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
 
-  // const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
-  const [dataPreview, setDataPreview] = useState({});
-
   const router = useRouter()
 
   const { id, action } = router.query;
 
   // console.log(id);      // "43"
   // console.log(action);  // "update"
-
-  // const [trigger, { data: searchByMobileData, isFetching: isLoadingByMobile }] = useLazyGetProfilesByMobileQuery();
-
-  // const handleOnBlurMobile = useCallback(
-  //   async (
-  //     e: React.FocusEvent<HTMLInputElement>
-  //   ) => {
-  //     try {
-  //       const mobile = e.target.value.trim();
-
-  //       if (mobile.length !== 10) {
-  //         return;
-  //       }
-
-  //       const result = await trigger(mobile).unwrap();
-
-  //       if (result?.success && !!result?.items?.length) {
-
-  //         setIsModalOpen(true)
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   },
-  //   [trigger, setIsModalOpen]
-  // );
-
 
   const {
     data,
@@ -118,15 +86,6 @@ const UpdateProfile = () => {
     }
   }, [id]);
 
-  const handlePreviewButton = () => {
-    const previewData = form.getFieldsValue();
-    setDataPreview(previewData);
-    setisPreviewOpen(true);
-  };
-
-  const hanldeClosePreview = () => {
-    setisPreviewOpen(false);
-  };
 
   useEffect(() => {
 
@@ -154,18 +113,9 @@ const UpdateProfile = () => {
         form={form}
         formContainerRef={formContainerRef}
         handleFromSubmit={handleFromSubmit}
-        // handleOnBlurMobile={handleOnBlurMobile}
-        handlePreviewButton={handlePreviewButton}
         isLoadingCreateUser={isLoadingCreateUser}
         callingFrom={'update'}
         isFetching={isFetching}
-      />
-
-      <ModalComp
-        title={"Preview Biodata"}
-        isOpen={isPreviewOpen}
-        data={dataPreview}
-        hanldeClose={hanldeClosePreview}
       />
 
     </AdminLayout>

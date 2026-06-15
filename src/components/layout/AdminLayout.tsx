@@ -28,7 +28,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
       label: "Dashboard",
     },
     {
-      key: "/profiles",
+      key: "profiles",
       icon: <SettingOutlined />,
       label: "Profiles",
       children: [
@@ -40,13 +40,9 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/profiles/create_profile",
           label: "Create Profiles",
         },
-        // {
-        //   key: "/profiles/update_profile",
-        //   label: "Update Profiles",
-        // },
       ],
     },
- {
+    {
       key: "gotra",
       icon: <SettingOutlined />,
       label: "Gotra",
@@ -55,11 +51,11 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/gotra",
           label: "All Gotra",
         },
-          {
+        {
           key: "/gotra/create_gotra",
           label: "Create Gotra",
         },
-       
+
       ],
     },
   ];

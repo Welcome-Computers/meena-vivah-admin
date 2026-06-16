@@ -29,10 +29,10 @@ const GotraTable = (props: iProps) => {
   const gotraList = data || [];
   const pagination = data?.pagination || {};
 
+  // trigger search
   const handleSearch = (value: string) => {
-    if (value.length > 0 && value.length < 3) {
-      message.error("Enter Minimum 3 Character");
-      return;
+      if(value.length <3){
+      return
     }
     setSearch(value);
   };
@@ -97,6 +97,8 @@ const GotraTable = (props: iProps) => {
   return (
     <>
       <GenericTable
+      
+      setSearch={setSearch}
         handleSort={handleSort}
         handleSearch={handleSearch}
         loading={isLoading}

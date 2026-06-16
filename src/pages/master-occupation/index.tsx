@@ -20,15 +20,6 @@ const Occupation = () => {
 
   const [form] = Form.useForm();
 
-  // get occupation list
-  // const { data, isLoading, error } = useGetOccupationsQuery({
-  //   page,
-  //   limit: 10,
-  // });
-  // const occupationList = data || [];
-  // const pagination = data?.pagination || {};
-
-
   // delet occupation
   const [deleteOccupation] = useDeleteOccupationMutation();
   const handleDelete = async (id: number) => {

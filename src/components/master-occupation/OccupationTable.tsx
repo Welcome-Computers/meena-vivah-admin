@@ -34,13 +34,11 @@ const OccupationTable = (props: iProps) => {
 
   // trigger search
   const handleSearch = (value: string) => {
-    if(value.length > 0 && value.length < 3){
-      message.error("Enter Minimum 3 Character")
+    if(value.length <3){
       return
     }
     setSearch(value);
   };
-
 
   // sorting data
 const handleSort = (sorter: any) => {
@@ -102,6 +100,8 @@ const handleSort = (sorter: any) => {
   return (
     <>
       <GenericTable
+
+      setSearch={setSearch}
       handleSort={handleSort}
         handleSearch={handleSearch}
         loading={isLoading}

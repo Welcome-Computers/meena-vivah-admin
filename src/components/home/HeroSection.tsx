@@ -10,7 +10,7 @@ export const HeroSection = () => {
   const { push } = useRouter()
 
   const filterDataHandler = (values: any) => {
-    push(`/matched_profiles?${queryString(values)}`)
+    push(`/matched-profiles?${queryString(values)}`)
   }
 
   return (

@@ -7,10 +7,10 @@ import {
   useDeleteGotraMutation,
   useGetGotrasQuery,
 } from "@/redux/features/masterGotra";
+import { Form } from "antd";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
-import  UpdateGotra  from "./_includes/UpdateGotra";
-import { Form } from "antd";
+import UpdateGotra from "./_includes/UpdateGotra";
 
 const Gotra = () => {
   const [page, setPage] = useState(1);

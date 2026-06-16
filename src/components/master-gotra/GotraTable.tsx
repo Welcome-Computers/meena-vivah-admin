@@ -1,19 +1,47 @@
-import { IPagination, IGotra } from "@/redux/types";
-import { Button, Popconfirm, Space } from "antd";
+import { IGotra } from "@/redux/types";
+import { Button, message, Popconfirm, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { GenericTable } from "../common/GenericTable";
+import { useState } from "react";
+import { useGetGotrasQuery } from "@/redux/features/masterGotra";
 
 interface iProps {
-  loading: boolean;
-  data: IGotra[];
-  pagination: IPagination;
   handleDelete: any;
   handleEdit: any;
 }
 
 const GotraTable = (props: iProps) => {
-  const { loading, data, pagination, handleDelete, handleEdit } = props;
+  const { handleDelete, handleEdit } = props;
 
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState<string>("");
+  const [sortField, setSortField] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+
+  // Get occupation list
+  const { data, isLoading, error } = useGetGotrasQuery({
+    page,
+    limit: 10,
+    ...(search && { search }),
+    ...(sortField && { sortField }),
+    ...(sortOrder && { sortOrder }),
+  });
+  const gotraList = data || [];
+  const pagination = data?.pagination || {};
+
+  const handleSearch = (value: string) => {
+    if (value.length > 0 && value.length < 3) {
+      message.error("Enter Minimum 3 Character");
+      return;
+    }
+    setSearch(value);
+  };
+
+  // sorting data
+  const handleSort = (sorter: any) => {
+    setSortField(sorter.field || "");
+    setSortOrder(sorter.order || "");
+  };
 
   const columns: ColumnsType<IGotra> = [
     {
@@ -68,142 +96,16 @@ const GotraTable = (props: iProps) => {
 
   return (
     <>
-    <GenericTable
-    loading={loading}
-     data={data}
-    pagination={pagination}
-    columns={columns}
-    />
-     
+      <GenericTable
+        handleSort={handleSort}
+        handleSearch={handleSearch}
+        loading={isLoading}
+        data={gotraList}
+        pagination={pagination}
+        columns={columns}
+      />
     </>
   );
 };
 
 export default GotraTable;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { IPagination, IGotra } from "@/redux/types";
-
-// import { Button, Popconfirm, Select, Space, Table } from "antd";
-
-// import type { ColumnsType } from "antd/es/table";
-// import Text from "antd/es/typography/Text";
-// import { useState } from "react";
-
-// interface iProps {
-//   loading: boolean;
-//   data: IGotra[];
-//   pagination: IPagination;
-//   handleDelete: any;
-//   handleEdit: any;
-// }
-
-// const GotraTable = (props: iProps) => {
-//   const { loading, data, pagination, handleDelete, handleEdit } = props;
-
-//   const [selectedGotra, setSelectedGotra] = useState("");
-
-//   console.log("GotraTable data:", data);
-
-
-//   const filterData=selectedGotra? data.filter((item)=>item.name === selectedGotra) :data;
-
-//   const columns: ColumnsType<IGotra> = [
-//     {
-//       title: "Code",
-//       dataIndex: "code",
-//       key: "code",
-//       width: 70,
-//       fixed: "left",
-//       sorter: (a, b) => (a.code ?? "").localeCompare(b.code ?? ""),
-//     },
-
-//     {
-//       title: "Gotra Name",
-//       dataIndex: "name",
-//       key: "name",
-//       width: 180,
-//       fixed: "left",
-//       sorter: (a, b) => (a.name ?? "").localeCompare(b.name ?? ""),
-//     },
-
-//     {
-//       title: "Action",
-//       key: "action",
-//       width: 100,
-//       fixed: "right",
-//       render: (_, record) => (
-//         <Space>
-//           <Button
-//             size="small"
-//             type="primary"
-//             onClick={() => handleEdit(record.id, record)}
-//           >
-//             Edit
-//           </Button>
-
-//           <Popconfirm
-//             title="Delet Gotra"
-//             description={`Delete "${record.name}" ?`}
-//             okText="Delet"
-//             cancelText="Cancel"
-//             okButtonProps={{ danger: true }}
-//             onConfirm={() => handleDelete(record.id)}
-//           >
-//             <Button size="small" type="primary">
-//               Delete
-//             </Button>
-//           </Popconfirm>
-//         </Space>
-//       ),
-//     },
-//   ];
-
-//   return (
-//     <>
-//       <Space direction="vertical" size={4} style={{ marginBottom: "1rem" }}>
-//         <Text strong>Search Gotra</Text>
-//         <Select
-//           style={{ width: "500px" }}
-//           allowClear
-//           showSearch
-//           onChange={(value) => setSelectedGotra(value)}
-//           options={data.map((item) => ({ value: item.name }))}
-//         />
-//       </Space>
-
-//       <Table
-//         rowKey="id"
-//         bordered
-//         size="small"
-//         loading={loading}
-//         // dataSource={data}
-//         dataSource={filterData}
-//         columns={columns}
-//         pagination={{
-//           current: pagination.page,
-//           pageSize: pagination.limit,
-//           total: pagination.total,
-//           showSizeChanger: true,
-//           showTotal: (total) => `Total ${total} profiles`,
-//           pageSizeOptions: ["50", "100", "150", "200"],
-//         }}
-//       />
-//     </>
-//   );
-// };
-
-// export default GotraTable;

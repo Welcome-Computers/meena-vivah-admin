@@ -1,7 +1,4 @@
-import type {
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 import {
   createOccupation,
@@ -15,16 +12,19 @@ import {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     if (req.method === "GET") {
-      const data =
-        await getOccupations();
+      const { search, sortOrder, sortField } = req.query;
+      const data = await getOccupations({
+        search: search as string,
+        sortField: sortField as string,
+        sortOrder: sortOrder as string,
+      });
 
       return res.status(200).json(data);
     }
-
 
     if (req.method === "POST") {
       try {
@@ -40,12 +40,8 @@ export default async function handler(
           message: "Occupation created successfully.",
           data: result,
         });
-
       } catch (error: any) {
-
-        if (
-          error?.message?.includes("already exists")
-        ) {
+        if (error?.message?.includes("already exists")) {
           return res.status(409).json({
             success: false,
             message: error.message,
@@ -66,20 +62,12 @@ export default async function handler(
           error: error.message,
         });
       }
-
     }
 
-
-    return res
-      .status(405)
-      .json({
-        message:
-          "Method not allowed",
-      });
-
+    return res.status(405).json({
+      message: "Method not allowed",
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json(error);
+    return res.status(500).json(error);
   }
 }

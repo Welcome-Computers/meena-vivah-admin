@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { asc, desc, eq, like } from "drizzle-orm";
 import { masterGotra } from '../../schema/masterGotra';
 
 
@@ -9,12 +9,22 @@ import {
 } from "./master-gotra.types";
 
 export const getGotras =
-  async () => {
-    return db
-      .select()
-      .from(masterGotra);
+  async ({search ,sortField,sortOrder}:{search:string ,sortField:string,sortOrder:string}) => {
+    let query=db.select().from(masterGotra).$dynamic();
+   if(search){
+        query=query.where(like(masterGotra.name,`%${search}%`))
+      }
+  
+       if(sortField == "name"){
+        query=query.orderBy((sortOrder === "ascend") ?asc(masterGotra.name) : desc(masterGotra.name))
+      }
+  
+       if(sortField == "code"){
+        query=query.orderBy((sortOrder === "ascend") ?asc(masterGotra.code) : desc(masterGotra.code))
+      }
+  
+      return query;
   };
-
   
 export const getGotraById =
   async (id: number) => {

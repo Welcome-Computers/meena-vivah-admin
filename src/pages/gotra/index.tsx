@@ -72,9 +72,6 @@ const Gotra = () => {
         <GotraTable
           handleEdit={handleEdit}
           handleDelete={handleDelete}
-          loading={isLoading}
-          data={gotraList}
-          pagination={pagination}
         />
 
       </div>

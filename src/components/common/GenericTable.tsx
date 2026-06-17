@@ -52,7 +52,7 @@ export const GenericTable = (props: GenericTableProps) => {
   return (
     <>
       <Form>
-        <Space direction="vertical" size={4} style={{ marginBottom: "1rem" }}>
+        <Space orientation="vertical" size={4} style={{ marginBottom: "1rem" }}>
           <Text strong>Search Gotra</Text>
           <Row>
             <Col>

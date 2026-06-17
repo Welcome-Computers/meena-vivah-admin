@@ -3,7 +3,7 @@ import { appMessage } from "@/lib/utility/message";
 import { useCreateUserMutation } from "@/redux/features/profile";
 import { Form } from "antd";
 import dayjs from "dayjs";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
@@ -11,12 +11,6 @@ const CreateProfile = () => {
   const [form] = Form.useForm();
   const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
-
-
-  const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
-  const [dataPreview, setDataPreview] = useState({});
-
-
 
   const [createUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useCreateUserMutation();
 
@@ -41,6 +35,7 @@ const CreateProfile = () => {
     };
 
     // console.log("form data", formData);
+    // return;
 
     try {
       const res = await createUserAction(formData).unwrap();

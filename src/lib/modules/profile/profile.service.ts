@@ -1,13 +1,5 @@
 import {
-  and,
-  desc,
-  eq,
-  gte,
-  inArray,
-  lte,
-  ne,
-  notInArray,
-  sql
+  and, desc, eq, gte, inArray, lte, ne, notInArray, sql
 } from "drizzle-orm";
 
 import { db } from "@/lib/db";
@@ -25,11 +17,13 @@ import { CreateProfileInput, UpdateProfileInput } from "./profile.validation";
 
 const fatherOccupation = alias(masterOccupation, "fatherOccupation");
 const motherOccupation = alias(masterOccupation, "motherOccupation");
+const siblingOccupation = alias(masterOccupation, "siblingOccupation");
 
 const selfGotra = alias(masterGotra, "selfGotra");
 const motherGotra = alias(masterGotra, "motherGotra");
 const grandmotherGotra = alias(masterGotra, "grandmotherGotra");
 const maternalGrandmotherGotra = alias(masterGotra, "maternalGrandmotherGotra");
+const otherGotraMaster = alias(masterGotra, "otherGotraMaster");
 
 export const userSelect = {
   id: profiles.id,
@@ -37,43 +31,21 @@ export const userSelect = {
   gender: profiles.gender,
   name: profiles.name,
   dob: profiles.dob,
+  height: profiles.height,
   education: profiles.education,
-
   fathersname: profiles.fathersname,
   mothersname: profiles.mothersname,
-
-  fathersoccupation:
-    fatherOccupation.name,
-
-  mothersoccupation:
-    motherOccupation.name,
-
-  preferences:
-    profiles.preferences,
-
-  otherinfo:
-    profiles.otherinfo,
-
-  isSuspended:
-    profiles.isSuspended,
-
-  createdAt:
-    profiles.createdAt,
-
-  occupation:
-    masterOccupation.name,
-
-  self_gotra:
-    selfGotra.name,
-
-  m_gotra:
-    motherGotra.name,
-
-  gm_gotra:
-    grandmotherGotra.name,
-
-  mat_gm_gotra:
-    maternalGrandmotherGotra.name,
+  fathersoccupation: fatherOccupation.name,
+  mothersoccupation: motherOccupation.name,
+  preferences: profiles.preferences,
+  otherinfo: profiles.otherinfo,
+  isSuspended: profiles.isSuspended,
+  createdAt: profiles.createdAt,
+  occupation: masterOccupation.name,
+  self_gotra: selfGotra.name,
+  m_gotra: motherGotra.name,
+  gm_gotra: grandmotherGotra.name,
+  mat_gm_gotra: maternalGrandmotherGotra.name,
 };
 
 async function getBaseProfiles(
@@ -138,18 +110,6 @@ async function attachProfileRelations(
   if (!userIds.length)
     return [];
 
-  const siblingOccupation =
-    alias(
-      masterOccupation,
-      "siblingOccupation"
-    );
-
-  const otherGotraMaster =
-    alias(
-      masterGotra,
-      "otherGotraMaster"
-    );
-
   const [
     allAddresses,
     allSiblings,
@@ -168,21 +128,11 @@ async function attachProfileRelations(
     db
       .select({
         id: siblingDetails.id,
-
-        user_id:
-          siblingDetails.user_id,
-
-        relation:
-          siblingDetails.relation,
-
-        name:
-          siblingDetails.name,
-
-        education:
-          siblingDetails.education,
-
-        occupation:
-          siblingOccupation.name,
+        user_id: siblingDetails.user_id,
+        relation: siblingDetails.relation,
+        name: siblingDetails.name,
+        education: siblingDetails.education,
+        occupation: siblingOccupation.name,
       })
       .from(siblingDetails)
 
@@ -200,17 +150,10 @@ async function attachProfileRelations(
 
     db
       .select({
-        id:
-          otherGotras.id,
-
-        user_id:
-          otherGotras.user_id,
-
-        other_gotra_relation:
-          otherGotras.other_gotra_relation,
-
-        other_gotra_name:
-          otherGotraMaster.name,
+        id: otherGotras.id,
+        user_id: otherGotras.user_id,
+        other_gotra_relation: otherGotras.other_gotra_relation,
+        other_gotra_name: otherGotraMaster.name,
       })
       .from(otherGotras)
 
@@ -227,14 +170,9 @@ async function attachProfileRelations(
       ),
   ]);
 
-  const addressMap =
-    new Map();
-
-  const siblingMap =
-    new Map();
-
-  const otherGotraMap =
-    new Map();
+  const addressMap = new Map();
+  const siblingMap = new Map();
+  const otherGotraMap = new Map();
 
   allAddresses.forEach(
     (item) => {
@@ -288,20 +226,9 @@ async function attachProfileRelations(
     (profile) => ({
       ...profile,
 
-      address_details:
-        addressMap.get(
-          profile.id
-        ) || [],
-
-      sibling_details:
-        siblingMap.get(
-          profile.id
-        ) || [],
-
-      other_gotra:
-        otherGotraMap.get(
-          profile.id
-        ) || [],
+      address_details: addressMap.get(profile.id) || [],
+      sibling_details: siblingMap.get(profile.id) || [],
+      other_gotra: otherGotraMap.get(profile.id) || [],
     })
   );
 }
@@ -316,50 +243,24 @@ export async function getProfiles(
 
   // console.log("profile default ", params)
 
-  const conditions = [
-    eq(profiles.isSuspended, false),
-  ];
-
+  const conditions = [eq(profiles.isSuspended, false),];
   // filters add here...
 
-  const data =
-    await getBaseProfiles(
-      conditions,
-      page,
-      limit
-    );
+  const data = await getBaseProfiles(conditions, page, limit);
 
-  const finalData =
-    await attachProfileRelations(
-      data
+  const finalData = await attachProfileRelations(data);
+  const [totalResult] = await db.select({ count: sql<number>`count(*)`, })
+    .from(profiles)
+    .where(
+      and(...conditions)
     );
-
-  const [totalResult] =
-    await db
-      .select({
-        count:
-          sql<number>`count(*)`,
-      })
-      .from(profiles)
-      .where(
-        and(...conditions)
-      );
 
   const total =
     Number(totalResult.count);
 
   return {
     data: finalData,
-
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages:
-        Math.ceil(
-          total / limit
-        ),
-    },
+    pagination: { total, page, limit, totalPages: Math.ceil(total / limit), },
   };
 }
 
@@ -376,9 +277,7 @@ export async function getProfileMatches(
     exclude_gotra,
   } = params;
 
-  const conditions = [
-    eq(profiles.isSuspended, false),
-  ];
+  const conditions = [eq(profiles.isSuspended, false),];
 
   /**
    * OCCUPATION
@@ -450,71 +349,33 @@ export async function getProfileMatches(
     preferredAge &&
     preferredAge.length === 2
   ) {
-    const [minAge, maxAge] =
-      preferredAge;
+    const [minAge, maxAge] = preferredAge;
 
-    const today =
-      new Date();
+    const today = new Date();
 
-    const maxDob =
-      new Date();
+    const maxDob = new Date();
 
-    maxDob.setFullYear(
-      today.getFullYear() -
-      minAge
-    );
+    maxDob.setFullYear(today.getFullYear() - minAge);
 
-    const minDob =
-      new Date();
+    const minDob = new Date();
 
-    minDob.setFullYear(
-      today.getFullYear() -
-      (maxAge - 1)
-    );
+    minDob.setFullYear(today.getFullYear() - (maxAge - 1));
 
-    conditions.push(
-      gte(
-        profiles.dob,
-        minDob
-      )
-    );
-
-    conditions.push(
-      lte(
-        profiles.dob,
-        maxDob
-      )
-    );
+    conditions.push(gte(profiles.dob, minDob));
+    conditions.push(lte(profiles.dob, maxDob));
   }
 
-  console.log(
-    "profile match params",
-    params
-  );
+  console.log("profile match params", params);
+  console.log("conditions count", conditions.length);
 
-  console.log(
-    "conditions count",
-    conditions.length
-  );
+  const data = await getBaseProfiles(conditions, page, limit);
 
-  const data =
-    await getBaseProfiles(
-      conditions,
-      page,
-      limit
-    );
-
-  const finalData =
-    await attachProfileRelations(
-      data
-    );
+  const finalData = await attachProfileRelations(data);
 
   const [totalResult] =
-    await db
-      .select({
-        count:
-          sql<number>`count(*)`,
-      })
+    await db.select({
+      count: sql<number>`count(*)`,
+    })
       .from(profiles)
       .where(
         and(...conditions)
@@ -526,15 +387,7 @@ export async function getProfileMatches(
   return {
     data: finalData,
 
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages:
-        Math.ceil(
-          total / limit
-        ),
-    },
+    pagination: { total, page, limit, totalPages: Math.ceil(total / limit), },
   };
 }
 
@@ -555,91 +408,44 @@ export async function createProfile(
             // other_mobile:
             //   payload.other_mobile,
 
-            mobile:
-              payload.gender,
-
-            gender:
-              payload.gender,
-
-            name:
-              payload.name,
-
-            dob:
-              payload.dob,
-
-            education:
-              payload.education,
-
-            occupation:
-              payload.occupation,
-
-            fathersname:
-              payload.fathersname,
-
-            mothersname:
-              payload.mothersname,
-
-            fathersoccupation:
-              payload.fathersoccupation,
-
-            mothersoccupation:
-              payload.mothersoccupation,
-
-            self_gotra:
-              payload.self_gotra,
-
-            m_gotra:
-              payload.m_gotra,
-
-            gm_gotra:
-              payload.gm_gotra,
-
-            mat_gm_gotra:
-              payload.mat_gm_gotra,
-
-            preferences:
-              payload.preferences,
-
-            otherinfo:
-              payload.other_details,
+            mobile: payload.mobile,
+            gender: payload.gender,
+            name: payload.name,
+            dob: payload.dob,
+            height: payload.height,
+            education: payload.education,
+            occupation: payload.occupation,
+            fathersname: payload.fathersname,
+            mothersname: payload.mothersname,
+            fathersoccupation: payload.fathersoccupation,
+            mothersoccupation: payload.mothersoccupation,
+            self_gotra: payload.self_gotra,
+            m_gotra: payload.m_gotra,
+            gm_gotra: payload.gm_gotra,
+            mat_gm_gotra: payload.mat_gm_gotra,
+            preferences: payload.preferences,
+            otherinfo: payload.other_details,
           })
           .$returningId();
 
-      const userId =
-        userResult.id;
-
-
+      const userId = userResult.id;
 
       /**
        * ADDRESS
        */
-      if (
-        payload.address_details
-          ?.length
-      ) {
+      if (payload.address_details?.length) {
 
         await tx
           .insert(addresses)
           .values(
             payload.address_details.map(
               (item) => ({
-                user_id:
-                  userId,
-
-                address:
-                  item.full_address,
-
-                state:
-                  item.state,
-
-                city:
-                  item.city,
-
-                pincode:
-                  item.pincode,
-
-                type:
-                  item.type,
+                user_id: userId,
+                address: item.full_address,
+                state: item.state,
+                city: item.city,
+                pincode: item.pincode,
+                type: item.type,
               })
             )
           );
@@ -648,30 +454,18 @@ export async function createProfile(
       /**
        * SIBLINGS
        */
-      if (
-        payload.sibling_details
-          ?.length
-      ) {
+      if (payload.sibling_details?.length) {
 
         await tx
           .insert(siblingDetails)
           .values(
             payload.sibling_details.map(
               (item) => ({
-                user_id:
-                  userId,
-
-                relation:
-                  item.relation,
-
-                name:
-                  item.sibling_name,
-
-                education:
-                  item.sibling_education,
-
-                occupation:
-                  item.sibling_occupation,
+                user_id: userId,
+                relation: item.relation,
+                name: item.sibling_name,
+                education: item.sibling_education,
+                occupation: item.sibling_occupation,
               })
             )
           );
@@ -680,24 +474,16 @@ export async function createProfile(
       /**
        * OTHER GOTRA
        */
-      if (
-        payload.other_gotra
-          ?.length
-      ) {
+      if (payload.other_gotra?.length) {
 
         await tx
           .insert(otherGotras)
           .values(
             payload.other_gotra.map(
               (item) => ({
-                user_id:
-                  userId,
-
-                other_gotra_relation:
-                  item.other_gotra_relation,
-
-                other_gotra_name:
-                  item.other_gotra_name,
+                user_id: userId,
+                other_gotra_relation: item.other_gotra_relation,
+                other_gotra_name: item.other_gotra_name,
               })
             )
           );
@@ -723,6 +509,7 @@ export async function getProfileById(
     gender: profiles.gender,
     name: profiles.name,
     dob: profiles.dob,
+    height: profiles.height,
     education: profiles.education,
 
     fathersname: profiles.fathersname,
@@ -792,6 +579,7 @@ export async function updateProfile(
         gender: payload.gender,
         name: payload.name,
         dob: payload.dob,
+        height: payload.height,
         education: payload.education,
         occupation: payload.occupation,
         fathersname: payload.fathersname,

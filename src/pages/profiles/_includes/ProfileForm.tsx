@@ -129,8 +129,9 @@ const ProfileForm = (props: iProps) => {
           onKeyDown={handleEnterNavigation}
           onFinish={handleFromSubmit}
           initialValues={{
-            sibling_details: [{}],
-            // other_mobile: [{}],
+            is_married: 0,
+            gender: "boy",
+            sibling_details: [{ relation: "sister", sibling_order: 'younger', is_married: 0 }],
             other_gotra: [{}],
             address_details: [{ type: "common" }],
           }}

@@ -22,9 +22,8 @@ const HeightField = memo(
         setInch(null);
         return;
       }
-
       const { feet, inches } = cmToFeetInch(cmValue)
-      debugger;
+
       setFoot(feet);
       setInch(inches);
     }, [cmValue]);

@@ -35,17 +35,24 @@ export const userSelect = {
   education: profiles.education,
   fathersname: profiles.fathersname,
   mothersname: profiles.mothersname,
-  fathersoccupation: fatherOccupation.name,
-  mothersoccupation: motherOccupation.name,
+  fathersoccupation: fatherOccupation.code,
+  fathersoccupation_name: fatherOccupation.name,
+  mothersoccupation: motherOccupation.code,
+  mothersoccupation_name: motherOccupation.name,
   preferences: profiles.preferences,
   otherinfo: profiles.otherinfo,
   isSuspended: profiles.isSuspended,
   createdAt: profiles.createdAt,
-  occupation: masterOccupation.name,
-  self_gotra: selfGotra.name,
-  m_gotra: motherGotra.name,
-  gm_gotra: grandmotherGotra.name,
-  mat_gm_gotra: maternalGrandmotherGotra.name,
+  occupation: masterOccupation.code,
+  occupation_name: masterOccupation.name,
+  self_gotra: selfGotra.code,
+  self_gotra_name: selfGotra.name,
+  m_gotra: motherGotra.code,
+  m_gotra_name: motherGotra.name,
+  gm_gotra: grandmotherGotra.code,
+  gm_gotra_name: grandmotherGotra.name,
+  mat_gm_gotra: maternalGrandmotherGotra.code,
+  mat_gm_gotra_name: maternalGrandmotherGotra.name,
 };
 
 async function getBaseProfiles(
@@ -53,8 +60,7 @@ async function getBaseProfiles(
   page: number,
   limit: number
 ) {
-  const offset =
-    (page - 1) * limit;
+  const offset = (page - 1) * limit;
 
   return await db
     .select(userSelect)
@@ -132,7 +138,8 @@ async function attachProfileRelations(
         relation: siblingDetails.relation,
         name: siblingDetails.name,
         education: siblingDetails.education,
-        occupation: siblingOccupation.name,
+        occupation: siblingOccupation.code,
+        occupation_name: siblingOccupation.name,
       })
       .from(siblingDetails)
 
@@ -153,6 +160,7 @@ async function attachProfileRelations(
         id: otherGotras.id,
         user_id: otherGotras.user_id,
         other_gotra_relation: otherGotras.other_gotra_relation,
+        other_gotra: otherGotraMaster.code,
         other_gotra_name: otherGotraMaster.name,
       })
       .from(otherGotras)
@@ -365,9 +373,6 @@ export async function getProfileMatches(
     conditions.push(lte(profiles.dob, maxDob));
   }
 
-  console.log("profile match params", params);
-  console.log("conditions count", conditions.length);
-
   const data = await getBaseProfiles(conditions, page, limit);
 
   const finalData = await attachProfileRelations(data);
@@ -494,14 +499,9 @@ export async function createProfile(
   );
 }
 
-export async function getProfileById(
+export async function getProfileById1(
   id: number
 ) {
-
-  // return await db.query.profiles
-  //   .findFirst({
-  //     where: eq(profiles.id, id),
-  //   });
 
   const [profile] = await db.select({
     id: profiles.id,
@@ -520,14 +520,12 @@ export async function getProfileById(
     preferences: profiles.preferences,
     otherinfo: profiles.otherinfo,
 
-    occupationFull: masterOccupation,
-    occupation: masterOccupation.name,
+    occupation: masterOccupation.code,
 
-    self_gotra: selfGotra.name,
-    m_gotra: motherGotra.name,
-    gm_gotra: grandmotherGotra.name,
-    mat_gm_gotra:
-      maternalGrandmotherGotra.name,
+    self_gotra: selfGotra.code,
+    m_gotra: motherGotra.code,
+    gm_gotra: grandmotherGotra.code,
+    mat_gm_gotra: maternalGrandmotherGotra.code,
   })
     .from(profiles)
 
@@ -561,6 +559,21 @@ export async function getProfileById(
   // .then(rows => rows[0] ?? null);
 
   return profile;
+}
+
+export async function getProfileById(
+  id: number
+) {
+  const data = await getBaseProfiles(
+    [eq(profiles.id, id)],
+    1,
+    1
+  );
+
+  const [profile] =
+    await attachProfileRelations(data);
+
+  return profile || null;
 }
 
 export async function updateProfile(

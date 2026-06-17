@@ -50,6 +50,16 @@ const PersonalDetails = memo((props: any) => {
           { option: "Girl", value: "girl" },
         ]}
       />
+      <CheckBoxField
+        form={form}
+        name="is_married"
+        label="Married"
+        rules={[{ required: true, message: "Select Gender First" }]}
+        options={[
+          { option: "Married", value: 1 },
+          { option: "UnMarried", value: 0 },
+        ]}
+      />
       <InputField
         name="name"
         label="Name"

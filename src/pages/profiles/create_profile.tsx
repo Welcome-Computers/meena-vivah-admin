@@ -61,13 +61,14 @@ const CreateProfile = () => {
   };
 
 
-
-
   return (
     <AdminLayout
       breadcrumbItems={[
         {
           title: "Dashboard",
+        },
+        {
+          title: "All Profile",
         },
         {
           title: "Create Profile",

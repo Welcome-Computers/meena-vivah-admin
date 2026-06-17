@@ -45,6 +45,9 @@ export const ProfileCard = (props: iProps) => {
                   <strong>Age:</strong> {getAge(record?.dob)}
                 </p>
                 <p>
+                  <strong>Height:</strong> {record?.height}
+                </p>
+                <p>
                   <strong>Education:</strong> {record?.education}
                 </p>
                 <p>

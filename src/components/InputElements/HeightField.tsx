@@ -1,3 +1,4 @@
+import { cmToFeetInch } from "@/lib/utility";
 import { Form, InputNumber } from "antd";
 import { memo, useEffect, useState } from "react";
 
@@ -15,35 +16,6 @@ const HeightField = memo(
     const [foot, setFoot] = useState<number | null>(null);
     const [inch, setInch] = useState<number | null>(null);
 
-    const [lastUpdatedBy, setLastUpdatedBy] = useState<
-      "cm" | "ft-inch" | null
-    >(null);
-
-
-
-    /**
-     * CM -> Foot/Inch
-     */
-    // useEffect(() => {
-    //   if (!cmValue && cmValue !== 0) {
-    //     setFoot(null);
-    //     setInch(null);
-    //     return;
-    //   }
-
-    //   const totalInches =
-    //     Number(cmValue) / 2.54;
-
-    //   const ft =
-    //     Math.floor(totalInches / 12);
-
-    //   const inchVal =
-    //     Math.round(totalInches % 12);
-
-    //   setFoot(ft);
-    //   setInch(inchVal);
-    // }, [cmValue]);
-
     useEffect(() => {
       if (!cmValue && cmValue !== 0) {
         setFoot(null);
@@ -51,13 +23,10 @@ const HeightField = memo(
         return;
       }
 
-      const totalInches = Number(cmValue) / 2.54;
-
-      const ft = Math.floor(totalInches / 12);
-      const inchVal = Math.round(totalInches % 12);
-
-      setFoot(ft);
-      setInch(inchVal);
+      const { feet, inches } = cmToFeetInch(cmValue)
+      debugger;
+      setFoot(feet);
+      setInch(inches);
     }, [cmValue]);
 
     /**
@@ -113,6 +82,7 @@ const HeightField = memo(
             <label>Foot</label>
             <InputNumber
               min={0}
+              max={8}
               value={foot}
               placeholder="Foot"
               style={{
@@ -120,7 +90,6 @@ const HeightField = memo(
               }}
               onChange={(value) => {
                 const ft = Number(value);
-
                 setFoot(ft);
 
                 updateCm(
@@ -144,8 +113,6 @@ const HeightField = memo(
               }}
               onChange={(value) => {
                 const inchVal = Number(value);
-
-                setLastUpdatedBy("ft-inch");
                 setInch(inchVal);
 
                 updateCm(foot, inchVal);
@@ -163,15 +130,12 @@ const HeightField = memo(
             =
           </div>         {/* CM */}
           <div>
-            <label>Foot</label>
+            <label>CM</label>
             <Form.Item noStyle name={name}>
               <InputNumber
                 min={0}
                 placeholder="CM"
                 style={{ width: "100%" }}
-                onChange={() => {
-                  setLastUpdatedBy("cm");
-                }}
               />
             </Form.Item>
           </div>

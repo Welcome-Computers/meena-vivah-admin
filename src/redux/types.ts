@@ -33,6 +33,7 @@ export interface IProfile {
   gender: string;
   name: string;
   dob: string | null;
+  height: number;
   education: string;
   occupation: string;
   fathersname: string;

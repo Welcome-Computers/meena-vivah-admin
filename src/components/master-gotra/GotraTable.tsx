@@ -8,40 +8,15 @@ import { useGetGotrasQuery } from "@/redux/features/masterGotra";
 interface iProps {
   handleDelete: any;
   handleEdit: any;
+  handleSort: any;
+  isLoading: any;
+  pagination: any;
+  data: any;
 }
 
 const GotraTable = (props: iProps) => {
-  const { handleDelete, handleEdit } = props;
-
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState<string>("");
-  const [sortField, setSortField] = useState("");
-  const [sortOrder, setSortOrder] = useState("");
-
-  // Get occupation list
-  const { data, isLoading, error } = useGetGotrasQuery({
-    page,
-    limit: 10,
-    ...(search && { search }),
-    ...(sortField && { sortField }),
-    ...(sortOrder && { sortOrder }),
-  });
-  const gotraList = data || [];
-  const pagination = data?.pagination || {};
-
-  // trigger search
-  const handleSearch = (value: string) => {
-      if(value.length <3){
-      return
-    }
-    setSearch(value);
-  };
-
-  // sorting data
-  const handleSort = (sorter: any) => {
-    setSortField(sorter.field || "");
-    setSortOrder(sorter.order || "");
-  };
+  const { handleDelete, handleEdit, handleSort, isLoading, pagination, data } =
+    props;
 
   const columns: ColumnsType<IGotra> = [
     {
@@ -97,12 +72,9 @@ const GotraTable = (props: iProps) => {
   return (
     <>
       <GenericTable
-      
-      setSearch={setSearch}
         handleSort={handleSort}
-        handleSearch={handleSearch}
         loading={isLoading}
-        data={gotraList}
+        data={data}
         pagination={pagination}
         columns={columns}
       />

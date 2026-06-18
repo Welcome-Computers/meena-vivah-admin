@@ -23,7 +23,6 @@ export default function UpdateOccupation(props: any) {
         setIsModalOpen(false);
         return;
       }
-
       await handleUpdateOccupation({
         id: occupationId,
         body: {

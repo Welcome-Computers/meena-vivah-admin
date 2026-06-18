@@ -1,22 +1,14 @@
 import PublicLayout from "@/components/layout/PublicLayout";
-import {
-  LockOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Typography,
-} from "antd";
+import {  UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Typography } from "antd";
+import OTP from "antd/es/input/OTP";
 import { useRouter } from "next/router";
-import { memo } from "react";
+import { memo, useState } from "react";
 
 const { Title } = Typography;
 
-const LoginForm = memo(() => {
-
+const PasswordLoginForm = memo(() => {
+  const [otpField,setOTPField]=useState(false)
   const router = useRouter();
 
   const onFinish = (values: {
@@ -25,14 +17,13 @@ const LoginForm = memo(() => {
     remember?: boolean;
   }) => {
     console.log("Login Values:", values);
-    router.push("/dashboard")
+    router.push("/dashboard");
     // Call Login API here
   };
 
   return (
     <PublicLayout>
       <div className="login_page_container">
-
         <div className="login_form_container">
           <Title
             level={2}
@@ -52,66 +43,40 @@ const LoginForm = memo(() => {
             }}
           >
             <Form.Item
-              label="Username"
-              name="username"
+              label="Mobile"
+              name="mobile"
               rules={[
                 {
                   required: true,
-                  message: "Please enter your username",
+                  message: "Please enter your mobile",
                 },
               ]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Enter username"
+                placeholder="Enter mobile"
                 size="large"
               />
             </Form.Item>
 
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your password",
-                },
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder="Enter password"
-                size="large"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="remember"
-              valuePropName="checked"
-            >
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-
-            <div
-              style={{
-                textAlign: "right",
-                marginBottom: 16,
-              }}
-            >
-              <a href="/forgot-password">
-                Forgot Password?
-              </a>
-            </div>
+          {otpField &&  
+           <OTP 
+            style={{marginBottom:"1rem"}}
+            // name="otp" 
+            />
+            }
 
             <Form.Item>
               <Button
                 type="primary"
                 // htmlType="submit"
-                onClick={() => { router.push("/dashboard") }}
+                onClick={() => {
+                  setOTPField(true)
+                }}
                 block
                 size="large"
               >
-                Log In
+                {otpField ? "Log In":"Send OTP"}
               </Button>
             </Form.Item>
           </Form>
@@ -121,6 +86,6 @@ const LoginForm = memo(() => {
   );
 });
 
-LoginForm.displayName = "LoginForm";
+PasswordLoginForm.displayName = "PasswordLoginForm";
 
-export default LoginForm;
+export default PasswordLoginForm;

@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 import Title from "antd/es/typography/Title";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Form } from "antd";
 import {
   useDeleteOccupationMutation,
@@ -9,16 +9,37 @@ import {
 import OccupationTable from "@/components/master-occupation/OccupationTable";
 import UpdateOccupation from "./_includes/UpdateOccupation";
 import { appMessage } from "@/lib/utility/message";
+import SearchField from "@/components/InputElements/SearchField";
+import { debounce } from "lodash";
 
 const Occupation = () => {
-  // const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [occupationId, setOccupationId] = useState<number | null>(null);
   const [selectedOccupation, setSelectedOccupation] = useState<string | null>(
     null,
   );
 
+  const [sortField, setSortField] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+
+  // serching state
+  const [inputValue, setInputValue] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
+
   const [form] = Form.useForm();
+
+  // Get occupation list
+  const { data, isLoading, error } = useGetOccupationsQuery({
+    page,
+    limit: 10,
+    ...(search && { search }),
+    ...(sortField && { sortField }),
+    ...(sortOrder && { sortOrder }),
+  });
+
+  const occupationList = data || [];
+  const pagination = data?.pagination || {};
 
   // delet occupation
   const [deleteOccupation] = useDeleteOccupationMutation();
@@ -49,6 +70,44 @@ const Occupation = () => {
     }
   };
 
+  // SEARCHING PART
+  // debouncing funtion
+  const debounceSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearch(value);
+      }, 500),
+    [setSearch],
+  );
+
+  // handle Onchnage State
+  const handleInputChange = (v: string) => {
+    setInputValue(v);
+    if (!v) {
+      debounceSearch("");
+      return;
+    }
+
+    if (v.length < 3) {
+      return;
+    }
+    debounceSearch(v);
+  };
+
+  // trigger search
+  const onSubmit = () => {
+    if (inputValue.length < 3) {
+      return;
+    }
+    setSearch(inputValue);
+  };
+
+  // SORTING PART
+  const handleSort = (sorter: any) => {
+    setSortField(sorter.field || "");
+    setSortOrder(sorter.order || "");
+  };
+
   return (
     <AdminLayout>
       <div>
@@ -56,6 +115,7 @@ const Occupation = () => {
           All Occupation
         </Title>
 
+        {/* update field*/}
         <UpdateOccupation
           setOccupationId={setOccupationId}
           occupationId={occupationId}
@@ -64,9 +124,34 @@ const Occupation = () => {
           isModalOpen={isModalOpen}
           form={form}
         />
+
+        {/* serach field */}
+        <Form onFinish={onSubmit}>
+          <SearchField
+            handleInputChange={handleInputChange}
+            rules={[
+              {
+                validator: (_: any, value: string) => {
+                  if (!value || value.length >= 3) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Minimum 3 Character required"),
+                  );
+                },
+              },
+            ]}
+          />
+        </Form>
+
+        {/* table coloum >> table  */}
         <OccupationTable
           handleDelete={handleDelete}
           handleEdit={handleEdit}
+          handleSort={handleSort}
+          isLoading={isLoading}
+          pagination={pagination}
+          data={data}
         />
       </div>
     </AdminLayout>

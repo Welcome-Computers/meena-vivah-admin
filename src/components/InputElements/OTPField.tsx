@@ -24,7 +24,7 @@ const OTPField = memo((props: IProps): JSX.Element => {
       )}
 
       <Form.Item {...rest} label={null}>
-        <OTP length={length} />
+        <OTP length={length}/>
       </Form.Item>
     </div>
   );

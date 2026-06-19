@@ -1,3 +1,5 @@
+// src\redux\rootMiddleware.ts
+
 import { AuthApi } from "./features/login";
 import { masterGotraApi } from "./features/masterGotra";
 import { masterOccupationApi } from "./features/masterOccupation";

@@ -66,8 +66,9 @@ const ModalByMobile = memo((props: iProps) => {
         <Button
           type="link"
           onClick={() => {
-            const values = form.getFieldsValue()
-            dispatch(setProfileData(values))
+            const values = form?.getFieldsValue?.() || {};
+
+            dispatch(setProfileData(values));
 
             router.push(
               `/profiles/update_profile?id=${record.id}&action=update`

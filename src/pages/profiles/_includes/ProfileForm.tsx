@@ -136,9 +136,7 @@ const ProfileForm = (props: iProps) => {
           <Row gutter={40}>
             <Col md={10} lg={10} xl={10}>
               <div className="editor-sticky">
-                <OtherDetails
-                  form={form}
-                />
+                <OtherDetails />
               </div>
             </Col>
             <Col md={14} lg={14} xl={14}>
@@ -206,7 +204,8 @@ const ProfileForm = (props: iProps) => {
 
           </div>
 
-        </Form>}
+        </Form>
+      }
 
       <ModalByMobile
         form={form}

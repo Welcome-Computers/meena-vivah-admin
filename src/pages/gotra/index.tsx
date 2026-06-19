@@ -1,6 +1,6 @@
-
 import AdminLayout from "@/components/layout/AdminLayout";
 
+import SearchField from "@/components/InputElements/SearchField";
 import GotraTable from "@/components/master-gotra/GotraTable";
 import { appMessage } from "@/lib/utility/message";
 import {
@@ -9,7 +9,8 @@ import {
 } from "@/redux/features/masterGotra";
 import { Form } from "antd";
 import Title from "antd/es/typography/Title";
-import { useState } from "react";
+import { debounce } from "lodash";
+import { useMemo, useState } from "react";
 import UpdateGotra from "./_includes/UpdateGotra";
 
 const Gotra = () => {
@@ -17,11 +18,22 @@ const Gotra = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGotraId, setSelectedGotraId] = useState<number | null>(null);
   const [selectedGotra, setSelectedGotra] = useState<string | null>(null);
+  const [sortField, setSortField] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+  // serching state
+  const [inputValue, setInputValue] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
 
   const [form] = Form.useForm();
 
-  // get gotra list
-  const { data, isLoading, error } = useGetGotrasQuery({ page, limit: 10 });
+  // Get Gotra list
+  const { data, isLoading, error } = useGetGotrasQuery({
+    page,
+    limit: 10,
+    ...(search && { search }),
+    ...(sortField && { sortField }),
+    ...(sortOrder && { sortOrder }),
+  });
   const gotraList = data || [];
   const pagination = data?.pagination || {};
 
@@ -54,6 +66,44 @@ const Gotra = () => {
     }
   };
 
+  // SEARCHING PART
+  // debouncing funtion
+  const debounceSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setSearch(value);
+      }, 500),
+    [setSearch],
+  );
+
+  // handle Onchnage State
+  const handleInputChange = (v: string) => {
+    setInputValue(v);
+    if (!v) {
+      debounceSearch("");
+      return;
+    }
+
+    if (v.length < 3) {
+      return;
+    }
+    debounceSearch(v);
+  };
+
+  // trigger search
+  const onSubmit = () => {
+    if (inputValue.length < 3) {
+      return;
+    }
+    setSearch(inputValue);
+  };
+
+  // sorting data
+  const handleSort = (sorter: any) => {
+    setSortField(sorter.field || "");
+    setSortOrder(sorter.order || "");
+  };
+
   return (
     <AdminLayout>
       <div>
@@ -69,11 +119,34 @@ const Gotra = () => {
           selectedGotra={selectedGotra}
         />
 
-        <GotraTable
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
-        />
+        {/* serach field */}
+        <Form onFinish={onSubmit}>
+          <SearchField
+            handleInputChange={handleInputChange}
+            rules={[
+              {
+                validator: (_: any, value: string) => {
+                  if (!value || value.length >= 3) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Minimum 3 Character required"),
+                  );
+                },
+              },
+            ]}
+          />
+        </Form>
 
+        {/* table coloum >> table  */}
+        <GotraTable
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+          handleSort={handleSort}
+          isLoading={isLoading}
+          pagination={pagination}
+          data={data}
+        />
       </div>
     </AdminLayout>
   );

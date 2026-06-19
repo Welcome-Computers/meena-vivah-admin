@@ -10,3 +10,4 @@ export const store = configureStore({
       ...apis.map((api) => api.middleware)
     ),
 });
+

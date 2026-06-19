@@ -3,9 +3,15 @@ import { configureStore } from "@reduxjs/toolkit";
 import { masterGotraApi } from "./features/masterGotra";
 import { masterOccupationApi } from "./features/masterOccupation";
 import { profileApi } from "./features/profile";
+import authReducer from "./slices/authSlice"
+import { AuthApi } from "./features/login";
 
 export const store = configureStore({
   reducer: {
+
+    auth:authReducer,
+    [AuthApi.reducerPath]: AuthApi.reducer,
+
 
     [profileApi.reducerPath]: profileApi.reducer,
     [masterGotraApi.reducerPath]: masterGotraApi.reducer,

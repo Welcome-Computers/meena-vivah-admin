@@ -2,49 +2,19 @@ import { IOccupation } from "@/redux/types";
 import { Button, message, Popconfirm, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { GenericTable } from "../common/GenericTable";
-import { useGetOccupationsQuery } from "@/redux/features/masterOccupation";
-import { useState } from "react";
 
 interface iProps {
   handleDelete: any;
   handleEdit: any;
+  handleSort: any;
+  isLoading: any;
+  pagination: any;
+  data: any;
 }
 
 const OccupationTable = (props: iProps) => {
-  const { handleDelete, handleEdit } = props;
-
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState<string>("");
- const [sortField, setSortField] = useState("");
-  const [sortOrder, setSortOrder] = useState("");
-
-
-  // Get occupation list
-  const { data, isLoading, error } = useGetOccupationsQuery({
-    page,
-    limit: 10,
-    ...(search && { search }),
-    ...(sortField && {sortField}),
-    ...(sortOrder && {sortOrder}),
-  });
-
-  const occupationList = data || [];
-  const pagination = data?.pagination || {};
-
-
-  // trigger search
-  const handleSearch = (value: string) => {
-    if(value.length <3){
-      return
-    }
-    setSearch(value);
-  };
-
-  // sorting data
-const handleSort = (sorter: any) => {
-  setSortField(sorter.field || "");
-  setSortOrder(sorter.order || "");
-};
+  const { handleDelete, handleEdit, handleSort, isLoading, pagination, data } =
+    props;
 
   const columns: ColumnsType<IOccupation> = [
     {
@@ -53,7 +23,7 @@ const handleSort = (sorter: any) => {
       key: "code",
       width: 70,
       fixed: "left",
-      sorter:true,
+      sorter: true,
     },
 
     {
@@ -62,7 +32,7 @@ const handleSort = (sorter: any) => {
       key: "name",
       width: 180,
       fixed: "left",
-      sorter:true,
+      sorter: true,
     },
 
     {
@@ -100,12 +70,9 @@ const handleSort = (sorter: any) => {
   return (
     <>
       <GenericTable
-
-      setSearch={setSearch}
-      handleSort={handleSort}
-        handleSearch={handleSearch}
+        handleSort={handleSort}
         loading={isLoading}
-        data={occupationList}
+        data={data}
         pagination={pagination}
         columns={columns}
       />

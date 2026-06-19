@@ -1,6 +1,6 @@
-import { getAdmin } from "@/lib/modules/auth/admin/admin.service";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { getAdmin } from "@/lib/modules/admin/admin.service";
 import { serialize } from "cookie";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,13 +13,13 @@ export default async function handler(
 
         const result = await getAdmin(payload);
 
-      
+
         const accessCookie = serialize("accessToken", result.accessToken, {
           httpOnly: true,
           path: "/",
           maxAge: 15 * 60,
         });
-   
+
         const refreshCookie = serialize("refreshToken", result.refreshToken, {
           httpOnly: true,
           path: "/",

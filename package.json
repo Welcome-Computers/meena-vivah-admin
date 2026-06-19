@@ -7,7 +7,9 @@
     "build": "next build",
     "clean": "rimraf .next",
     "start": "next start -p 3006",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate": "drizzle-kit migrate",
+    "generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.1",

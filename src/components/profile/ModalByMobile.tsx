@@ -1,9 +1,12 @@
-import { Button, Modal, Table } from "antd";
+import { setProfileData } from "@/redux/features/profile";
+import { useAppDispatch } from "@/redux/hooks";
+import { Button, FormInstance, Modal, Table } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { memo } from "react";
 
 interface iProps {
+  form: FormInstance,
   title: string;
   isOpen: boolean;
   data: any[];
@@ -12,6 +15,7 @@ interface iProps {
 
 const ModalByMobile = memo((props: iProps) => {
   const {
+    form,
     title,
     isOpen,
     data = [],
@@ -19,6 +23,7 @@ const ModalByMobile = memo((props: iProps) => {
   } = props;
 
   const router = useRouter()
+  const dispatch = useAppDispatch() as any;
 
   const columns = [
     {
@@ -61,10 +66,14 @@ const ModalByMobile = memo((props: iProps) => {
         <Button
           type="link"
           onClick={() => {
-            hanldeClose();
+            const values = form.getFieldsValue()
+            dispatch(setProfileData(values))
+
             router.push(
               `/profiles/update_profile?id=${record.id}&action=update`
             );
+
+            hanldeClose();
           }}
         >
           Edit

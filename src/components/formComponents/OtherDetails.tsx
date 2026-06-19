@@ -1,13 +1,22 @@
+import { Form } from "antd";
 import { memo } from "react";
 import style from "../../pages/profiles/style.module.css";
-import TextAreaField from "../InputElements/TextAreaField";
+import RichTextEditor from "./ReactQuill";
 
 const OtherDetails = memo((props: any) => {
   const { form } = props;
 
   return (
     <div className={style["form-container"]}>
-      <TextAreaField name="other_details" label={"Other Info"} rows={5} />
+      <Form.Item name="otherinfo">
+        <label>Other Information</label>
+        <RichTextEditor
+          value={form.getFieldValue("otherinfo")}
+          onChange={(value) =>
+            form.setFieldValue("otherinfo", value)
+          }
+        />
+      </Form.Item>
     </div>
   );
 });

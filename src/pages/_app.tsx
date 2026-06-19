@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { antdTheme } from "@/lib/utility/theme";
 import { store } from "@/redux/store";
 import "@/styles/globals.css";
+import "react-quill-new/dist/quill.snow.css";
 
 export default function App({
   Component,

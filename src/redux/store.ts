@@ -1,26 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-
-import { masterGotraApi } from "./features/masterGotra";
-import { masterOccupationApi } from "./features/masterOccupation";
-import { profileApi } from "./features/profile";
+import { apis } from "./apis";
+import { rootReducer } from "./rootReducer";
 
 export const store = configureStore({
-  reducer: {
-
-    [profileApi.reducerPath]: profileApi.reducer,
-    [masterGotraApi.reducerPath]: masterGotraApi.reducer,
-    [masterOccupationApi.reducerPath]: masterOccupationApi.reducer,
-  },
+  reducer: rootReducer,
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(
-        profileApi.middleware,
-        masterGotraApi.middleware,
-        masterOccupationApi.middleware
-      ),
+    getDefaultMiddleware().concat(
+      ...apis.map((api) => api.middleware)
+    ),
 });
-
-export type RootState = ReturnType<typeof store.getState>;
-
-export type AppDispatch = typeof store.dispatch;

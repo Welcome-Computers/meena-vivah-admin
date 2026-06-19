@@ -2,7 +2,7 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { useGetUsersQuery } from "@/redux/features/profile";
+import { useGetUsersQuery } from "@/redux/features/profile/srevices";
 import { Button } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";

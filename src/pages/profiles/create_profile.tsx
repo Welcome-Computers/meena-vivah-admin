@@ -1,6 +1,6 @@
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateUserMutation } from "@/redux/features/profile";
+import { useCreateUserMutation } from "@/redux/features/profile/srevices";
 import { Form } from "antd";
 import dayjs from "dayjs";
 import { useRef } from "react";
@@ -16,7 +16,7 @@ const CreateProfile = () => {
 
   const handleFromSubmit = async () => {
 
-    const { dob, ...rest } = form.getFieldsValue();
+    const { keep_data, dob, ...rest } = form.getFieldsValue();
 
     const formattedDob = dob
       ? dayjs(
@@ -36,14 +36,16 @@ const CreateProfile = () => {
 
     // console.log("form data", formData);
     // return;
-
     try {
       const res = await createUserAction(formData).unwrap();
 
       if (res.success) {
         appMessage.success("Profile created successfully");
-        form.resetFields();
-        firstComponentFocusHandler(formContainerRef);
+
+        if (!keep_data) {
+          form.resetFields();
+          firstComponentFocusHandler(formContainerRef);
+        }
 
       } else {
         appMessage.error(

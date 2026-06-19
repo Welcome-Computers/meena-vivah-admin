@@ -44,6 +44,7 @@ export const userSelect = {
   isSuspended: profiles.isSuspended,
   createdAt: profiles.createdAt,
   occupation: masterOccupation.code,
+  occupation_details: profiles.occupation_details,
   occupation_name: masterOccupation.name,
   self_gotra: selfGotra.code,
   self_gotra_name: selfGotra.name,
@@ -400,6 +401,8 @@ export async function createProfile(
   payload: CreateProfileInput
 ) {
 
+  console.log(payload)
+
   return await db.transaction(
     async (tx) => {
 
@@ -420,6 +423,7 @@ export async function createProfile(
             height: payload.height,
             education: payload.education,
             occupation: payload.occupation,
+            occupation_details: payload.occupation_details,
             fathersname: payload.fathersname,
             mothersname: payload.mothersname,
             fathersoccupation: payload.fathersoccupation,
@@ -429,7 +433,7 @@ export async function createProfile(
             gm_gotra: payload.gm_gotra,
             mat_gm_gotra: payload.mat_gm_gotra,
             preferences: payload.preferences,
-            otherinfo: payload.other_details,
+            otherinfo: payload.otherinfo,
           })
           .$returningId();
 
@@ -595,6 +599,7 @@ export async function updateProfile(
         height: payload.height,
         education: payload.education,
         occupation: payload.occupation,
+        occupation_details: payload.occupation_details,
         fathersname: payload.fathersname,
         mothersname: payload.mothersname,
         fathersoccupation: payload.fathersoccupation,
@@ -604,7 +609,7 @@ export async function updateProfile(
         gm_gotra: payload.gm_gotra,
         mat_gm_gotra: payload.mat_gm_gotra,
         preferences: payload.preferences,
-        otherinfo: payload.other_details,
+        otherinfo: payload.otherinfo,
       })
       .where(eq(profiles.id, userId));
 

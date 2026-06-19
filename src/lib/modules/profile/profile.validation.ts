@@ -37,6 +37,7 @@ export const createProfileSchema =
     height: z.number().nullable().optional(),
     education: z.string().nullable().optional(),
     occupation: z.string().nullable().optional(),
+    occupation_details: z.string().nullable().optional(),
     fathersname: z.string().nullable().optional(),
     mothersname: z.string().nullable().optional(),
     fathersoccupation: z.string().nullable().optional(),
@@ -46,7 +47,7 @@ export const createProfileSchema =
     gm_gotra: z.string().nullable().optional(),
     mat_gm_gotra: z.string().nullable().optional(),
     preferences: z.string().nullable().optional(),
-    other_details: z.string().nullable().optional(),
+    otherinfo: z.string().nullable().optional(),
 
     /**
      * MOBILE DETAILS

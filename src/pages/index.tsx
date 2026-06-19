@@ -2,7 +2,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { FooterComponent } from "@/components/layout/Footer";
 import PublicLayout from "@/components/layout/PublicLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { useGetUsersQuery } from "@/redux/features/profile";
+import { useGetUsersQuery } from "@/redux/features/profile/srevices";
 import { useState } from "react";
 
 const Home = () => {

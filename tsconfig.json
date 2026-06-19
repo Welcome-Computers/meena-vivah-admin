@@ -21,7 +21,13 @@
     "paths": {
       "@/*": [
         "src/*"
-      ]
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@redux/*": [
+        "./src/redux/*"
+      ],
     },
     "ignoreDeprecations": "6.0"
   },

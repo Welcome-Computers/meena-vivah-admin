@@ -1,6 +1,7 @@
 import { DatePickerProps, Form, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 import { useWatch } from "antd/es/form/Form";
+import dayjs from "dayjs";
 import { memo } from "react";
 
 
@@ -25,25 +26,33 @@ const DobField = memo((props: DobProps) => {
   }));
 
   const monthOptions = [
-    { label: "January", value: 0 },
-    { label: "February", value: 1 },
-    { label: "March", value: 2 },
-    { label: "April", value: 3 },
-    { label: "May", value: 4 },
-    { label: "June", value: 5 },
-    { label: "July", value: 6 },
-    { label: "August", value: 7 },
-    { label: "September", value: 8 },
-    { label: "October", value: 9 },
-    { label: "November", value: 10 },
-    { label: "December", value: 11 },
+    { label: "January", value: 1 },
+    { label: "February", value: 2 },
+    { label: "March", value: 3 },
+    { label: "April", value: 4 },
+    { label: "May", value: 5 },
+    { label: "June", value: 6 },
+    { label: "July", value: 7 },
+    { label: "August", value: 8 },
+    { label: "September", value: 9 },
+    { label: "October", value: 10 },
+    { label: "November", value: 11 },
+    { label: "December", value: 12 },
   ];
 
-  const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 70 }, (_, index) => ({
-    label: currentYear - index,
-    value: currentYear - index,
-  }));
+
+  const currentYear = dayjs().year();
+
+  const maxAllowedYear =
+    currentYear - 18;
+
+  const yearOptions = Array.from(
+    { length: 70 },
+    (_, index) => ({
+      label: maxAllowedYear - index,
+      value: maxAllowedYear - index,
+    })
+  );
 
   const form = Form.useFormInstance();
 
@@ -112,19 +121,11 @@ const DobField = memo((props: DobProps) => {
             className="custom-input"
             placeholder="Year" options={yearOptions}
             onChange={(year) => {
-              const dob =
-                form.getFieldValue(name) || {};
+              const dob = form.getFieldValue(name) || {};
 
               form.setFieldValue(name, {
-                year,
-                month:
-                  dob.month === undefined
-                    ? 0
-                    : dob.month,
-                day:
-                  dob.day === undefined
-                    ? 1
-                    : dob.day,
+                year, month: dob.month === undefined ? 1 : dob.month,
+                day: dob.day === undefined ? 1 : dob.day,
               });
             }}
           />

@@ -23,6 +23,7 @@
     "object-query-string": "^1.2.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-quill-new": "^3.8.3",
     "react-redux": "^9.3.0",
     "zod": "^4.3.6"
   },

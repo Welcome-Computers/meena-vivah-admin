@@ -17,6 +17,7 @@ export const profiles = mysqlTable("profile", {
   height: int("height", {}),
   education: varchar("education", { length: 255, }),
   occupation: varchar("occupation", { length: 255, }),
+  occupation_details: varchar("occupation_details", { length: 255, }),
   fathersname: varchar("fathersname", { length: 255, }),
   mothersname: varchar("mothersname", { length: 255, }),
   fathersoccupation: varchar("fathersoccupation", { length: 255, }),

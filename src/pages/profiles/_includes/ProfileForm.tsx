@@ -1,22 +1,19 @@
-import ModalComp from "@/components/common/ModalComp";
+import ModalPreviewProfile from "@/components/common/ModalPreviewProfile";
 import AddressDetails from "@/components/formComponents/AddressDetails";
 import FamilyDetails from "@/components/formComponents/FamilyDetails";
 import GotraDetials from "@/components/formComponents/GotraDetails";
 import MobileDetails from "@/components/formComponents/MobileDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
-import SiblingDetails from "@/components/formComponents/SiblingDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
 import ModalByMobile from "@/components/profile/ModalByMobile";
 import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
-import { useLazyGetProfilesByMobileQuery } from "@/redux/features/profile";
-import { Button, Col, Form, FormInstance, Row } from "antd";
+import { useLazyGetProfilesByMobileQuery } from "@/redux/features/profile/srevices";
+import { Button, Col, Form, FormInstance, Row, Space, Switch } from "antd";
 import { RefObject, useCallback, useEffect, useState } from "react";
-
-
 interface iProps {
   form: FormInstance,
   handleFromSubmit: any,
@@ -133,34 +130,34 @@ const ProfileForm = (props: iProps) => {
             gender: "boy",
             sibling_details: [{ relation: "sister", sibling_order: 'younger', is_married: 0 }],
             other_gotra: [{}],
-            address_details: [{ type: "common" }],
+            address_details: [{ type: "parmanent" }],
           }}
         >
-          <Row gutter={[40, 40]}>
-            <Col xs={24} md={12}>
-              <PersonalDetails
-                occupatonOptions={occupatonOptions}
-                handleOnBlurMobile={handleOnBlurMobile}
-                isOccupationLoading={isOccupationLoading}
-                handleCreateOccupation={handleCreateOccupation}
-                form={form} />
-              <FamilyDetails
-                occupatonOptions={occupatonOptions}
-                isOccupationLoading={isOccupationLoading}
-                handleCreateOccupation={handleCreateOccupation}
-                form={form} />
-              <SiblingDetails
-                occupatonOptions={occupatonOptions}
-                isOccupationLoading={isOccupationLoading}
-                handleCreateOccupation={handleCreateOccupation}
-                form={form} />
+          <Row gutter={40}>
+            <Col md={10} lg={10} xl={10}>
+              <div className="editor-sticky">
+                <OtherDetails
+                  form={form}
+                />
+              </div>
             </Col>
-
-            <Col xs={24} md={12}>
-              <GotraDetials form={form} />
-              <AddressDetails form={form} />
-              <MobileDetails form={form} />
-              <OtherDetails />
+            <Col md={14} lg={14} xl={14}>
+              <div className="form-scroll-section">
+                <PersonalDetails
+                  occupatonOptions={occupatonOptions}
+                  handleOnBlurMobile={handleOnBlurMobile}
+                  isOccupationLoading={isOccupationLoading}
+                  handleCreateOccupation={handleCreateOccupation}
+                  form={form} />
+                <GotraDetials form={form} />
+                <FamilyDetails
+                  occupatonOptions={occupatonOptions}
+                  isOccupationLoading={isOccupationLoading}
+                  handleCreateOccupation={handleCreateOccupation}
+                  form={form} />
+                <AddressDetails form={form} />
+                <MobileDetails form={form} />
+              </div>
             </Col>
           </Row>
 
@@ -180,34 +177,60 @@ const ProfileForm = (props: iProps) => {
               Preview
             </Button>
 
-            <Button
-              loading={isLoadingCreateUser}
-              iconPlacement="end"
-              type="primary"
-              htmlType="submit">
-              Confrom
-            </Button>
+            <Space orientation="horizontal" size={4}>
+              {callingFrom === "create" ?
+                <Form.Item
+                  style={{ margin: "0 35px 0 0" }}
+                  name="keep_data"
+                  label=""
+                  initialValue={true}
+                  valuePropName="checked"
+                >
+                  <div>
+                    <Switch
+                      checkedChildren="KeepData"
+                      unCheckedChildren="!KeepData"
+                    />
+                  </div>
+                </Form.Item> : null}
+
+              <Button
+                loading={isLoadingCreateUser}
+                iconPlacement="end"
+                type="primary"
+                htmlType="submit">
+                Confrom
+              </Button>
+
+            </Space>
 
           </div>
 
         </Form>}
 
       <ModalByMobile
+        form={form}
         title="Profile Found"
         isOpen={isModalOpen}
         data={searchByMobileData?.items || []}
         hanldeClose={() => setIsModalOpen(false)}
       />
 
-      <ModalComp
+      <ModalPreviewProfile
         title={"Preview Biodata"}
         isOpen={isPreviewOpen}
         data={dataPreview}
         hanldeClose={hanldeClosePreview}
       />
 
-    </div>
+    </div >
   )
 }
 
 export default ProfileForm
+
+{/* <SiblingDetails
+  occupatonOptions={occupatonOptions}
+  isOccupationLoading={isOccupationLoading}
+  handleCreateOccupation={handleCreateOccupation}
+  form={form} /> */}

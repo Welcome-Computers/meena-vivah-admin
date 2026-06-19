@@ -15,7 +15,16 @@ const MobileDetails = memo((props: any) => {
 
   return (
     <div className={style["form-container"]}>
+      {/* pereferences */}
       <InputField
+        name="preferences"
+        label="Preferences"
+        rules={[
+          { max: 100, message: "Maximum 50 characters" },
+        ]}
+      />
+
+      {/* <InputField
         name={"other_mobile"}
         rules={[
           {
@@ -51,7 +60,7 @@ const MobileDetails = memo((props: any) => {
         ]}
         label="Other Mobile"
         placeholder="e.g. 9988771234"
-      />
+      /> */}
 
     </div>
   );

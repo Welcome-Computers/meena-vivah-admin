@@ -28,7 +28,9 @@ const SiblingDetails = memo((props: any) => {
         Siblings Details
       </p>
 
-      <FormListComponent formListName="sibling_details" isDisabled={isDisabled}>
+      <FormListComponent
+        form={form}
+        formListName="sibling_details" isDisabled={isDisabled}>
         {(value: any) => (
           <div>
             <InputField

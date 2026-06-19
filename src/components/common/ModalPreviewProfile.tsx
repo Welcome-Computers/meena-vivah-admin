@@ -9,7 +9,7 @@ interface iProps {
   data: any,
   hanldeClose: any
 }
-const ModalComp = memo((props: iProps) => {
+const ModalPreviewProfile = memo((props: iProps) => {
   const { title, isOpen, data, hanldeClose } = props || {};
 
   return (
@@ -53,6 +53,12 @@ const ModalComp = memo((props: iProps) => {
           <Text strong>Occupation:</Text>
           <br />
           <Text>{data.occupation || "Not provided"}</Text>
+        </Col>
+
+        <Col span={12}>
+          <Text strong>Occupation Details:</Text>
+          <br />
+          <Text>{data.occupation_details || "Not provided"}</Text>
         </Col>
 
         <Col span={12}>
@@ -121,7 +127,7 @@ const ModalComp = memo((props: iProps) => {
     </Modal>
   );
 });
-export default ModalComp;
+export default ModalPreviewProfile;
 
 
 

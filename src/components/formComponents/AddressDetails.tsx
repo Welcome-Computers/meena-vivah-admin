@@ -1,5 +1,5 @@
 import { Form } from "antd";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import InputField from "../InputElements/InputField";
@@ -10,35 +10,19 @@ const AddressDetails = memo((props: any) => {
 
   // if address and pincode empty then button disabled and Max 2 entries
   const addressdetails = Form.useWatch("address_details") || [];
-  const isFirstFilled =
-    !(addressdetails.length < 2) ||
-    !(addressdetails[0]?.full_address && addressdetails[0]?.pincode);
 
-  useEffect(() => {
-    // address type validation
-    if (addressdetails[0]?.type === addressdetails[1]?.type) {
-      form.setFields([
-        {
-          name: ["address_details", 1, "type"],
-          errors: ["type must be diffrent"],
-        },
-      ]);
-    } else {
-      form.setFields([
-        {
-          name: ["address_details", 1, "type"],
-          errors: [],
-        },
-      ]);
-    }
+  const isDisabled =
+    addressdetails.length >= 5 ||
+    !addressdetails?.[0]?.full_address ||
+    !addressdetails?.[0]?.type;
 
-  }, [addressdetails, form])
 
   return (
     <div className={style["form-container"]}>
       <FormListComponent
+        form={form}
         formListName="address_details"
-        isDisabled={isFirstFilled}
+        isDisabled={isDisabled}
       >
         {(value: any) => (
           <div>
@@ -47,11 +31,38 @@ const AddressDetails = memo((props: any) => {
               label="AddressType"
               form={form}
               isLableShow={true}
+              rules={[
+                // {
+                //   required: true,
+                //   message: "Select address type",
+                // },
+                {
+                  validator: (_: any, currentType: any) => {
+                    const addresses =
+                      form.getFieldValue("address_details") || [];
+
+                    const duplicateCount = addresses.filter(
+                      (item: any) =>
+                        item?.type === currentType
+                    ).length;
+
+                    if (currentType && duplicateCount > 1) {
+                      return Promise.reject(
+                        new Error(
+                          "Address type must be different"
+                        )
+                      );
+                    }
+
+                    return Promise.resolve();
+                  },
+                },
+              ]}
               name={[value.name, "type"]}
               options={[
                 {
-                  option: "Common",
-                  value: "common",
+                  option: "Parmanent",
+                  value: "parmanent",
                 },
                 {
                   option: "Native",
@@ -67,12 +78,18 @@ const AddressDetails = memo((props: any) => {
             <InputField
               name={[value.name, "full_address"]}
               label="Address"
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Enter address",
+            //   },
+            // ]}
             />
 
             {/* <InputField name={[value.name, "tehsil"]} label="Tehsil/Village" /> */}
 
 
-            <InputField
+            {/* <InputField
               name={[value.name, "city"]}
               label="City"
               placeholder="e.g. Jaipur"
@@ -92,7 +109,7 @@ const AddressDetails = memo((props: any) => {
 
                 ]
               }
-            />
+            /> */}
 
           </div>
         )}

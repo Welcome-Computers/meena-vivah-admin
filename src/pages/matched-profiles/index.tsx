@@ -5,7 +5,7 @@ import {
   GetMatchedProfilesProps,
   GetProfilesProps,
 } from "@/lib/modules/profile/profile.types";
-import { useGetUsersQuery } from "@/redux/features/profile";
+import { useGetUsersQuery } from "@/redux/features/profile/srevices";
 import { useSearchParams } from "next/navigation";
 import {
   useCallback,

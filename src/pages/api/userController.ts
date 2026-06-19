@@ -8,7 +8,7 @@ export default async function PersonalDetails(
   const connection = await db.getConnection();
   try {
     const { name, dob, education, occupation, gender,
-      fathersoccupation, fathersname, mothersname, mothersoccupation, sibling_details, address_details, other_gotra, self_gotra, m_gotra, gm_gotra, mat_gm_gotra, preferences, mobile, other_details, type,
+      fathersoccupation, fathersname, mothersname, mothersoccupation, sibling_details, address_details, other_gotra, self_gotra, m_gotra, gm_gotra, mat_gm_gotra, preferences, mobile, otherinfo, type,
     } = req.body;
 
     // const mobile = other_mobile[0]?.mobile;
@@ -19,7 +19,7 @@ export default async function PersonalDetails(
       `INSERT INTO user (mobile,gender,name,dob,education,occupation,fathersname,mothersname,fathersoccupation,mothersoccupation,self_gotra,m_gotra,gm_gotra,mat_gm_gotra,preferences,otherinfo
      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [mobile, gender, name, dob, education, occupation, fathersname, mothersname, fathersoccupation,
-        mothersoccupation, self_gotra, m_gotra, gm_gotra, mat_gm_gotra, preferences, other_details,
+        mothersoccupation, self_gotra, m_gotra, gm_gotra, mat_gm_gotra, preferences, otherinfo,
       ],
     );
 

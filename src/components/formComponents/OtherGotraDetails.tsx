@@ -44,7 +44,9 @@ export const OtheGotraDetails = memo((props: any) => {
   };
 
   return (
-    <FormListComponent formListName="other_gotra" style={{ marginBottom: 16 }} isDisabled={isDisabled}>
+    <FormListComponent
+      form={form}
+      formListName="other_gotra" style={{ marginBottom: 16 }} isDisabled={isDisabled}>
       {(value: any) => (
         <>
           <div className="otherGotraSection"

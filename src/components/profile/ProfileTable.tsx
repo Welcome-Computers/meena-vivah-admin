@@ -1,4 +1,4 @@
-import { getAge } from "@/lib/utility";
+import { cmToFeetInch, getAge } from "@/lib/utility";
 import { IPagination, IProfile } from "@/redux/types";
 
 import { Avatar, Button, Space, Table, Tag } from "antd";
@@ -80,6 +80,28 @@ const ProfileTable = (props: iProps) => {
     }
   },
 
+  {
+    title: "Height",
+    dataIndex: "height",
+    key: "height",
+    width: 180,
+    render: (value) => {
+      const { feet, inches } = cmToFeetInch(value);
+
+      if (
+        feet === null ||
+        inches === null
+      ) {
+        return "--";
+      }
+
+      return (
+        <span>
+          {feet}.{inches}
+        </span>
+      );
+    }
+  },
   {
     title: "Education",
     dataIndex: "education",

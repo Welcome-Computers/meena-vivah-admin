@@ -6,7 +6,6 @@ import DobField from "../InputElements/DobField";
 import HeightField from "../InputElements/HeightField";
 import InputField from "../InputElements/InputField";
 import SearchableSelectField from "../InputElements/SearchableSelectField";
-import TextAreaField from "../InputElements/TextAreaField";
 
 const PersonalDetails = memo((props: any) => {
   const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading, handleOnBlurMobile } = props;
@@ -50,13 +49,22 @@ const PersonalDetails = memo((props: any) => {
           { option: "Girl", value: "girl" },
         ]}
       />
+      <CheckBoxField
+        form={form}
+        name="is_married"
+        label="Married"
+        rules={[{ required: true, message: "Select Gender First" }]}
+        options={[
+          { option: "Married", value: 1 },
+          { option: "UnMarried", value: 0 },
+        ]}
+      />
       <InputField
         name="name"
         label="Name"
         rules={[
           { required: true, message: "Enter first name " },
           { max: 30, message: "Maximum 30 characters" },
-          { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
         ]}
       />
 
@@ -71,6 +79,7 @@ const PersonalDetails = memo((props: any) => {
       />
 
       <SearchableSelectField
+        // mode="multiple"
         name={"occupation"}
         label={"Occupation"}
         allowCreate
@@ -83,20 +92,17 @@ const PersonalDetails = memo((props: any) => {
         ]}
       />
 
-      <TextAreaField
-        name="education"
-        label="Education"
-        form={form}
-        rows={4}
-        maxLength={50}
+      <InputField
+        name="occupation_details"
+        label="Occupation Details"
         rules={[
-          {
-            required: true,
-            message: "Education Qualification Must be Filled.",
-          },
-
           { max: 100, message: "Maximum 100 characters" },
         ]}
+      />
+
+      <InputField
+        name="education"
+        label="Education"
       />
 
     </div>

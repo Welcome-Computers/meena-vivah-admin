@@ -1,31 +1,18 @@
-import { configureStore } from "@reduxjs/toolkit";
+// src\redux\store.ts
 
-import { masterGotraApi } from "./features/masterGotra";
-import { masterOccupationApi } from "./features/masterOccupation";
-import { profileApi } from "./features/profile";
-import authReducer from "./slices/authSlice"
-import { AuthApi } from "./features/login";
+import { configureStore } from "@reduxjs/toolkit";
+import { apis } from "./apis";
+import { rootReducer } from "./rootReducer";
 
 export const store = configureStore({
-  reducer: {
-
-    auth:authReducer,
-    [AuthApi.reducerPath]: AuthApi.reducer,
-
-
-    [profileApi.reducerPath]: profileApi.reducer,
-    [masterGotraApi.reducerPath]: masterGotraApi.reducer,
-    [masterOccupationApi.reducerPath]: masterOccupationApi.reducer,
-  },
+  reducer: rootReducer,
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(
-        profileApi.middleware,
-        masterGotraApi.middleware,
-        masterOccupationApi.middleware
-      ),
+    getDefaultMiddleware().concat(
+      ...apis.map((api) => api.middleware)
+    ),
 });
+
 
 export type RootState = ReturnType<typeof store.getState>;
 

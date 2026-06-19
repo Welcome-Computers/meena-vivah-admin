@@ -1,9 +1,9 @@
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Form } from "antd";
 import { memo } from "react";
-const FormListComponent = memo((props: any) => {
-  const { name, children, label, formListName, isDisabled } = props;
 
+const FormListComponent = memo((props: any) => {
+  const { form, children, formListName, isDisabled } = props;
 
   return (
     <Form.List
@@ -46,7 +46,15 @@ const FormListComponent = memo((props: any) => {
               icon={<PlusOutlined />}
               size="small"
               disabled={isDisabled}
-              onClick={() => add()}
+              onClick={async () => {
+                try {
+                  // await form.validateFields();
+
+                  add();
+                } catch (error) {
+                  console.log("Validation failed");
+                }
+              }}
             />
           </div>
         </div>

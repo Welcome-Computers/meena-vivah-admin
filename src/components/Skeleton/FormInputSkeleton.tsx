@@ -2,7 +2,7 @@ import { Skeleton, Space } from "antd";
 
 const FormSkeleton = () => (
   <Space
-    direction="vertical"
+    orientation="vertical"
     size={24}
     style={{ width: "100%" }}
   >

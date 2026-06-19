@@ -1,9 +1,9 @@
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateUserMutation } from "@/redux/features/profile";
+import { useCreateUserMutation } from "@/redux/features/profile/srevices";
 import { Form } from "antd";
 import dayjs from "dayjs";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
@@ -12,17 +12,11 @@ const CreateProfile = () => {
   const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
 
-
-  const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
-  const [dataPreview, setDataPreview] = useState({});
-
-
-
   const [createUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useCreateUserMutation();
 
   const handleFromSubmit = async () => {
 
-    const { dob, ...rest } = form.getFieldsValue();
+    const { keep_data, dob, ...rest } = form.getFieldsValue();
 
     const formattedDob = dob
       ? dayjs(
@@ -41,14 +35,17 @@ const CreateProfile = () => {
     };
 
     // console.log("form data", formData);
-
+    // return;
     try {
       const res = await createUserAction(formData).unwrap();
 
       if (res.success) {
         appMessage.success("Profile created successfully");
-        form.resetFields();
-        firstComponentFocusHandler(formContainerRef);
+
+        if (!keep_data) {
+          form.resetFields();
+          firstComponentFocusHandler(formContainerRef);
+        }
 
       } else {
         appMessage.error(
@@ -66,13 +63,14 @@ const CreateProfile = () => {
   };
 
 
-
-
   return (
     <AdminLayout
       breadcrumbItems={[
         {
           title: "Dashboard",
+        },
+        {
+          title: "All Profile",
         },
         {
           title: "Create Profile",

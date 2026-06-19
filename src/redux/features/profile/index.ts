@@ -1,90 +1,24 @@
-import { GetMatchedProfilesProps } from "@/lib/modules/profile/profile.types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { queryString } from "object-query-string";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-export const profileApi = createApi({
-  reducerPath: "profileApi",
+const initialState: any = {
+  profile_data: {},
+};
 
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-  }),
-
-  tagTypes: ["Users"],
-
-  endpoints: (builder) => ({
-    // GET USERS
-    getUsers: builder.query({
-      query: (params: GetMatchedProfilesProps) => {
-
-        return ({
-          url: `/api/profile?${queryString(params)}`,
-          method: "GET",
-        })
-      },
-
-      providesTags: ["Users"],
-    }),
-
-    // CREATE USER
-    createUser: builder.mutation({
-      query: (body) => ({
-        url: `/api/profile`,
-        method: "POST",
-        body,
-      }),
-
-      invalidatesTags: ["Users"],
-    }),
-    // UPDATE USER
-    updateUser: builder.mutation({
-      query: (body) => ({
-        url: `/api/profile/update-user`,
-        method: "POST",
-        body,
-      }),
-
-      invalidatesTags: ["Users"],
-    }),
-
-    // DELETE USER
-    deleteUser: builder.mutation({
-      query: (id) => ({
-        url: `/api/profile/${id}`,
-        method: "DELETE",
-      }),
-
-      invalidatesTags: ["Users"],
-    }),
-
-    getSingleProfileById: builder.query({
-      query: (id) => {
-        return ({
-          url: `/api/profile/${id}`,
-          method: "GET",
-        })
-      },
-      providesTags: [],
-    }),
-
-    getProfilesByMobile: builder.query({
-      query: (mobile: string) => {
-        return ({
-          url: `/api/profile/by-mobile?mobile=${mobile}`,
-          method: "GET",
-        })
-      },
-      providesTags: [],
-    })
-
-  }),
+const profileApi = createSlice({
+  name: 'PROFILE_SLICE',
+  initialState,
+  reducers: {
+    setBrandsLoading: (state, action: PayloadAction<any>) => {
+      state.loading = action.payload;
+    },
+    setBrandData: (state, action: PayloadAction<any>) => {
+      state.loading = action.payload;
+    },
+    setProfileData: (state, action: PayloadAction<any>) => {
+      state.profile_data = action.payload;
+    },
+  },
 });
 
-export const {
-  useGetSingleProfileByIdQuery,
-  useLazyGetProfilesByMobileQuery,
-  useGetUsersQuery,
-  useLazyGetUsersQuery,
-  useCreateUserMutation,
-  useUpdateUserMutation,
-  useDeleteUserMutation,
-} = profileApi;
+export const { setBrandsLoading, setBrandData, setProfileData } = profileApi.actions;
+export default profileApi.reducer;

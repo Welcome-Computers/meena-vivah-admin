@@ -1,5 +1,6 @@
-import { Form, Select } from "antd";
-import { memo } from "react";
+import { cmToFeetInch } from "@/lib/utility";
+import { Form, InputNumber } from "antd";
+import { memo, useEffect, useState } from "react";
 
 interface HeightFieldProps {
   name: string;
@@ -8,59 +9,135 @@ interface HeightFieldProps {
 
 const HeightField = memo(
   ({ name, label }: HeightFieldProps) => {
+    const form = Form.useFormInstance();
 
-    const footOptions = Array.from(
-      { length: 4 },
-      (_, index) => ({
-        label: `${index + 4} ft`,
-        value: index + 4,
-      })
-    );
+    const cmValue = Form.useWatch(name, form);
 
-    const inchOptions = Array.from(
-      { length: 12 },
-      (_, index) => ({
-        label: `${index} in`,
-        value: index,
-      })
-    );
+    const [foot, setFoot] = useState<number | null>(null);
+    const [inch, setInch] = useState<number | null>(null);
+
+    useEffect(() => {
+      if (!cmValue && cmValue !== 0) {
+        setFoot(null);
+        setInch(null);
+        return;
+      }
+      const { feet, inches } = cmToFeetInch(cmValue)
+
+      setFoot(feet);
+      setInch(inches);
+    }, [cmValue]);
+
+    /**
+     * Foot/Inch -> CM
+     */
+    const updateCm = (
+      ft: number | null,
+      inchVal: number | null
+    ) => {
+      if (
+        ft === null &&
+        inchVal === null
+      ) {
+        form.setFieldValue(
+          name,
+          null
+        );
+        return;
+      }
+
+      const totalInches =
+        (ft || 0) * 12 +
+        (inchVal || 0);
+
+      const cm = Math.round(
+        totalInches * 2.54
+      );
+
+      form.setFieldValue(
+        name,
+        cm
+      );
+    };
 
     return (
       <Form.Item
-        name={name}
         label={label}
-        style={{ marginBottom: 5 }}
+        style={{
+          marginBottom: 5,
+        }}
       >
+
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns:
+              "3fr 3fr 1fr 3fr",
             gap: 8,
           }}
         >
           {/* FOOT */}
-          <Form.Item
-            noStyle
-            name={[name, "foot"]}
-          >
-            <Select
+          <div>
+            <label>Foot</label>
+            <InputNumber
+              min={0}
+              max={8}
+              value={foot}
               placeholder="Foot"
-              options={footOptions}
-              className="custom-input"
+              style={{
+                width: "100%",
+              }}
+              onChange={(value) => {
+                const ft = Number(value);
+                setFoot(ft);
+
+                updateCm(
+                  ft,
+                  inch
+                );
+              }}
             />
-          </Form.Item>
+          </div>
 
           {/* INCH */}
-          <Form.Item
-            noStyle
-            name={[name, "inch"]}
-          >
-            <Select
+          <div>
+            <label>Inch</label>
+            <InputNumber
+              min={0}
+              max={11}
+              value={inch}
               placeholder="Inch"
-              options={inchOptions}
-              className="custom-input"
+              style={{
+                width: "100%",
+              }}
+              onChange={(value) => {
+                const inchVal = Number(value);
+                setInch(inchVal);
+
+                updateCm(foot, inchVal);
+              }}
             />
-          </Form.Item>
+          </div>
+          <div
+            style={{
+              textAlign: "center",
+              alignItems: "center",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            =
+          </div>         {/* CM */}
+          <div>
+            <label>CM</label>
+            <Form.Item noStyle name={name}>
+              <InputNumber
+                min={0}
+                placeholder="CM"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          </div>
         </div>
       </Form.Item>
     );

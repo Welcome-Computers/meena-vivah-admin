@@ -1,6 +1,6 @@
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
-import { useGetSingleProfileByIdQuery, useUpdateUserMutation } from "@/redux/features/profile";
+import { useGetSingleProfileByIdQuery, useUpdateUserMutation } from "@/redux/features/profile/srevices";
 import { Form } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";

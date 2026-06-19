@@ -7,7 +7,7 @@ import {
 
 import TopStatics from "@/components/dashboard/TopStatics";
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { useGetUsersQuery } from "@/redux/features/profile";
+import { useGetUsersQuery } from "@/redux/features/profile/srevices";
 import { useRouter } from "next/router";
 import { useState } from "react";
 

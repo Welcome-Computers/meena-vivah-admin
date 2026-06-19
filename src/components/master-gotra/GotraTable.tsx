@@ -1,9 +1,9 @@
+import { useGetGotrasQuery } from "@/redux/features/masterGotra";
 import { IGotra } from "@/redux/types";
 import { Button, message, Popconfirm, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { GenericTable } from "../common/GenericTable";
 import { useState } from "react";
-import { useGetGotrasQuery } from "@/redux/features/masterGotra";
+import { GenericTable } from "../common/GenericTable";
 
 interface iProps {
   handleDelete: any;

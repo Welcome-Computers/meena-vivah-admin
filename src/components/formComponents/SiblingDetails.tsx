@@ -28,9 +28,19 @@ const SiblingDetails = memo((props: any) => {
         Siblings Details
       </p>
 
-      <FormListComponent formListName="sibling_details" isDisabled={isDisabled}>
+      <FormListComponent
+        form={form}
+        formListName="sibling_details" isDisabled={isDisabled}>
         {(value: any) => (
           <div>
+            <InputField
+              name={[value.name, "sibling_name"]}
+              rules={[
+                { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+                { max: 30, message: "Maximum 30 characters" },
+              ]}
+              label="Name"
+            />
             <CheckBoxField
               label="Relation"
               form={form}
@@ -39,11 +49,11 @@ const SiblingDetails = memo((props: any) => {
               options={[
                 {
                   option: "Sister",
-                  value: "girl",
+                  value: "sister",
                 },
                 {
                   option: "Brother",
-                  value: "boy",
+                  value: "broter",
                 },
               ]}
               rules={[
@@ -75,29 +85,37 @@ const SiblingDetails = memo((props: any) => {
               ]}
             />
 
-            <InputField
-              name={[value.name, "sibling_name"]}
-              rules={[
-                { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
-                { max: 30, message: "Maximum 30 characters" },
-              ]}
-              label="Name"
-            />
 
+            <CheckBoxField
+              label="Sibling Order"
+              form={form}
+              isLableShow={true}
+              name={[value.name, "sibling_order"]}
+              options={[
+                {
+                  option: "Elder",
+                  value: "elder",
+                },
+                {
+                  option: "Younger",
+                  value: "younger",
+                },
+              ]}
+            />
 
             <CheckBoxField
               label="Marital Status"
               form={form}
               isLableShow={true}
-              name={[value.name, "marr"]}
+              name={[value.name, "is_married"]}
               options={[
                 {
                   option: "Married",
-                  value: "married",
+                  value: 1,
                 },
                 {
-                  option: "Unmarried",
-                  value: "unmarried",
+                  option: "UnMarried",
+                  value: 0,
                 },
               ]}
             />
@@ -113,10 +131,9 @@ const SiblingDetails = memo((props: any) => {
               label="Occupation"
               options={occupatonOptions}
               loading={isOccupationLoading}
-              allowCreate
-              onCreateOption={handleCreateOccupation}
               placeholder="Select occupations"
             />
+
 
           </div>
         )}

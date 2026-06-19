@@ -3,7 +3,6 @@ import { useCreateGotraMutation, useGetGotrasQuery } from "@/redux/features/mast
 import { Form } from "antd";
 import { memo, useState } from "react";
 import style from "../../pages/profiles/style.module.css";
-import InputField from "../InputElements/InputField";
 import { SelectOption } from "../InputElements/SearchableSelectField";
 import { GotraField } from "./Gotra/GotraField";
 import { OtheGotraDetails } from "./OtherGotraDetails";
@@ -186,15 +185,7 @@ const GotraDetials = memo((props: any) => {
         handleInputValue={handleInputValue}
       />
 
-      {/* pereferences */}
-      <InputField
-        name="preferences"
-        label="Preferences"
-        rules={[
-          { max: 100, message: "Maximum 50 characters" },
-          { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
-        ]}
-      />
+
     </div>
   );
 });

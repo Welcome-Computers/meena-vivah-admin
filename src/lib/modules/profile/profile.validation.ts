@@ -31,66 +31,29 @@ const otherGotraSchema = z.object({
 
 export const createProfileSchema =
   z.object({
-    name:
-      z.string().min(2),
-
-    gender:
-      z.string(),
-
-    dob:
-      z.coerce
-        .date()
-        .optional(),
-
-    education:
-      z.string().nullable().optional(),
-
-    occupation:
-      z.string().nullable().optional(),
-
-    fathersname:
-      z.string().nullable().optional(),
-
-    mothersname:
-      z.string().nullable().optional(),
-
-    fathersoccupation:
-      z.string().nullable().optional(),
-
-    mothersoccupation:
-      z.string().nullable().optional(),
-
-    self_gotra:
-      z.string().nullable().optional(),
-
-    m_gotra:
-      z.string().nullable().optional(),
-
-    gm_gotra:
-      z.string().nullable().optional(),
-
-    mat_gm_gotra:
-      z.string().nullable().optional(),
-
-    preferences:
-      z.string().nullable().optional(),
-
-    other_details:
-      z.string().nullable().optional(),
+    name: z.string().min(2),
+    gender: z.string(),
+    dob: z.coerce.date().optional(),
+    height: z.number().nullable().optional(),
+    education: z.string().nullable().optional(),
+    occupation: z.string().nullable().optional(),
+    occupation_details: z.string().nullable().optional(),
+    fathersname: z.string().nullable().optional(),
+    mothersname: z.string().nullable().optional(),
+    fathersoccupation: z.string().nullable().optional(),
+    mothersoccupation: z.string().nullable().optional(),
+    self_gotra: z.string().nullable().optional(),
+    m_gotra: z.string().nullable().optional(),
+    gm_gotra: z.string().nullable().optional(),
+    mat_gm_gotra: z.string().nullable().optional(),
+    preferences: z.string().nullable().optional(),
+    otherinfo: z.string().nullable().optional(),
 
     /**
      * MOBILE DETAILS
      */
-    mobile:
-      z.string().min(10),
-
-    other_mobile:
-      z.array(
-        z.object({
-          mobile:
-            z.string().min(10),
-        })
-      ),
+    mobile: z.string().min(10),
+    other_mobile: z.array(z.object({ mobile: z.string().min(10), })),
 
     /**
      * ADDRESS DETAILS

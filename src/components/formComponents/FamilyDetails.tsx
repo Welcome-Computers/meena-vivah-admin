@@ -2,7 +2,6 @@ import { Form } from "antd";
 import { memo } from "react";
 import style from "../../pages/profiles/style.module.css";
 import InputField from "../InputElements/InputField";
-import SearchableSelectField from "../InputElements/SearchableSelectField";
 
 const FamilyDetails = memo((props: any) => {
   const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading } = props;
@@ -15,13 +14,12 @@ const FamilyDetails = memo((props: any) => {
         name="fathersname"
         label="Father Name"
         rules={[
-          { required: true, message: "Enter first name " },
-          { pattern: /^[a-zA-Z\s]+$/, message: "Only letters allowed" },
+          // { required: true, message: "Enter Father Name " },
           { max: 30, message: "Maximum 30 characters" },
         ]}
       />
 
-      <SearchableSelectField
+      {/* <SearchableSelectField
         name="fathersoccupation"
         label="Father Occupation"
         disabled={!fatherName}
@@ -31,7 +29,15 @@ const FamilyDetails = memo((props: any) => {
         loading={isOccupationLoading}
         placeholder="Select occupations"
         rules={[
-          { max: 100, message: "Maximum 100 characters" }
+          { max: 100, message: "Maximum 50 characters" }
+        ]}
+      /> */}
+      <InputField
+        name="fathersoccupation"
+        label="Mother Occupation"
+        disabled={!fatherName}
+        rules={[
+          { max: 100, message: "Maximum 30 characters" },
         ]}
       />
 
@@ -39,10 +45,18 @@ const FamilyDetails = memo((props: any) => {
         name="mothersname"
         label="Mother Name"
         rules={[
-          { max: 100, message: "Maximum 100 characters" },
+          { max: 100, message: "Maximum 30 characters" },
         ]}
       />
-      <SearchableSelectField
+      <InputField
+        name="mothersoccupation"
+        label="Mother Occupation"
+        disabled={!motherName}
+        rules={[
+          { max: 100, message: "Maximum 30 characters" },
+        ]}
+      />
+      {/* <SearchableSelectField
         name="mothersoccupation"
         label="Mother Occupation"
         disabled={!motherName}
@@ -51,8 +65,8 @@ const FamilyDetails = memo((props: any) => {
         options={occupatonOptions}
         loading={isOccupationLoading}
         placeholder="Select occupations"
-        rules={[{ max: 100, message: "Maximum 100 characters" }]}
-      />
+        rules={[{ max: 100, message: "Maximum 50 characters" }]}
+      /> */}
     </div>
   );
 });

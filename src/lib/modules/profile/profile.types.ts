@@ -23,12 +23,8 @@ export type GetMatchedProfilesProps = {
   page?: number;
   limit?: number;
   action?: string;
-
   looking_for?: string;
-
   preferredAge?: [number, number];
-
   req_occupation?: string[];
-
   exclude_gotra?: string[];
 };

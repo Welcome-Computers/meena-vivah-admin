@@ -1,17 +1,17 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 
+import SearchField from "@/components/InputElements/SearchField";
 import GotraTable from "@/components/master-gotra/GotraTable";
 import { appMessage } from "@/lib/utility/message";
 import {
   useDeleteGotraMutation,
   useGetGotrasQuery,
 } from "@/redux/features/masterGotra";
+import { Form } from "antd";
 import Title from "antd/es/typography/Title";
+import { debounce } from "lodash";
 import { useMemo, useState } from "react";
 import UpdateGotra from "./_includes/UpdateGotra";
-import { Form } from "antd";
-import SearchField from "@/components/InputElements/SearchField";
-import { debounce } from "lodash";
 
 const Gotra = () => {
   const [page, setPage] = useState(1);

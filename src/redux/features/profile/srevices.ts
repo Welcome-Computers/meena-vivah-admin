@@ -27,14 +27,24 @@ export const profileApi = createApi({
 
     // CREATE USER
     createUser: builder.mutation({
-      query: (body) => ({
-        url: `/api/profile`,
-        method: "POST",
-        body,
-      }),
+      query: (body: any) => {
+
+        const { action, data } = body || {};
+
+        return {
+          url: action
+            ? `/api/profile?action=${action}`
+            : "/api/profile",
+
+          method: "POST",
+
+          body: data ?? body,
+        };
+      },
 
       invalidatesTags: ["Users"],
     }),
+
     // UPDATE USER
     updateUser: builder.mutation({
       query: (body) => ({

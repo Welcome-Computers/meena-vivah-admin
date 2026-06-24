@@ -1,16 +1,16 @@
+import SearchField from "@/components/InputElements/SearchField";
 import AdminLayout from "@/components/layout/AdminLayout";
-import Title from "antd/es/typography/Title";
-import { useMemo, useState } from "react";
-import { Form } from "antd";
+import OccupationTable from "@/components/master-occupation/OccupationTable";
+import { appMessage } from "@/lib/utility/message";
 import {
   useDeleteOccupationMutation,
   useGetOccupationsQuery,
 } from "@/redux/features/masterOccupation";
-import OccupationTable from "@/components/master-occupation/OccupationTable";
-import UpdateOccupation from "./_includes/UpdateOccupation";
-import { appMessage } from "@/lib/utility/message";
-import SearchField from "@/components/InputElements/SearchField";
+import { Form } from "antd";
+import Title from "antd/es/typography/Title";
 import { debounce } from "lodash";
+import { useMemo, useState } from "react";
+import UpdateOccupation from "./_includes/UpdateOccupation";
 
 const Occupation = () => {
   const [page, setPage] = useState(1);

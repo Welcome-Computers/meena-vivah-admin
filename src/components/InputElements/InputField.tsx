@@ -39,9 +39,7 @@ const InputField = memo((props: IProps) => {
         label={label}
         {...formItemProps}
       >
-        <Input {...rest} maxLength={maxLength} size='small'
-          className="custom-input"
-        />
+        <Input {...rest} maxLength={maxLength} className="custom-input" />
       </Form.Item>
     </div>
   );

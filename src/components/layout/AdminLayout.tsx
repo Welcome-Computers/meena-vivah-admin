@@ -1,6 +1,9 @@
 import {
   DashboardOutlined,
-  SettingOutlined
+  ProfileFilled,
+  SettingOutlined,
+  UploadOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
 import { useRouter } from "next/router";
@@ -29,7 +32,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
     },
     {
       key: "profiles",
-      icon: <SettingOutlined />,
+      icon: <ProfileFilled />,
       label: "Profiles",
       children: [
         {
@@ -58,20 +61,35 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
       ],
     },
- {
+    {
       key: "master-occupation",
-      icon: <SettingOutlined />,
+      icon: <UserOutlined />,
       label: "Occupation",
       children: [
         {
           key: "/master-occupation",
           label: "All Occupation",
         },
-          {
+        {
           key: "/master-occupation/create_occupation",
           label: "Create Occupation",
         },
-       
+
+      ],
+    },
+    {
+      key: "uploader",
+      icon: <UploadOutlined />,
+      label: "Uploader",
+      children: [
+        {
+          key: "/uploader",
+          label: "Create",
+        },
+        {
+          key: "/uploader/multi_update",
+          label: "Update",
+        },
       ],
     },
 

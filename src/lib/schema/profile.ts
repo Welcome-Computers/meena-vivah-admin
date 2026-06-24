@@ -2,6 +2,7 @@ import {
   boolean,
   date,
   int,
+  mysqlEnum,
   mysqlTable,
   text,
   timestamp,
@@ -30,4 +31,5 @@ export const profiles = mysqlTable("profile", {
   otherinfo: text("otherinfo"),
   isSuspended: boolean("is_suspended").default(false),
   createdAt: timestamp("created_at").defaultNow(),
+  status: mysqlEnum('status', ['draft', 'approved', 'rejected', 'suspended']).notNull().default('draft'),
 });

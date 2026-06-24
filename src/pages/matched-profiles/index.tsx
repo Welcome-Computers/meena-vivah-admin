@@ -33,11 +33,9 @@ const MatchedProfilePage = () => {
           ? [ageValues[0], ageValues[1]]
           : undefined,
 
-      req_occupation:
-        searchParams.getAll("req_occupation[]"),
+      req_occupation: searchParams.getAll("req_occupation[]"),
 
-      exclude_gotra:
-        searchParams.getAll("exclude_gotra[]"),
+      exclude_gotra: searchParams.getAll("exclude_gotra[]"),
     };
   }, [searchParams]);
 
@@ -97,9 +95,8 @@ const MatchedProfilePage = () => {
         <div className={style.gridItem}>
           <ProfileFilter
             callingFrom="profilePage"
-            filterDataHandler={
-              filterDataHandler
-            }
+            filterDataHandler={filterDataHandler}
+            initialFilters={initialFilters}
           />
 
           <ProfileContainer

@@ -16,6 +16,9 @@ export type GetProfilesProps = {
   m_gotra?: string;
   gm_gotra?: string;
   mat_gm_gotra?: string;
+
+  draft?: "draft" | "approved" | "rejected" | "suspended";
+
 };
 
 

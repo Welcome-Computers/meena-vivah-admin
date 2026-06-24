@@ -29,7 +29,6 @@ const TextAreaField = memo((props: IProps): JSX.Element => {
       // wrapperCol={{ span: 19 }}
       >
         <TextArea
-          size='small'
           {...rest}
           rows={rows}
           className="custom-input"

@@ -4,7 +4,7 @@ import { memo } from "react";
 import SearchableSelectField from "../InputElements/SearchableSelectField";
 import FormListComponent from "./FormListComponent";
 
-export const OtheGotraDetails = memo((props: any) => {
+const OtheGotraDetails = memo((props: any) => {
   const { handleCreateGotra, gottraOptions, isGotraLoading, dependencies, handleInputValue } = props;
 
   const form = Form.useFormInstance();
@@ -110,3 +110,5 @@ export const OtheGotraDetails = memo((props: any) => {
     </FormListComponent>
   );
 });
+
+export default OtheGotraDetails;

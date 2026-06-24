@@ -8,7 +8,6 @@ import { addresses } from "@/lib/schema/address";
 import { masterGotra } from "@/lib/schema/masterGotra";
 import { otherGotras } from '@/lib/schema/otherGotra';
 import { profiles } from "@/lib/schema/profile";
-import { siblingDetails } from "@/lib/schema/sibling";
 
 import { masterOccupation } from "@/lib/schema/masterOccupation";
 import { alias } from "drizzle-orm/mysql-core";
@@ -17,7 +16,6 @@ import { CreateProfileInput, UpdateProfileInput } from "./profile.validation";
 
 const fatherOccupation = alias(masterOccupation, "fatherOccupation");
 const motherOccupation = alias(masterOccupation, "motherOccupation");
-const siblingOccupation = alias(masterOccupation, "siblingOccupation");
 
 const selfGotra = alias(masterGotra, "selfGotra");
 const motherGotra = alias(masterGotra, "motherGotra");
@@ -40,6 +38,7 @@ export const userSelect = {
   mothersoccupation: motherOccupation.code,
   mothersoccupation_name: motherOccupation.name,
   preferences: profiles.preferences,
+  status: profiles.status,
   otherinfo: profiles.otherinfo,
   isSuspended: profiles.isSuspended,
   createdAt: profiles.createdAt,
@@ -119,7 +118,6 @@ async function attachProfileRelations(
 
   const [
     allAddresses,
-    allSiblings,
     allOtherGotras,
   ] = await Promise.all([
     db
@@ -132,29 +130,6 @@ async function attachProfileRelations(
         )
       ),
 
-    db
-      .select({
-        id: siblingDetails.id,
-        user_id: siblingDetails.user_id,
-        relation: siblingDetails.relation,
-        name: siblingDetails.name,
-        education: siblingDetails.education,
-        occupation: siblingOccupation.code,
-        occupation_name: siblingOccupation.name,
-      })
-      .from(siblingDetails)
-
-      .leftJoin(
-        siblingOccupation,
-        sql`${siblingDetails.occupation} COLLATE utf8mb4_unicode_ci = ${siblingOccupation.code}`
-      )
-
-      .where(
-        inArray(
-          siblingDetails.user_id,
-          userIds
-        )
-      ),
 
     db
       .select({
@@ -180,7 +155,6 @@ async function attachProfileRelations(
   ]);
 
   const addressMap = new Map();
-  const siblingMap = new Map();
   const otherGotraMap = new Map();
 
   allAddresses.forEach(
@@ -193,22 +167,6 @@ async function attachProfileRelations(
       arr.push(item);
 
       addressMap.set(
-        item.user_id,
-        arr
-      );
-    }
-  );
-
-  allSiblings.forEach(
-    (item) => {
-      const arr =
-        siblingMap.get(
-          item.user_id
-        ) || [];
-
-      arr.push(item);
-
-      siblingMap.set(
         item.user_id,
         arr
       );
@@ -236,7 +194,6 @@ async function attachProfileRelations(
       ...profile,
 
       address_details: addressMap.get(profile.id) || [],
-      sibling_details: siblingMap.get(profile.id) || [],
       other_gotra: otherGotraMap.get(profile.id) || [],
     })
   );
@@ -413,9 +370,6 @@ export async function createProfile(
         await tx
           .insert(profiles)
           .values({
-            // other_mobile:
-            //   payload.other_mobile,
-
             mobile: payload.mobile,
             gender: payload.gender,
             name: payload.name,
@@ -434,6 +388,7 @@ export async function createProfile(
             mat_gm_gotra: payload.mat_gm_gotra,
             preferences: payload.preferences,
             otherinfo: payload.otherinfo,
+            status: payload.status,
           })
           .$returningId();
 
@@ -460,25 +415,7 @@ export async function createProfile(
           );
       }
 
-      /**
-       * SIBLINGS
-       */
-      if (payload.sibling_details?.length) {
 
-        await tx
-          .insert(siblingDetails)
-          .values(
-            payload.sibling_details.map(
-              (item) => ({
-                user_id: userId,
-                relation: item.relation,
-                name: item.sibling_name,
-                education: item.sibling_education,
-                occupation: item.sibling_occupation,
-              })
-            )
-          );
-      }
 
       /**
        * OTHER GOTRA
@@ -501,68 +438,6 @@ export async function createProfile(
       return userResult;
     }
   );
-}
-
-export async function getProfileById1(
-  id: number
-) {
-
-  const [profile] = await db.select({
-    id: profiles.id,
-    mobile: profiles.mobile,
-    gender: profiles.gender,
-    name: profiles.name,
-    dob: profiles.dob,
-    height: profiles.height,
-    education: profiles.education,
-
-    fathersname: profiles.fathersname,
-    mothersname: profiles.mothersname,
-    fathersoccupation: profiles.fathersoccupation,
-    mothersoccupation: profiles.mothersoccupation,
-
-    preferences: profiles.preferences,
-    otherinfo: profiles.otherinfo,
-
-    occupation: masterOccupation.code,
-
-    self_gotra: selfGotra.code,
-    m_gotra: motherGotra.code,
-    gm_gotra: grandmotherGotra.code,
-    mat_gm_gotra: maternalGrandmotherGotra.code,
-  })
-    .from(profiles)
-
-    .leftJoin(
-      masterOccupation,
-      sql`${profiles.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
-    )
-
-    .leftJoin(
-      selfGotra,
-      sql`${profiles.self_gotra} COLLATE utf8mb4_unicode_ci = ${selfGotra.code}`
-    )
-
-    .leftJoin(
-      motherGotra,
-      sql`${profiles.m_gotra} COLLATE utf8mb4_unicode_ci = ${motherGotra.code}`
-    )
-
-    .leftJoin(
-      grandmotherGotra,
-      sql`${profiles.gm_gotra} COLLATE utf8mb4_unicode_ci = ${grandmotherGotra.code}`
-    )
-
-    .leftJoin(
-      maternalGrandmotherGotra,
-      sql`${profiles.mat_gm_gotra} COLLATE utf8mb4_unicode_ci = ${maternalGrandmotherGotra.code}`
-    )
-
-    .where(eq(profiles.id, id))
-    .limit(1);
-  // .then(rows => rows[0] ?? null);
-
-  return profile;
 }
 
 export async function getProfileById(
@@ -610,6 +485,7 @@ export async function updateProfile(
         mat_gm_gotra: payload.mat_gm_gotra,
         preferences: payload.preferences,
         otherinfo: payload.otherinfo,
+        status: payload.status,
       })
       .where(eq(profiles.id, userId));
 
@@ -633,24 +509,6 @@ export async function updateProfile(
       );
     }
 
-    /**
-     * SIBLINGS
-     */
-    await tx
-      .delete(siblingDetails)
-      .where(eq(siblingDetails.user_id, userId));
-
-    if (payload.sibling_details?.length) {
-      await tx.insert(siblingDetails).values(
-        payload.sibling_details.map((item) => ({
-          user_id: userId,
-          relation: item.relation,
-          name: item.sibling_name,
-          education: item.sibling_education,
-          occupation: item.sibling_occupation,
-        }))
-      );
-    }
 
     /**
      * OTHER GOTRA
@@ -688,6 +546,7 @@ export async function suspendProfile(
 
   return true;
 }
+
 export async function activeProfile(
   id: number
 ) {
@@ -704,24 +563,14 @@ export async function activeProfile(
   return true;
 }
 
-
 export async function getProfileByMobile(
   mobile: string
 ) {
   const data = await db
     .select({
       id: profiles.id,
-      name: profiles.name,
-      mobile: profiles.mobile,
-      gender: profiles.gender,
-      dob: profiles.dob,
-      occupation: masterOccupation.name,
     })
     .from(profiles)
-    .leftJoin(
-      masterOccupation,
-      sql`${profiles.occupation} COLLATE utf8mb4_unicode_ci = ${masterOccupation.code}`
-    )
     .where(
       and(
         eq(profiles.mobile, mobile),
@@ -729,5 +578,136 @@ export async function getProfileByMobile(
       )
     );
 
-  return data;
+  return await attachProfileRelations(data);
+}
+
+export async function createBulkProfiles(
+  payloads: CreateProfileInput[]
+) {
+
+  return await db.transaction(async (tx) => {
+
+    /**
+     * 1. INSERT ALL PROFILES
+     */
+    const profileRows = payloads.map((payload) => ({
+      mobile: payload.mobile,
+      gender: payload.gender,
+      name: payload.name,
+      dob: payload.dob,
+      height: payload.height,
+      education: payload.education,
+      occupation: payload.occupation,
+      occupation_details: payload.occupation_details,
+
+      fathersname: payload.fathersname,
+      mothersname: payload.mothersname,
+
+      fathersoccupation: payload.fathersoccupation,
+      mothersoccupation: payload.mothersoccupation,
+
+      self_gotra: payload.self_gotra,
+      m_gotra: payload.m_gotra,
+      gm_gotra: payload.gm_gotra,
+      mat_gm_gotra: payload.mat_gm_gotra,
+
+      preferences: payload.preferences,
+      otherinfo: payload.otherinfo,
+
+      status: payload.status ?? "draft",
+    }));
+
+
+    const insertedProfiles =
+      await tx
+        .insert(profiles)
+        .values(profileRows)
+        .$returningId();
+
+
+
+    /**
+     * 2. CREATE ADDRESSES BULK
+     */
+
+    const addressRows =
+      payloads.flatMap(
+        (payload, index) => {
+
+          const userId =
+            insertedProfiles[index].id;
+
+
+          return (
+            payload.address_details?.map(
+              (item) => ({
+                user_id: userId,
+                address: item.full_address,
+                state: item.state,
+                city: item.city,
+                pincode: item.pincode,
+                type: item.type,
+              })
+            ) || []
+          );
+
+        }
+      );
+
+
+    if (addressRows.length) {
+
+      await tx
+        .insert(addresses)
+        .values(addressRows);
+
+    }
+
+
+
+
+    /**
+     * 3. OTHER GOTRA BULK
+     */
+
+    const gotraRows =
+      payloads.flatMap(
+        (payload, index) => {
+
+          const userId =
+            insertedProfiles[index].id;
+
+
+          return (
+            payload.other_gotra?.map(
+              (item) => ({
+                user_id: userId,
+
+                other_gotra_relation:
+                  item.other_gotra_relation,
+
+                other_gotra_name:
+                  item.other_gotra_name,
+              })
+            ) || []
+          );
+
+        }
+      );
+
+
+    if (gotraRows.length) {
+
+      await tx
+        .insert(otherGotras)
+        .values(gotraRows);
+
+    }
+
+
+
+    return insertedProfiles;
+
+  });
+
 }

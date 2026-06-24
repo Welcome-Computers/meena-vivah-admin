@@ -1,8 +1,10 @@
 import { cmToFeetInch, getAge } from "@/lib/utility";
 import { IPagination, IProfile } from "@/redux/types";
 
-import { Avatar, Button, Space, Table, Tag } from "antd";
+import { Avatar, Button, Form, Space, Table, Tag } from "antd";
 
+import { setProfileData } from "@/redux/features/profile";
+import { useAppDispatch } from "@/redux/hooks";
 import type { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -12,19 +14,31 @@ interface iProps {
   loading: boolean;
   showAction?: boolean;
   data: IProfile[];
-  pagination: IPagination;
-  onPageChange: any;
+  pagination?: IPagination;
+  onPageChange?: any;
+  is_pick_current_data?: boolean;
+  callingFrom?: string;
 }
 
 const ProfileTable = (props: iProps) => {
 
-  const { showAction, loading, data, pagination, onPageChange } = props;
+  const { callingFrom, showAction, loading, data, pagination, onPageChange, is_pick_current_data = false } = props;
+
+  const form = Form.useFormInstance()
 
   const router = useRouter();
+  const dispatch = useAppDispatch() as any;
 
   const columns: ColumnsType<IProfile> = [{
     title: "#", key: "index",
-    width: 70, fixed: "left", render: (_, __, index) => (pagination.page - 1) * pagination.limit + index + 1,
+    width: 70, fixed: "left",
+    render: (_, __, index) => {
+      if (!pagination) {
+        return index + 1;
+      }
+
+      return (pagination.page - 1) * pagination.limit + index + 1;
+    },
   },
 
   {
@@ -51,7 +65,7 @@ const ProfileTable = (props: iProps) => {
                 size={0}>
                 <small>
                   (<em color="blue">
-                    {`${record?.occupation}`}
+                    {`${record?.occupation_name}`}
                   </em>)
                 </small>
               </Space>
@@ -68,7 +82,6 @@ const ProfileTable = (props: iProps) => {
       )
     },
   },
-
 
   {
     title: "DOB",
@@ -116,29 +129,18 @@ const ProfileTable = (props: iProps) => {
     render: (_, record) => (
       <Space wrap>
         <Tag>
-          Self:
-          {" "}
-          {
-            record.self_gotra
-          }
+          {`Self: ${record.self_gotra_name}`}
         </Tag>
         <Tag>
-          Mother:
-          {" "}
-          {
-            record.m_gotra
-          }
+          {`Mother: ${record.m_gotra_name}`}
         </Tag>
         <Tag>
-          GM:
-          {" "}
-          {
-            record.gm_gotra
-          }
+          {`G.Mother: ${record.gm_gotra_name}`}
         </Tag>
       </Space>
     ),
   },
+
 
   {
     title: "Father",
@@ -147,24 +149,28 @@ const ProfileTable = (props: iProps) => {
     key: "fathersname",
     width: 180,
     render: (value, record) => {
+      if (!value && !record?.fathersoccupation) {
+        return null;
+      }
+
       return (
         <Space orientation="horizontal" size={0}>
           <Space
             orientation="vertical"
             size={0}
-            style={{ marginLeft: "10px" }}>
+            style={{ marginLeft: "10px" }}
+          >
             <small>
-              {value}
+              {value || "--"}
 
-              <em color="blue">
-                {` ${record?.fathersoccupation}`}
-              </em>
+              {record?.fathersoccupation && (
+                <em>{` ${record.fathersoccupation}`}</em>
+              )}
             </small>
           </Space>
         </Space>
-      )
-    },
-
+      );
+    }
   },
 
   {
@@ -173,23 +179,28 @@ const ProfileTable = (props: iProps) => {
     key: "mothersname",
     width: 180,
     render: (value, record) => {
+      if (!value && !record?.mothersoccupation) {
+        return null;
+      }
+
       return (
         <Space orientation="horizontal" size={0}>
           <Space
             orientation="vertical"
             size={0}
-            style={{ marginLeft: "10px" }}>
+            style={{ marginLeft: "10px" }}
+          >
             <small>
-              {value}
+              {value || "--"}
 
-              <em color="blue">
-                {` ${record?.mothersoccupation}`}
-              </em>
+              {record?.mothersoccupation && (
+                <em>{` ${record.mothersoccupation}`}</em>
+              )}
             </small>
           </Space>
         </Space>
-      )
-    },
+      );
+    }
   },
 
   {
@@ -238,6 +249,16 @@ const ProfileTable = (props: iProps) => {
             <Button
               type="link"
               onClick={() => {
+
+                if (is_pick_current_data) {
+
+                  const values = form?.getFieldsValue?.() || {};
+
+                  const details = callingFrom === "create" ? values?.otherinfo : values?.old_detials;
+
+                  dispatch(setProfileData(details));
+                }
+
                 router.push(
                   `/profiles/update_profile?id=${record.id}&action=update`
                 );
@@ -245,7 +266,7 @@ const ProfileTable = (props: iProps) => {
             >
               Edit
             </Button>
-          </Space>
+          </Space >
         ),
       },
     ]
@@ -261,15 +282,19 @@ const ProfileTable = (props: iProps) => {
       loading={loading}
       dataSource={data}
       columns={columns}
-      pagination={{
-        current: pagination.page,
-        pageSize: pagination.limit,
-        total: pagination.total,
-        showSizeChanger: true,
-        showTotal: (total) => `Total ${total} profiles`,
-        pageSizeOptions: ["10", "20", "50", "100",],
-        onChange: onPageChange,
-      }}
+      pagination={
+        pagination
+          ? {
+            current: pagination.page,
+            pageSize: pagination.limit,
+            total: pagination.total,
+            showSizeChanger: true,
+            showTotal: (total) => `Total ${total} profiles`,
+            pageSizeOptions: ["10", "20", "50", "100"],
+            onChange: onPageChange,
+          }
+          : false
+      }
       scroll={{ x: 1200 }}
       expandable={{
         expandedRowRender: (

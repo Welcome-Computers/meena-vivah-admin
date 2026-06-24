@@ -4,12 +4,13 @@ import style from "../../pages/profiles/style.module.css";
 import InputField from "../InputElements/InputField";
 
 const FamilyDetails = memo((props: any) => {
-  const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading } = props;
+  const { form } = props;
   const motherName = Form.useWatch("mothersname", form);
   const fatherName = Form.useWatch("fathersname", form);
 
   return (
     <div className={style["form-container"]}>
+
       <InputField
         name="fathersname"
         label="Father Name"
@@ -19,19 +20,6 @@ const FamilyDetails = memo((props: any) => {
         ]}
       />
 
-      {/* <SearchableSelectField
-        name="fathersoccupation"
-        label="Father Occupation"
-        disabled={!fatherName}
-        allowCreate
-        onCreateOption={handleCreateOccupation}
-        options={occupatonOptions}
-        loading={isOccupationLoading}
-        placeholder="Select occupations"
-        rules={[
-          { max: 100, message: "Maximum 50 characters" }
-        ]}
-      /> */}
       <InputField
         name="fathersoccupation"
         label="Mother Occupation"
@@ -56,17 +44,7 @@ const FamilyDetails = memo((props: any) => {
           { max: 100, message: "Maximum 30 characters" },
         ]}
       />
-      {/* <SearchableSelectField
-        name="mothersoccupation"
-        label="Mother Occupation"
-        disabled={!motherName}
-        allowCreate
-        onCreateOption={handleCreateOccupation}
-        options={occupatonOptions}
-        loading={isOccupationLoading}
-        placeholder="Select occupations"
-        rules={[{ max: 100, message: "Maximum 50 characters" }]}
-      /> */}
+
     </div>
   );
 });

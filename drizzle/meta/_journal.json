@@ -8,6 +8,13 @@
       "when": 1781858843599,
       "tag": "0000_left_kronos",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1782250371569,
+      "tag": "0001_sharp_shinko_yamashiro",
+      "breakpoints": true
     }
   ]
 }

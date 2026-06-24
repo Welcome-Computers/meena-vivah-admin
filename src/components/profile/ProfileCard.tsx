@@ -1,4 +1,4 @@
-import { getAge } from "@/lib/utility";
+import { getAge, isEnglishName } from "@/lib/utility";
 import { IPagination, IProfile } from "@/redux/types";
 import { Avatar, Button, Pagination } from "antd";
 import Image from "next/image";
@@ -39,8 +39,9 @@ export const ProfileCard = (props: iProps) => {
               </div>
 
               <div className={style.profileInfo}>
-                <h4>{record?.name}</h4>
-                <p className={style.profession}>{record?.occupation}</p>
+                <h4 className={isEnglishName(record?.name) ? "capitalize" : ""}>{record?.name}</h4>
+
+                <p className={style.profession}>{record?.occupation_name}</p>
                 <p>
                   <strong>Age:</strong> {getAge(record?.dob)}
                 </p>
@@ -54,11 +55,12 @@ export const ProfileCard = (props: iProps) => {
                   <strong>Contact:</strong> {record?.mobile}
                 </p>
                 <p>
-                  <strong>Gotra:</strong> {record?.self_gotra}/ {record?.m_gotra}/ {record?.gm_gotra}
+                  <strong>Gotra:</strong> {record?.self_gotra_name}/ {record?.m_gotra_name}/ {record?.gm_gotra_name}
                 </p>
               </div>
 
-              {showAction &&
+              {
+                showAction &&
                 <Button
                   type="link"
                   onClick={() => {
@@ -68,7 +70,8 @@ export const ProfileCard = (props: iProps) => {
                   }}
                 >
                   Edit
-                </Button>}
+                </Button>
+              }
             </div>
           )
         }
@@ -93,6 +96,6 @@ export const ProfileCard = (props: iProps) => {
           onChange={onPageChange}
         />
       </div>
-    </div>
+    </div >
   );
 };

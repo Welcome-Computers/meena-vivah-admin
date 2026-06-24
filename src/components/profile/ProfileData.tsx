@@ -4,105 +4,118 @@ import {
 } from "antd";
 
 const ProfileData = ({ record }: any) => {
+
+  const hasFamilyDetails =
+    record.fathersname ||
+    record.fathersoccupation ||
+    record.mothersname ||
+    record.mothersoccupation;
+
+  const hasGotraDetails =
+    record.self_gotra ||
+    record.m_gotra ||
+    record.gm_gotra ||
+    record.mat_gm_gotra;
+
+
+  const validAddresses =
+    record?.address_details?.filter((item: any) =>
+      [item.address, item.city, item.state, item.pincode].some(Boolean)
+    ) || [];
+
+
   return (
     <div style={{ padding: 12 }}>
       {/* Parents */}
-      <div className="other_info">
-        <h4>Family Details</h4>
-        <div>
-          <p>
-            <b>Father:</b>{` ${record.fathersname}`} <Tag color={"gray"}>{record.fathersoccupation}</Tag>
-          </p>
-          <p>
-            <b>Mother:</b>{` ${record.mothersname}`} <Tag color={"gray"}>{record.mothersoccupation}</Tag>
-          </p>
+      {hasFamilyDetails && (
+        <div className="other_info">
+          <h4>Family Details</h4>
+
+          <div>
+            {(record.fathersname || record.fathersoccupation) && (
+              <p>
+                <b>Father:</b>
+                {record.fathersname ? ` ${record.fathersname}` : ""}
+                {record.fathersoccupation && (
+                  <Tag color="gray">{record.fathersoccupation}</Tag>
+                )}
+              </p>
+            )}
+
+            {(record.mothersname || record.mothersoccupation) && (
+              <p>
+                <b>Mother:</b>
+                {record.mothersname ? ` ${record.mothersname}` : ""}
+                {record.mothersoccupation && (
+                  <Tag color="gray">{record.mothersoccupation}</Tag>
+                )}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
       {/* Gotra */}
-      <div className="other_info">
-        <h4>
-          Gotra Details
-        </h4>
-        <div>
-          <Space wrap>
-            <Tag>
-              <b>Self:</b>{` ${record.self_gotra}`}
-            </Tag>
-            <Tag>
-              <b>Mother:</b>{` ${record.m_gotra}`}
-            </Tag>
-            <Tag>
-              <b>Grandmother:</b>{` ${record.gm_gotra}`}
-            </Tag>
-            <Tag>
-              <b>Maternal GM:</b>{` ${record.mat_gm_gotra}`}
-            </Tag>
-          </Space>
+      {hasGotraDetails && (
+        <div className="other_info">
+          <h4>Gotra Details</h4>
+          <div>
+            <Space wrap>
+              {record.self_gotra && (
+                <Tag>
+                  <b>Self:</b> {record.self_gotra}
+                </Tag>
+              )}
+
+              {record.m_gotra && (
+                <Tag>
+                  <b>Mother:</b> {record.m_gotra}
+                </Tag>
+              )}
+
+              {record.gm_gotra && (
+                <Tag>
+                  <b>Grandmother:</b> {record.gm_gotra}
+                </Tag>
+              )}
+
+              {record.mat_gm_gotra && (
+                <Tag>
+                  <b>Maternal GM:</b> {record.mat_gm_gotra}
+                </Tag>
+              )}
+            </Space>
+          </div>
         </div>
-      </div>
+      )}
+
       {/* Address */}
-      {record?.address_details?.length ? (
+      {validAddresses.length > 0 && (
         <div className="other_info">
           <h4>Address Details</h4>
-          <div>
-            {record.address_details.map(
-              (item: any, index: number) => {
-                const addressText = [
-                  item.address,
-                  item.city,
-                  item.state,
-                  item.pincode,
-                ]
-                  .filter(Boolean)
-                  .join(", ");
 
-                return (
-                  <div
-                    key={index}
-                    style={{ marginBottom: 10 }}
-                  >
-                    <p>
-                      <b className="capitalize">{item.type}:</b>{" "}
-                      {addressText || "-"}
-                    </p>
-                  </div>
-                );
-              }
-            )}
+          <div>
+            {validAddresses.map((item: any, index: number) => {
+              const addressText = [
+                item.address,
+                item.city,
+                item.state,
+                item.pincode,
+              ]
+                .filter(Boolean)
+                .join(", ");
+
+              return (
+                <div key={index} style={{ marginBottom: 10 }}>
+                  <p>
+                    <b className="capitalize">{item.type}:</b> {addressText}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
-      ) : null}
-
-      {/* Siblings */}
-      {record?.sibling_details?.length ? (
-        <div className="other_info">
-          <h4>Sibling Details</h4>
-          <div>
-            {record.sibling_details.map(
-              (item: any, index: number) => {
-                const siblingText = [
-                  item.name,
-                  item.education,
-                  item.occupation,
-                ]
-                  .filter(Boolean)
-                  .join(" - ");
-
-                return (
-                  <div key={index}>
-
-                    <Tag color={record.relation === "boy" ? "blue" : "magenta"}        >
-                      {record.relation?.toUpperCase()}
-                    </Tag>
-
-                    {siblingText || "-"}
-                  </div>
-                );
-              }
-            )}
-          </div>
-        </div>
-      ) : null}
+      )}
 
       {/* Other Gotra */}
       {record?.other_gotra?.length ? (

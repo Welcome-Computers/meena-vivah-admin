@@ -31,7 +31,7 @@ const FormListComponent = memo((props: any) => {
               {fields.length > 1 && (
                 <Button
                   style={{ marginTop: "5px" }}
-                  size="small"
+                  size="medium"
                   danger
                   icon={<CloseOutlined />}
                   onClick={() => remove(value.name)}
@@ -44,7 +44,7 @@ const FormListComponent = memo((props: any) => {
           <div style={{ display: "flex", justifyContent: "end" }}>
             <Button
               icon={<PlusOutlined />}
-              size="small"
+              size="medium"
               disabled={isDisabled}
               onClick={async () => {
                 try {

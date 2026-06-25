@@ -18,6 +18,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
   const router = useRouter();
   const { data, isLoading, error } = useGetMeQuery({});
 
+
   useEffect(() => {
     if (!isLoading && error) {
       router.push("/");
@@ -75,6 +76,18 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/master-occupation/create_occupation",
           label: "Create Occupation",
         },
+      ],
+    },
+     {
+      key: "audit-logs",
+      icon: <SettingOutlined />,
+      label: "Audit Histroy",
+      children: [
+        {
+          key: "/audit-logs",
+          label: "All History",
+        },
+         
       ],
     },
   ];

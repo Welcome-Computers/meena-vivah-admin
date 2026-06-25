@@ -8,6 +8,7 @@ import {
 } from "@/lib/modules/master-gotra/master-gotra.service";
 import { profiles } from "@/lib/schema/profile";
 import { eq, or } from "drizzle-orm";
+import { adminAuth } from "@/lib/modules/admin/adminAuth";
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,16 +23,30 @@ export default async function handler(
       return res.status(200).json(data);
     }
 
+    // update gotra
     if (req.method === "PUT") {
-      const result = await updateGotra({
-        id,
-        ...req.body,
-      });
+      // get admin id
+      let adminId: number | null = null;
+      const decodedToken = adminAuth(req) as { id: number };
+      adminId = decodedToken.id;
+
+      const result = await updateGotra(
+        {
+          id,
+          ...req.body,
+        },
+        adminId,
+      );
 
       return res.status(200).json(result);
     }
 
     if (req.method === "DELETE") {
+      // get admin id
+      let adminId: number | null = null;
+      const decodedToken = adminAuth(req) as { id: number };
+      adminId = decodedToken.id;
+
       // get gotra
       const gotra = await getGotraById(id);
 
@@ -54,7 +69,7 @@ export default async function handler(
         });
       }
 
-      const result = await deleteGotra(id);
+      const result = await deleteGotra(id, adminId);
 
       return res.status(200).json(result);
     }

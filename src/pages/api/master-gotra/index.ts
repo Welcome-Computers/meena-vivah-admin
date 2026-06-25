@@ -9,6 +9,7 @@ import {
   createGotraSchema,
   createGotrasSchema,
 } from "@/lib/modules/master-gotra/master-gotra.validation";
+import { adminAuth } from "@/lib/modules/admin/adminAuth";
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,12 +29,15 @@ export default async function handler(
 
     if (req.method === "POST") {
       try {
+        // get admin id
+        const decodedToken = adminAuth(req) as { id: number };
+
         // existing code
         const payload = Array.isArray(req.body)
           ? createGotrasSchema.parse(req.body)
           : createGotraSchema.parse(req.body);
 
-        const result = await createGotra(payload);
+        const result = await createGotra(payload, decodedToken);
 
         return res.status(201).json({
           success: true,

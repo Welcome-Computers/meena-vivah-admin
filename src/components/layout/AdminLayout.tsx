@@ -1,10 +1,8 @@
-import {
-  DashboardOutlined,
-  SettingOutlined
-} from "@ant-design/icons";
+import { useAdminLogoutMutation, useGetMeQuery } from "@/redux/features/login";
+import { DashboardOutlined, SettingOutlined } from "@ant-design/icons";
 import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 const { Header, Sider, Content } = Layout;
 
@@ -16,10 +14,17 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout(props: AdminLayoutProps) {
-
-  const { children, title, headerRightSec, breadcrumbItems } = props || {}
-
+  const { children, title, headerRightSec, breadcrumbItems } = props || {};
   const router = useRouter();
+  const { data, isLoading, error } = useGetMeQuery({});
+
+  useEffect(() => {
+    if (!isLoading && error) {
+      router.push("/");
+    }
+  }, [error, isLoading, router]);
+
+  const [adminLogout] = useAdminLogoutMutation();
 
   const menuItems = [
     {
@@ -55,10 +60,9 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/gotra/create_gotra",
           label: "Create Gotra",
         },
-
       ],
     },
- {
+    {
       key: "master-occupation",
       icon: <SettingOutlined />,
       label: "Occupation",
@@ -67,20 +71,43 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/master-occupation",
           label: "All Occupation",
         },
-          {
+        {
           key: "/master-occupation/create_occupation",
           label: "Create Occupation",
         },
-       
       ],
     },
-
-
   ];
+
+  // Logout funtion
+  const handleLogout = async () => {
+    try {
+      const res = await adminLogout({}).unwrap();
+
+      if (res.success) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+if (isLoading) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      Loading...
+    </div>
+  );
+}
+
+if (error || !data) {
+  return null;
+}
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-
       <Sider breakpoint="lg" collapsedWidth="0">
         <div style={{ color: "white", padding: 16, fontSize: 18 }}>
           Admin Panel
@@ -106,8 +133,10 @@ export default function AdminLayout(props: AdminLayoutProps) {
           <Button
             type="primary"
             style={{ position: "absolute", top: 16, right: 16 }}
-            onClick={() => router.push('/')}
-            danger>
+            // onClick={() => router.push('/')}
+            onClick={handleLogout}
+            danger
+          >
             Logout
           </Button>
 
@@ -116,7 +145,6 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
         {/* Content */}
         <Content style={{ margin: "0px 0px 0px 0px " }}>
-
           <div className="admin_header">
             <div>
               {breadcrumbItems?.length ? (
@@ -127,9 +155,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
             {headerRightSec ? <div>{headerRightSec}</div> : null}
           </div>
 
-          <div style={{ padding: 20, minHeight: 360 }}>
-            {children}
-          </div>
+          <div style={{ padding: 20, minHeight: 360 }}>{children}</div>
         </Content>
       </Layout>
     </Layout>

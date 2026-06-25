@@ -6,7 +6,6 @@ export const AuthApi = createApi({
   baseQuery: baseQueryWithReauth,
 
   endpoints: (builder) => ({
-
     adminLogin: builder.mutation({
       query: (body) => ({
         url: `/api/auth/login`,
@@ -15,6 +14,11 @@ export const AuthApi = createApi({
       }),
     }),
 
+    getMe: builder.query({
+      query: () => ({
+        url: "/api/auth/me",
+      }),
+    }),
 
     adminLogout: builder.mutation({
       query: () => ({
@@ -22,9 +26,7 @@ export const AuthApi = createApi({
         method: "POST",
       }),
     }),
-
-   
   }),
 });
 
-export const { useAdminLoginMutation, useAdminLogoutMutation } = AuthApi;
+export const { useAdminLoginMutation,useGetMeQuery, useAdminLogoutMutation } = AuthApi;

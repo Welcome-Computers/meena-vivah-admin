@@ -1,0 +1,35 @@
+* [33m4ef9878[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mpukhraj/adminpage[m[33m, [m[1;31morigin/pukhraj/adminpage[m[33m)[m admin login page created
+*   [33m8acf24d[m[33m ([m[1;31morigin/development[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mpukhraj/loginform[m[33m)[m Merge pull request #29 from Welcome-Computers/ujagar/development
+[32m|[m[33m\[m  
+[32m|[m * [33m251ce96[m Add drizzle migrations
+* [33m|[m [33mad5d8e2[m Merge pull request #27 from Welcome-Computers/ujagar/development
+[34m|[m[33m\[m[33m|[m 
+[34m|[m * [33m95724d8[m bug fix
+[34m|[m * [33m654b77b[m bug fix
+[34m|[m *   [33mf28a8ee[m Merge branch 'development' of github.com:Welcome-Computers/meena-vivah-admin into ujagar/development
+[34m|[m [36m|[m[34m\[m  
+[34m|[m [36m|[m[34m/[m  
+[34m|[m[34m/[m[36m|[m   
+* [36m|[m   [33m0b4f8f8[m Merge pull request #28 from Welcome-Computers/pukhraj/loginform
+[1;32m|[m[1;33m\[m [36m\[m  
+[1;32m|[m * [36m|[m [33me59ff0e[m[33m ([m[1;31morigin/pukhraj/loginform[m[33m)[m login form created
+[1;32m|[m [1;33m|[m * [33m46e13b7[m implement with rich text editor
+[1;32m|[m [1;33m|[m * [33m675d035[m apply common functionality
+[1;32m|[m [1;33m|[m * [33mb2d14b7[m apply height
+[1;32m|[m [1;33m|[m * [33m9326a3e[m add height
+[1;32m|[m [1;33m|[m *   [33m0a5d33e[m use lodash library
+[1;32m|[m [1;33m|[m [1;34m|[m[1;32m\[m  
+[1;32m|[m [1;33m|[m[1;32m_[m[1;34m|[m[1;32m/[m  
+[1;32m|[m[1;32m/[m[1;33m|[m [1;34m|[m   
+* [1;33m|[m [1;34m|[m [33md820c39[m Merge pull request #26 from Welcome-Computers/pukhraj/gotra-occupation-update01
+[1;36m|[m[1;33m\[m[1;33m|[m [1;34m|[m 
+[1;36m|[m * [1;34m|[m [33m968b241[m[33m ([m[1;31morigin/pukhraj/gotra-occupation-update01[m[33m, [m[1;32mpukhraj/gotra-occupation-update01[m[33m)[m gotra occupation serach field updated
+[1;36m|[m [31m|[m * [33m1a80788[m fix bug
+[1;36m|[m [31m|[m[1;36m/[m  
+[1;36m|[m[1;36m/[m[31m|[m   
+* [31m|[m [33m0940a3d[m Merge pull request #25 from Welcome-Computers/pukhraj/occupation-gotra-update
+[32m|[m[31m\[m[31m|[m 
+[32m|[m * [33m33c484a[m[33m ([m[1;31morigin/pukhraj/occupation-gotra-update[m[33m, [m[1;32mpukhraj/occupation-gotra-update[m[33m)[m update occupation - gotra
+[32m|[m[32m/[m  
+*   [33mb3b78c8[m[33m ([m[1;31morigin/pukhraj/master-occupation[m[33m, [m[1;32mpukhraj/master-occupation[m[33m)[m Merge pull request #24 from Welcome-Computers/ujagar/development
+[34m|[m[35m\[m  

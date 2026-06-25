@@ -1,5 +1,6 @@
 // src\redux\apis.ts
 
+import { importedProfileApi } from "./features/importedProfile/srevices";
 import { AuthApi } from "./features/login";
 import { masterGotraApi } from "./features/masterGotra";
 import { masterOccupationApi } from "./features/masterOccupation";
@@ -10,4 +11,5 @@ export const apis = [
   masterGotraApi,
   masterOccupationApi,
   AuthApi,
+  importedProfileApi,
 ];

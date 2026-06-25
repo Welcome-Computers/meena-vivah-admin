@@ -1,5 +1,6 @@
 // src\redux\rootMiddleware.ts
 
+import { importedProfileApi } from "./features/importedProfile/srevices";
 import { AuthApi } from "./features/login";
 import { masterGotraApi } from "./features/masterGotra";
 import { masterOccupationApi } from "./features/masterOccupation";
@@ -10,4 +11,5 @@ export const apiMiddlewares = [
   masterGotraApi.middleware,
   masterOccupationApi.middleware,
   AuthApi.middleware,
+  importedProfileApi.middleware,
 ];

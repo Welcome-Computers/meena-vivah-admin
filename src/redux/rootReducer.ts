@@ -1,8 +1,10 @@
 // rootReducer.ts
 
 import { combineReducers } from "@reduxjs/toolkit";
+
 import profile from "./features/profile";
 
+import { importedProfileApi } from "./features/importedProfile/srevices";
 import { AuthApi } from "./features/login";
 import { masterGotraApi } from "./features/masterGotra";
 import { masterOccupationApi } from "./features/masterOccupation";
@@ -15,4 +17,5 @@ export const rootReducer = combineReducers({
   [masterGotraApi.reducerPath]: masterGotraApi.reducer,
   [masterOccupationApi.reducerPath]: masterOccupationApi.reducer,
   [AuthApi.reducerPath]: AuthApi.reducer,
+  [importedProfileApi.reducerPath]: importedProfileApi.reducer,
 });

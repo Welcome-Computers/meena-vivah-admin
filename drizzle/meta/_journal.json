@@ -15,6 +15,20 @@
       "when": 1782250371569,
       "tag": "0001_sharp_shinko_yamashiro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1782350321622,
+      "tag": "0002_lean_the_initiative",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1782350672765,
+      "tag": "0003_damp_redwing",
+      "breakpoints": true
     }
   ]
 }

@@ -24,6 +24,7 @@ import InputField from "../InputElements/InputField";
 
 interface Props {
   profiles: any[];
+  handleFromSubmit: () => Promise<void>
 }
 
 const BiodataPreviewTable = ({
@@ -269,16 +270,11 @@ const BiodataPreviewTable = ({
   ];
 
   const saveSingleRow = async (record: any) => {
-
     console.log(
       "saving single",
       record
     );
-
-
     // call RTK mutation here
-
-
     setData(prev =>
       prev.map(item =>
         item.id === record.id
@@ -393,7 +389,6 @@ const BiodataPreviewTable = ({
     expanded: boolean,
     record: any
   ) => {
-
     if (expanded) {
       setExpandedId(record.id);
 
@@ -407,47 +402,93 @@ const BiodataPreviewTable = ({
   };
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={data}
-      expandable={{
-        expandedRowRender,
-        expandedRowKeys: expandedId ? [expandedId] : [],
-        onExpand: handleExpand,
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={(values) => {
+
+        console.log(
+          "final data",
+          values.profiles
+        );
+
       }}
-      scroll={{
-        x: 2000,
-        y: 700,
-      }}
-      pagination={{
-        current: pagination.page,
-        pageSize: pagination.limit,
-        total: pagination.total,
+    >
+      <Form.List
+        name="profiles"
+      >
 
-        showSizeChanger: true,
+        {
+          (fields) => {
 
-        showTotal: (total) =>
-          `Total ${total} profiles`,
+            const tableData =
+              fields.map(
+                field => ({
+                  ...field,
+                  ...form.getFieldValue(
+                    [
+                      "profiles",
+                      field.name
+                    ]
+                  )
+                })
+              );
 
-        pageSizeOptions: [
-          "50",
-          "100",
-          "150",
-          "200",
-        ],
 
-        onChange: (page, pageSize) => {
+            return (
+              <Table
+                rowKey="id"
+                columns={columns}
+                dataSource={data}
+                expandable={{
+                  expandedRowRender,
+                  expandedRowKeys: expandedId ? [expandedId] : [],
+                  onExpand: handleExpand,
+                }}
+                scroll={{
+                  x: 2000,
+                  y: 700,
+                }}
+                pagination={{
+                  current: pagination.page,
+                  pageSize: pagination.limit,
+                  total: pagination.total,
 
-          setPagination(prev => ({
-            ...prev,
-            page,
-            limit: pageSize,
-          }));
+                  showSizeChanger: true,
 
-        },
-      }}
-    />
+                  showTotal: (total) =>
+                    `Total ${total} profiles`,
+
+                  pageSizeOptions: [
+                    "50",
+                    "100",
+                    "150",
+                    "200",
+                  ],
+
+                  onChange: (page, pageSize) => {
+
+                    setPagination(prev => ({
+                      ...prev,
+                      page,
+                      limit: pageSize,
+                    }));
+
+                  },
+                }}
+              />
+            );
+          }
+        }
+      </Form.List>
+      <Button
+        type="primary"
+        htmlType="submit"
+      >
+        Save All
+      </Button>
+
+    </Form>
 
   );
 

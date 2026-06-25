@@ -3,55 +3,66 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
+import { useCreateBulkImportedProfilesMutation, useLazyGetImportedProfilesQuery } from "@/redux/features/importedProfile/srevices";
 
 import { ParsedProfile } from "@/redux/types";
-import { Button, Form, Space } from "antd";
+import { Button, Space } from "antd";
 import dayjs from "dayjs";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 
 
 const Imports = () => {
 
   const [page, setPage] = useState(1);
-
-  const [form] = Form.useForm()
-
-  const router = useRouter();
+  const [limit, setlimit] = useState(10);
 
   const [profiles, setProfiles] = useState<ParsedProfile[]>([]);
 
-
-
+  const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
 
-  const handleFromSubmit = async () => {
-
-    const { dob, ...rest } = form.getFieldsValue();
-
-    const formattedDob = dob
-      ? dayjs(
-        new Date(dob.year, dob.month, dob.day)
-      ).format("YYYY-MM-DD")
-      : null;
-
-    const formData = {
-      ...rest,
-      dob: formattedDob,
-    };
-
-    console.log("form data", formData);
-    return;
+  const fetchDraftsProfilesHandler = useCallback(async () => {
     try {
-      const res = await createImportedProfilesAction(formData).unwrap();
+      const responce = await fetchProfiles({ page, limit }).unwrap()
+      if (responce.success) {
+        setProfiles(responce.data)
+      }
+    } catch (error) {
+
+    }
+  }, [page, limit, setProfiles])
+
+  useEffect(() => {
+    fetchDraftsProfilesHandler()
+  }, [fetchDraftsProfilesHandler])
+
+
+  const handleFromSubmit = useCallback(async () => {
+    const updatedProfiles = profiles.map((pData) => {
+      const { dob, ...rest } = pData || {};
+      const formattedDob = dob
+        ? dayjs(dob, 'YYYY, MM, DD').format("YYYY-MM-DD")
+        : undefined;
+
+      const formData = {
+        ...rest,
+        dob: formattedDob,
+      };
+      return formData;
+    })
+
+    // console.log(updatedProfiles)
+    // return;
+
+    try {
+      const res = await createImportedProfilesAction(updatedProfiles).unwrap();
 
       if (res.success) {
-        appMessage.success("Profile created successfully");
+        appMessage.success("Profiles created successfully");
       } else {
         appMessage.error(
-          res.message || "Profile not created"
+          res.message || "Profiles not created"
         );
       }
     } catch (error: any) {
@@ -61,9 +72,7 @@ const Imports = () => {
         "Something went wrong"
       );
     }
-  };
-
-
+  }, [profiles]);
 
 
   return (
@@ -90,8 +99,8 @@ const Imports = () => {
       <div>
         <BiodataPreviewTable
           profiles={profiles}
+          setProfiles={setProfiles}
           handleFromSubmit={handleFromSubmit}
-
         />
       </div>
     </AdminLayout >

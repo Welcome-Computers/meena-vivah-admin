@@ -9,49 +9,53 @@ import {
   Button,
   Form,
   Input,
-  Modal,
   Space,
-  Table,
+  Table
 } from "antd";
 
+import { ParsedProfile } from "@/redux/types";
 import { RuleObject } from "antd/es/form";
 import {
-  useEffect,
-  useState,
+  Dispatch,
+  SetStateAction,
+  useState
 } from "react";
 import GotraDetials from "../formComponents/GotraDetails";
 import InputField from "../InputElements/InputField";
 
 interface Props {
   profiles: any[];
+  setProfiles: Dispatch<SetStateAction<ParsedProfile[]>>;
   handleFromSubmit: () => Promise<void>
 }
 
 const BiodataPreviewTable = ({
   profiles,
+  setProfiles,
+  handleFromSubmit
 }: Props) => {
 
-  const [data, setData] = useState<any[]>([]);
+  // const [data, setProfiles] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form] = Form.useForm();
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 50,
-    total: data.length, // or API total
+    total: profiles.length, // or API total
   });
 
-  useEffect(() => {
-    setData(profiles);
-  }, [profiles]);
+  // useEffect(() => {
+  //   setProfiles(profiles);
+  // }, [profiles]);
 
   const updateField = (
-    id: string,
+    id: number,
     field: string,
     value: string
   ) => {
 
-    setData(prev =>
+    setProfiles(prev =>
       prev.map(item =>
         item.id === id
           ? {
@@ -99,31 +103,6 @@ const BiodataPreviewTable = ({
       );
 
     };
-
-  const deleteRow = (record: any) => {
-    Modal.confirm({
-      title: "Delete biodata?",
-      content: "Are you sure you want to remove this record?",
-      okText: "Delete",
-      okType: "danger",
-
-      onOk() {
-        setData(prev =>
-          prev.filter(
-            x => String(x.id) !== String(record.id)
-          )
-        );
-
-        setSelectedKeys(prev =>
-          prev.filter(
-            x => String(x) !== String(record.id)
-          )
-        );
-      },
-    });
-  };
-
-
 
   const copyHtml = async (
     html: string
@@ -204,6 +183,34 @@ const BiodataPreviewTable = ({
       render: htmlRender,
     },
 
+    {
+      title: "Action",
+      fixed: "right",
+      width: 180,
+
+      render: (_: any, record: any) => (
+        <Space>
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              // deleteRow(record)
+              setProfiles(prev =>
+                prev.filter(
+                  x => String(x.id) !== String(record.id)
+                )
+              );
+
+              setSelectedKeys(prev =>
+                prev.filter(
+                  x => String(x) !== String(record.id)
+                )
+              );
+            }}
+          />
+        </Space>
+      )
+    },
 
     {
       title: "Name",
@@ -248,23 +255,6 @@ const BiodataPreviewTable = ({
         </div>
       ),
     },
-    {
-      title: "Action",
-      fixed: "right",
-      width: 180,
-
-      render: (_: any, record: any) => (
-        <Space>
-          <Button
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() =>
-              deleteRow(record)
-            }
-          />
-        </Space>
-      )
-    }
 
 
   ];
@@ -275,7 +265,7 @@ const BiodataPreviewTable = ({
       record
     );
     // call RTK mutation here
-    setData(prev =>
+    setProfiles(prev =>
       prev.map(item =>
         item.id === record.id
           ? record
@@ -292,7 +282,7 @@ const BiodataPreviewTable = ({
 
     if (!expandedId) return;
 
-    setData(prev =>
+    setProfiles(prev =>
       prev.map(item =>
         item.id === expandedId
           ? {
@@ -402,94 +392,56 @@ const BiodataPreviewTable = ({
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={(values) => {
+    <div>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={profiles}
+        expandable={{
+          expandedRowRender,
+          expandedRowKeys: expandedId ? [expandedId] : [],
+          onExpand: handleExpand,
+        }}
+        scroll={{
+          x: 2000,
+          y: 700,
+        }}
+        pagination={{
+          current: pagination.page,
+          pageSize: pagination.limit,
+          total: pagination.total,
 
-        console.log(
-          "final data",
-          values.profiles
-        );
+          showSizeChanger: true,
 
-      }}
-    >
-      <Form.List
-        name="profiles"
-      >
+          showTotal: (total) =>
+            `Total ${total} profiles`,
 
-        {
-          (fields) => {
+          pageSizeOptions: [
+            "50",
+            "100",
+            "150",
+            "200",
+          ],
 
-            const tableData =
-              fields.map(
-                field => ({
-                  ...field,
-                  ...form.getFieldValue(
-                    [
-                      "profiles",
-                      field.name
-                    ]
-                  )
-                })
-              );
+          onChange: (page, pageSize) => {
 
+            setPagination(prev => ({
+              ...prev,
+              page,
+              limit: pageSize,
+            }));
 
-            return (
-              <Table
-                rowKey="id"
-                columns={columns}
-                dataSource={data}
-                expandable={{
-                  expandedRowRender,
-                  expandedRowKeys: expandedId ? [expandedId] : [],
-                  onExpand: handleExpand,
-                }}
-                scroll={{
-                  x: 2000,
-                  y: 700,
-                }}
-                pagination={{
-                  current: pagination.page,
-                  pageSize: pagination.limit,
-                  total: pagination.total,
-
-                  showSizeChanger: true,
-
-                  showTotal: (total) =>
-                    `Total ${total} profiles`,
-
-                  pageSizeOptions: [
-                    "50",
-                    "100",
-                    "150",
-                    "200",
-                  ],
-
-                  onChange: (page, pageSize) => {
-
-                    setPagination(prev => ({
-                      ...prev,
-                      page,
-                      limit: pageSize,
-                    }));
-
-                  },
-                }}
-              />
-            );
-          }
-        }
-      </Form.List>
+          },
+        }}
+      />
       <Button
         type="primary"
-        htmlType="submit"
+        htmlType="button"
+        onClick={handleFromSubmit}
       >
         Save All
       </Button>
-
-    </Form>
-
+    </div>
   );
 
 }

@@ -63,7 +63,6 @@ export default async function handler(
       }
 
 
-
       /**
        * SINGLE CREATE
        */
@@ -82,23 +81,17 @@ export default async function handler(
     if (req.method === "GET") {
 
       const page = Number(req.query.page || 1);
-
       const limit = Number(req.query.limit || 10);
-
 
       const result = await getImportedProfiles({
         page,
         limit,
       });
 
-
       return res.status(200).json({
         success: true,
         ...result,
       });
-
-
-
     }
 
     return res.status(405).json({
@@ -110,14 +103,12 @@ export default async function handler(
   } catch (error: any) {
 
     console.log(error);
-
     /**
      * Zod Error
      */
     if (
       error instanceof ZodError
     ) {
-
       return res.status(400).json({
         success: false,
         errors:
@@ -157,4 +148,8 @@ export default async function handler(
         "Internal server error",
     });
   }
+
+
+
 }
+

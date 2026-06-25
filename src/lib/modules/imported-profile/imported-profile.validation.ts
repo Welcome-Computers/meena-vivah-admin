@@ -4,7 +4,6 @@ import { z } from "zod";
 
 export const createImportedProfileSchema =
   z.object({
-
     name: z.string().optional(),
     gender: z.string().optional(),
     mobile: z.string().optional(),

@@ -58,7 +58,7 @@ export const importedProfileApi = createApi({
       query: (
         body: CreateImportedProfileInput[]
       ) => ({
-        url: "/api/imported-profile/bulk",
+        url: `/api/imported-profile?action=bulkCreate`,
         method: "POST",
         body,
       }),

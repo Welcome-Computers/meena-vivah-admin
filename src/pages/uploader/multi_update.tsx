@@ -117,6 +117,8 @@ const Multi_Update = () => {
 
   }, [profiles]);
 
+  const handleFromSubmit1 = async () => { }
+
   return (
     <AdminLayout
       breadcrumbItems={[
@@ -140,6 +142,7 @@ const Multi_Update = () => {
       <div>
         <BiodataPreviewTable
           profiles={profiles}
+          handleFromSubmit={handleFromSubmit1}
         />
       </div>
     </AdminLayout >

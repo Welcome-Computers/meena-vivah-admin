@@ -23,7 +23,10 @@ export default function BiodataUploader({
       console.log("HTML length:", html.length);
       const profiles = parseTelegramHtml(html);
       // console.log("Parsed profiles:", profiles);
-      onParsed(profiles);
+      const updatedProfile = profiles.map((item: any, index: any) => {
+        return { ...item, id: index + 1 }
+      })
+      onParsed(updatedProfile);
       e.target.value = "";
     } catch (error) {
       console.error(error);

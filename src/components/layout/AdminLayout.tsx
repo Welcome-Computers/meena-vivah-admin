@@ -94,10 +94,6 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/uploader",
           label: "Create",
         },
-        {
-          key: "/uploader/multi_update",
-          label: "Update",
-        },
       ],
     },
     {

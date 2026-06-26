@@ -48,6 +48,7 @@ export const createProfileSchema =
     mat_gm_gotra: z.string().nullable().optional(),
     preferences: z.string().nullable().optional(),
     otherinfo: z.string().nullable().optional(),
+    status: z.enum(["draft", "approved", "rejected", "suspended"]).optional(),
 
     /**
      * MOBILE DETAILS
@@ -62,7 +63,6 @@ export const createProfileSchema =
      */
 
     address_details: z.array(addressSchema).optional(),
-    sibling_details: z.array(siblingSchema).optional(),
     other_gotra: z.array(otherGotraSchema).optional(),
 
   });
@@ -76,9 +76,6 @@ export const updateProfileSchema = createProfileSchema
       addressSchema.partial()
     ).optional(),
 
-    sibling_details: z.array(
-      siblingSchema.partial()
-    ).optional(),
 
     other_gotra: z.array(
       otherGotraSchema.partial()

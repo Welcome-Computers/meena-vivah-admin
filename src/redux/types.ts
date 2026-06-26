@@ -36,6 +36,7 @@ export interface IProfile {
   height: number;
   education: string;
   occupation: string;
+  occupation_name: string;
   fathersname: string;
   mothersname: string;
   fathersoccupation: string;
@@ -44,6 +45,10 @@ export interface IProfile {
   m_gotra: string;
   gm_gotra: string;
   mat_gm_gotra: string;
+  self_gotra_name: string;
+  m_gotra_name: string;
+  gm_gotra_name: string;
+  mat_gm_gotra_name: string;
   preferences: string | null;
   otherinfo: string | null;
   isSuspended: boolean;
@@ -52,7 +57,6 @@ export interface IProfile {
    * RELATIONAL DATA
    */
   address_details?: IAddressDetails[];
-  sibling_details?: ISiblingDetails[];
   other_gotra?: IOtherGotra[];
 }
 
@@ -95,3 +99,15 @@ export type IOccupation = {
   code?: string;
 };
 
+
+
+export interface ParsedProfile {
+  id: number;
+  name: string;
+  dob: string;
+  mobile: string;
+
+  fathersname: string;
+
+  otherinfo: string;
+}

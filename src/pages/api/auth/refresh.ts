@@ -1,5 +1,3 @@
-import jwt from "jsonwebtoken";
-import { serialize } from "cookie";
 
 export default async function handler(req: any, res: any) {
   try {
@@ -9,31 +7,31 @@ export default async function handler(req: any, res: any) {
       throw new Error("No Refresh Token");
     }
 
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.JWT_SECRET_REFRESH_TOKEN!,
-    ) as any;
+    // const decoded = jwt.verify(
+    //   refreshToken,
+    //   process.env.JWT_SECRET_REFRESH_TOKEN!,
+    // ) as any;
 
-    // create a new token
-    const accessToken = jwt.sign(
-      {
-        id: decoded.id,
-        mobile: decoded.mobile,
-      },
-      process.env.JWT_SECRET_TOKEN!,
-      {
-        expiresIn: "15m",
-      },
-    );
+    // // create a new token
+    // const accessToken = jwt.sign(
+    //   {
+    //     id: decoded.id,
+    //     mobile: decoded.mobile,
+    //   },
+    //   process.env.JWT_SECRET_TOKEN!,
+    //   {
+    //     expiresIn: "15m",
+    //   },
+    // );
 
-    // set cookie
-    const accessCookie = serialize("accessToken", accessToken, {
-      httpOnly: true,
-      path: "/",
-      maxAge: 15 * 60,
-    });
+    // // set cookie
+    // const accessCookie = serialize("accessToken", accessToken, {
+    //   httpOnly: true,
+    //   path: "/",
+    //   maxAge: 15 * 60,
+    // });
 
-    res.setHeader("Set-Cookie", accessCookie);
+    // res.setHeader("Set-Cookie", accessCookie);
 
     return res.status(200).json({
       success: true,

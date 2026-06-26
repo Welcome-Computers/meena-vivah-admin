@@ -6,6 +6,7 @@ import type {
 import { ZodError } from "zod";
 
 import {
+  createBulkProfiles,
   createProfile,
   getProfileMatches,
   getProfiles,
@@ -27,6 +28,50 @@ export default async function handler(
      */
     if (req.method === "POST") {
 
+      const action = req.query.action as string;
+
+
+      /**
+       * BULK CREATE / UPLOAD
+       */
+      if (action === "bulkCreate") {
+
+
+        if (!Array.isArray(req.body)) {
+          return res.status(400).json({
+            success: false,
+            message: "Payload must be an array",
+          });
+        }
+
+
+        /**
+         * Validate all profiles
+         */
+        const validatedProfiles =
+          req.body.map((item: any) =>
+            createProfileSchema.parse(item)
+          );
+
+
+        const result =
+          await createBulkProfiles(
+            validatedProfiles
+          );
+
+
+        return res.status(201).json({
+          success: true,
+          count: result.length,
+          data: result,
+        });
+      }
+
+
+
+      /**
+       * SINGLE CREATE
+       */
 
       const validatedData = createProfileSchema.parse(req.body);
       const result = await createProfile(validatedData);

@@ -15,6 +15,7 @@ import {
 import { GetGotraProps } from "@/lib/modules/master-gotra/master-gotra.types";
 import { useGetGotrasQuery } from "@/redux/features/masterGotra";
 import { useGetOccupationsQuery } from "@/redux/features/masterOccupation";
+import { useEffect } from "react";
 import SearchableSelectField from "../InputElements/SearchableSelectField";
 import AgeRangeField from "./AgeRangeField";
 import style from "./ProfileFilter.module.css";
@@ -22,11 +23,12 @@ import style from "./ProfileFilter.module.css";
 
 interface iProps {
   filterDataHandler: (query: GetGotraProps) => void;
-  callingFrom: "profilePage" | "homePage"
+  callingFrom: "profilePage" | "homePage";
+  initialFilters?: any
 }
 
 export const ProfileFilter = (props: iProps) => {
-  const { filterDataHandler, callingFrom } = props || {};
+  const { initialFilters, filterDataHandler, callingFrom } = props || {};
 
   const [form] = Form.useForm();
   const fromData = Form.useWatch(null, form)
@@ -40,14 +42,12 @@ export const ProfileFilter = (props: iProps) => {
     data?.map((item: any) => ({
       label: item.name,
       value: item.code,
-      // disabled: exclude_gotra?.includes(item.code),
     })) || [];
 
   const occupatonOptions =
     occupatonList?.map((item: any) => ({
       label: item.name,
       value: item.code,
-      // disabled: req_occupation?.includes(item.code),
     })) || [];
 
   /**
@@ -67,6 +67,10 @@ export const ProfileFilter = (props: iProps) => {
 
     filterDataHandler(query)
   };
+
+  useEffect(() => {
+    form.setFieldsValue(initialFilters)
+  }, [form, initialFilters])
 
   return (
     <div className={style.profileFilterContainer}>

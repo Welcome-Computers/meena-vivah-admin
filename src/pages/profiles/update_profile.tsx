@@ -13,6 +13,7 @@ const UpdateProfile = () => {
   const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
 
+
   const router = useRouter()
 
   const { id, action } = router.query;
@@ -49,7 +50,6 @@ const UpdateProfile = () => {
       ...rest,
       dob: formattedDob,
 
-      sibling_details: removeEmptyObjects(rest.sibling_details),
       other_gotra: removeEmptyObjects(rest.other_gotra),
       other_mobile: removeEmptyObjects(rest.other_mobile),
       address_details: removeEmptyObjects(rest.address_details),

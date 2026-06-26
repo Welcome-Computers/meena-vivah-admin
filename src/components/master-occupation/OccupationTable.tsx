@@ -1,5 +1,5 @@
 import { IOccupation } from "@/redux/types";
-import { Button, message, Popconfirm, Space } from "antd";
+import { Button, Popconfirm, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { GenericTable } from "../common/GenericTable";
 
@@ -43,7 +43,7 @@ const OccupationTable = (props: iProps) => {
       render: (_, record) => (
         <Space>
           <Button
-            size="small"
+            size="medium"
             type="primary"
             onClick={() => handleEdit(record.id, record)}
           >
@@ -58,7 +58,9 @@ const OccupationTable = (props: iProps) => {
             okButtonProps={{ danger: true }}
             onConfirm={() => handleDelete(record.id)}
           >
-            <Button size="small" type="primary">
+            <Button
+              size="medium"
+              type="primary">
               Delete
             </Button>
           </Popconfirm>

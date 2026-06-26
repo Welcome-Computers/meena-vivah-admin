@@ -70,17 +70,12 @@ const ModalPreviewProfile = memo((props: iProps) => {
 
       <Divider style={{ borderColor: "#f6d365" }} />
 
-      <Title
-        level={5}
-        style={{
-          color: "#d48806",
-          marginBottom: "1rem",
-        }}
-      >
-        Family Details
-      </Title>
+      <Title level={5} style={{
+        color: "#d48806", marginBottom: "1rem",
+      }}>Family Details</Title>
 
       <Row gutter={[16, 16]}>
+
         <Col span={12}>
           <Text strong>Father's Name:</Text>
           <br />

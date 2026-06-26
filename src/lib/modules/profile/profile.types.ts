@@ -16,6 +16,9 @@ export type GetProfilesProps = {
   m_gotra?: string;
   gm_gotra?: string;
   mat_gm_gotra?: string;
+
+  draft?: "draft" | "approved" | "rejected" | "suspended";
+
 };
 
 
@@ -28,3 +31,12 @@ export type GetMatchedProfilesProps = {
   req_occupation?: string[];
   exclude_gotra?: string[];
 };
+
+export type moveBulkProfilesProps = {
+  dob: string | undefined;
+  id: number;
+  name: string;
+  mobile: string;
+  fathersname: string;
+  otherinfo: string;
+}[];

@@ -1,6 +1,7 @@
 import { MenuOutlined } from "@ant-design/icons";
-import { Button, Drawer, Layout, Menu } from "antd";
+import { Button, Drawer, Layout, Menu, Space } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { DropDown } from "../home/DropDown";
 import style from "./Navbar.module.css";
@@ -13,6 +14,8 @@ export const NavBar = ({
   isButtonShow?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
+
+  const router = useRouter();
 
   const items = [
     {
@@ -43,21 +46,30 @@ export const NavBar = ({
         <div>
           {/* login register buttons */}
           {isButtonShow && (
-            <Link
-              href={"/login"}
-              className={style.button}>
-              Update profile ?
-            </Link>
+            <Space>
+              <Button
+                danger
+                onClick={() => router.push('/login')}
+                className={style.button}
+              >
+                Login
+              </Button>
+              <Button
+                danger
+                onClick={() => router.push('/login/admin')}
+                className={style.button}
+              >
+                Admin
+              </Button>
+            </Space>
           )}
         </div>
-
-
         {/* dorpdown menus*/}
         {isDropDownShow && <DropDown />}
       </nav>
       <Drawer placement="right" onClose={() => setOpen(false)} open={open}>
         <Menu items={items} />
       </Drawer>
-    </Layout>
+    </Layout >
   );
 };

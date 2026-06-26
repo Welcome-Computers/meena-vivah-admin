@@ -5,7 +5,8 @@ import { memo, useState } from "react";
 import style from "../../pages/profiles/style.module.css";
 import { SelectOption } from "../InputElements/SearchableSelectField";
 import { GotraField } from "./Gotra/GotraField";
-import { OtheGotraDetails } from "./OtherGotraDetails";
+import OtheGotraDetails from "./OtherGotraDetails";
+// import { OtheGotraDetails } from "./OtherGotraDetails";
 
 const GotraDetials = memo((props: any) => {
 

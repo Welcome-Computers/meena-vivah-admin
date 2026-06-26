@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { App as AntdApp, ConfigProvider } from "antd";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 
@@ -14,7 +14,10 @@ export default function App({
   return (
     <Provider store={store}>
       <ConfigProvider theme={antdTheme}>
-        <Component {...pageProps} />
+        <AntdApp>
+
+          <Component {...pageProps} />
+        </AntdApp>
       </ConfigProvider>
     </Provider>
   );

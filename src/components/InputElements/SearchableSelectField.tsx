@@ -100,7 +100,7 @@ const SearchableSelectField = memo((props: IProps) => {
             .toLowerCase()
             .includes(input.toLowerCase())
         }
-        size="small"
+        size="medium"
         className="custom-input"
         popupRender={(menu) => (
           <>

@@ -1,14 +1,26 @@
-import { RuleObject } from "antd/es/form";
-import { memo } from "react";
+import { FormInstance, RuleObject } from "antd/es/form";
+import { FocusEvent, memo } from "react";
 import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import DobField from "../InputElements/DobField";
 import HeightField from "../InputElements/HeightField";
 import InputField from "../InputElements/InputField";
-import SearchableSelectField from "../InputElements/SearchableSelectField";
+import SearchableSelectField, { SelectOption } from "../InputElements/SearchableSelectField";
+import ProfileTable from "../profile/ProfileTable";
 
-const PersonalDetails = memo((props: any) => {
-  const { form, handleCreateOccupation, occupatonOptions, isOccupationLoading, handleOnBlurMobile } = props;
+interface iProps {
+  searchByMobileData: any,
+  isLoadingByMobile: boolean,
+  form: FormInstance,
+  handleCreateOccupation: (value: string) => Promise<void | SelectOption>,
+  occupatonOptions: any,
+  isOccupationLoading: boolean,
+  handleOnBlurMobile: (e: FocusEvent<HTMLInputElement, Element>) => Promise<void>
+  callingFrom: string,
+}
+
+const PersonalDetails = memo((props: iProps) => {
+  const { callingFrom, isLoadingByMobile, searchByMobileData, form, handleCreateOccupation, occupatonOptions, isOccupationLoading, handleOnBlurMobile } = props;
 
   return (
     <div className={style["form-container"]}>
@@ -39,6 +51,18 @@ const PersonalDetails = memo((props: any) => {
           { required: "true", message: "Mobile number must be required" }
         ]}
       />
+
+      {/* View data Table of search by mobile */}
+      {searchByMobileData?.items?.length > 0 ?
+        <ProfileTable
+          loading={isLoadingByMobile}
+          data={searchByMobileData?.items || []}
+          showAction={true}
+          is_pick_current_data={true}
+          callingFrom={callingFrom}
+        />
+        : null}
+
       <CheckBoxField
         form={form}
         name="gender"

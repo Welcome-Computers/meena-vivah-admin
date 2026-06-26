@@ -9,7 +9,7 @@ export const profileApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
   }),
 
-  tagTypes: ["Users"],
+  tagTypes: ["Profiles"],
 
   endpoints: (builder) => ({
     // GET USERS
@@ -22,19 +22,29 @@ export const profileApi = createApi({
         })
       },
 
-      providesTags: ["Users"],
+      providesTags: ["Profiles"],
     }),
 
     // CREATE USER
     createUser: builder.mutation({
-      query: (body) => ({
-        url: `/api/profile`,
-        method: "POST",
-        body,
-      }),
+      query: (body: any) => {
 
-      invalidatesTags: ["Users"],
+        const { action, data } = body || {};
+
+        return {
+          url: action
+            ? `/api/profile?action=${action}`
+            : "/api/profile",
+
+          method: "POST",
+
+          body: data ?? body,
+        };
+      },
+
+      invalidatesTags: ["Profiles"],
     }),
+
     // UPDATE USER
     updateUser: builder.mutation({
       query: (body) => ({
@@ -43,7 +53,7 @@ export const profileApi = createApi({
         body,
       }),
 
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["Profiles"],
     }),
 
     // DELETE USER
@@ -53,7 +63,7 @@ export const profileApi = createApi({
         method: "DELETE",
       }),
 
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["Profiles"],
     }),
 
     getSingleProfileById: builder.query({
@@ -74,7 +84,9 @@ export const profileApi = createApi({
         })
       },
       providesTags: [],
-    })
+    }),
+
+
 
   }),
 });

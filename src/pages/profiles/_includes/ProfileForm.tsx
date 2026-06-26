@@ -6,7 +6,6 @@ import MobileDetails from "@/components/formComponents/MobileDetails";
 import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
-import ModalByMobile from "@/components/profile/ModalByMobile";
 import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility";
 import { appMessage } from "@/lib/utility/message";
@@ -61,15 +60,12 @@ const ProfileForm = (props: iProps) => {
 
         const result = await trigger(mobile).unwrap();
 
-        if (result?.success && !!result?.items?.length) {
 
-          setIsModalOpen(true)
-        }
       } catch (error) {
         console.error(error);
       }
     },
-    [trigger, setIsModalOpen]
+    [trigger]
   );
 
   const handleCreateOccupation = async (value: string): Promise<SelectOption | void> => {
@@ -128,7 +124,6 @@ const ProfileForm = (props: iProps) => {
           initialValues={{
             is_married: 0,
             gender: "boy",
-            sibling_details: [{ relation: "sister", sibling_order: 'younger', is_married: 0 }],
             other_gotra: [{}],
             address_details: [{ type: "parmanent" }],
           }}
@@ -136,7 +131,9 @@ const ProfileForm = (props: iProps) => {
           <Row gutter={40}>
             <Col md={10} lg={10} xl={10}>
               <div className="editor-sticky">
-                <OtherDetails />
+                <OtherDetails
+                  callingFrom={callingFrom}
+                />
               </div>
             </Col>
             <Col md={14} lg={14} xl={14}>
@@ -146,6 +143,9 @@ const ProfileForm = (props: iProps) => {
                   handleOnBlurMobile={handleOnBlurMobile}
                   isOccupationLoading={isOccupationLoading}
                   handleCreateOccupation={handleCreateOccupation}
+                  searchByMobileData={searchByMobileData}
+                  isLoadingByMobile={isLoadingByMobile}
+                  callingFrom={callingFrom}
                   form={form} />
                 <GotraDetials form={form} />
                 <FamilyDetails
@@ -179,15 +179,15 @@ const ProfileForm = (props: iProps) => {
               {callingFrom === "create" ?
                 <Form.Item
                   style={{ margin: "0 35px 0 0" }}
-                  name="keep_data"
+                  name="need_duplicate"
                   label=""
                   initialValue={true}
                   valuePropName="checked"
                 >
                   <div>
                     <Switch
-                      checkedChildren="KeepData"
-                      unCheckedChildren="!KeepData"
+                      checkedChildren="NeedDuplicate"
+                      unCheckedChildren="!NeedDuplicate"
                     />
                   </div>
                 </Form.Item> : null}
@@ -207,14 +207,6 @@ const ProfileForm = (props: iProps) => {
         </Form>
       }
 
-      <ModalByMobile
-        form={form}
-        title="Profile Found"
-        isOpen={isModalOpen}
-        data={searchByMobileData?.items || []}
-        hanldeClose={() => setIsModalOpen(false)}
-      />
-
       <ModalPreviewProfile
         title={"Preview Biodata"}
         isOpen={isPreviewOpen}
@@ -222,14 +214,9 @@ const ProfileForm = (props: iProps) => {
         hanldeClose={hanldeClosePreview}
       />
 
-    </div >
+    </div>
   )
 }
 
 export default ProfileForm
 
-{/* <SiblingDetails
-  occupatonOptions={occupatonOptions}
-  isOccupationLoading={isOccupationLoading}
-  handleCreateOccupation={handleCreateOccupation}
-  form={form} /> */}

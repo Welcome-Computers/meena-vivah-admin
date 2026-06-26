@@ -1,8 +1,6 @@
-import { useGetGotrasQuery } from "@/redux/features/masterGotra";
 import { IGotra } from "@/redux/types";
-import { Button, message, Popconfirm, Space } from "antd";
+import { Button, Popconfirm, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useState } from "react";
 import { GenericTable } from "../common/GenericTable";
 
 interface iProps {
@@ -60,7 +58,9 @@ const GotraTable = (props: iProps) => {
             okButtonProps={{ danger: true }}
             onConfirm={() => handleDelete(record.id)}
           >
-            <Button size="small" type="primary">
+            <Button
+              size="medium"
+              type="primary">
               Delete
             </Button>
           </Popconfirm>

@@ -166,12 +166,13 @@ a {
   top: 20px;
 }
 
-.editor-sticky .ql-container {
-  height: 600px;
+.editor-sticky .ant-col.ant-form-item-control {
+  max-width: unset !important;
 }
 
 .editor-sticky .ql-editor {
-  min-height: 550px;
+  min-height: 300px;
+  width: 100%;
 }
 
 .form-scroll-section {
@@ -204,4 +205,28 @@ a {
 
 .mb_20 {
   margin-bottom: 20px;
+}
+
+
+.details_wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.full_detials,
+.other_detials {
+  height: 100%;
+}
+
+.full_detials,
+.other_detials {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.full_detials .ql-container,
+.other_detials .ql-container {
+  flex: 1;
 }

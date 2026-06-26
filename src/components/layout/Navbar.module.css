@@ -21,16 +21,8 @@
 
 
 .button {
-  margin: 4px 4px;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 10px;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  outline: none;
-  align-items: center;
   background-color: #cd3162;
+  color: #fff;
 }
 
 
@@ -49,11 +41,6 @@
     margin: 0;
     width: 190px;
     height: 80px;
-  }
-
-  .button {
-    margin: 4px 8px;
-    font-size: 1rem;
   }
 
 }

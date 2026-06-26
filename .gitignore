@@ -22,8 +22,8 @@
 /build
 
 # drizzle
-drizzle/*.sql
-drizzle/meta/*.json
+# drizzle/*.sql
+# drizzle/meta/*.json
 
 # logs
 npm-debug.log*

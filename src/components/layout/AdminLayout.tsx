@@ -1,5 +1,11 @@
 import { useAdminLogoutMutation, useGetMeQuery } from "@/redux/features/login";
-import { DashboardOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  DashboardOutlined,
+  ProfileFilled,
+  SettingOutlined,
+  UploadOutlined,
+  UserOutlined
+} from "@ant-design/icons";
 import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect } from "react";
@@ -35,7 +41,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
     },
     {
       key: "profiles",
-      icon: <SettingOutlined />,
+      icon: <ProfileFilled />,
       label: "Profiles",
       children: [
         {
@@ -65,7 +71,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
     },
     {
       key: "master-occupation",
-      icon: <SettingOutlined />,
+      icon: <UserOutlined />,
       label: "Occupation",
       children: [
         {
@@ -76,9 +82,21 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/master-occupation/create_occupation",
           label: "Create Occupation",
         },
+
       ],
     },
-     {
+    {
+      key: "uploader",
+      icon: <UploadOutlined />,
+      label: "Uploader",
+      children: [
+        {
+          key: "/uploader",
+          label: "Create",
+        },
+      ],
+    },
+    {
       key: "audit-logs",
       icon: <SettingOutlined />,
       label: "Audit Histroy",
@@ -87,7 +105,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
           key: "/audit-logs",
           label: "All History",
         },
-         
+
       ],
     },
   ];
@@ -107,17 +125,17 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
 
 
-if (isLoading) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      Loading...
-    </div>
-  );
-}
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        Loading...
+      </div>
+    );
+  }
 
-if (error || !data) {
-  return null;
-}
+  if (error || !data) {
+    return null;
+  }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>

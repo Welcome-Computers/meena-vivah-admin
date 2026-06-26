@@ -7,6 +7,18 @@ import { useRef } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
+const breadcrumbObj = [
+  {
+    title: "Dashboard",
+  },
+  {
+    title: "All Profile",
+  },
+  {
+    title: "Create Profile",
+  },
+]
+
 const CreateProfile = () => {
   const [form] = Form.useForm();
   const fromData = Form.useWatch(null, form)
@@ -16,7 +28,7 @@ const CreateProfile = () => {
 
   const handleFromSubmit = async () => {
 
-    const { keep_data, dob, ...rest } = form.getFieldsValue();
+    const { need_duplicate, dob, ...rest } = form.getFieldsValue();
 
     const formattedDob = dob
       ? dayjs(
@@ -28,7 +40,6 @@ const CreateProfile = () => {
       ...rest,
       dob: formattedDob,
 
-      sibling_details: removeEmptyObjects(rest.sibling_details),
       other_gotra: removeEmptyObjects(rest.other_gotra),
       other_mobile: removeEmptyObjects(rest.other_mobile),
       address_details: removeEmptyObjects(rest.address_details),
@@ -42,7 +53,7 @@ const CreateProfile = () => {
       if (res.success) {
         appMessage.success("Profile created successfully");
 
-        if (!keep_data) {
+        if (need_duplicate) {
           form.resetFields();
           firstComponentFocusHandler(formContainerRef);
         }
@@ -63,19 +74,10 @@ const CreateProfile = () => {
   };
 
 
+
   return (
     <AdminLayout
-      breadcrumbItems={[
-        {
-          title: "Dashboard",
-        },
-        {
-          title: "All Profile",
-        },
-        {
-          title: "Create Profile",
-        },
-      ]}
+      breadcrumbItems={breadcrumbObj}
     >
       {/* Main form components */}
 
@@ -86,7 +88,6 @@ const CreateProfile = () => {
         isLoadingCreateUser={isLoadingCreateUser}
         callingFrom={'create'}
       />
-
 
     </AdminLayout>
   );

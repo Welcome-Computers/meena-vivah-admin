@@ -26,7 +26,7 @@ import InputField from "../InputElements/InputField";
 interface Props {
   profiles: any[];
   setProfiles: Dispatch<SetStateAction<ParsedProfile[]>>;
-  handleFromSubmit: () => Promise<void>
+  handleFromSubmit: (type: "draft" | "permanent") => Promise<void>
 }
 
 const BiodataPreviewTable = ({
@@ -434,13 +434,30 @@ const BiodataPreviewTable = ({
           },
         }}
       />
-      <Button
-        type="primary"
-        htmlType="button"
-        onClick={handleFromSubmit}
+
+      <Space
+        style={{
+          width: "100%",
+          justifyContent: "flex-end",
+        }}
+        size={20}
       >
-        Save All
-      </Button>
+        <Button
+          type="primary"
+          htmlType="button"
+          onClick={() => handleFromSubmit("draft")}
+        >
+          Save Draft
+        </Button>
+        <Button
+          danger
+          type="primary"
+          htmlType="button"
+          onClick={() => handleFromSubmit("permanent")}
+        >
+          Save Permanent
+        </Button>
+      </Space>
     </div>
   );
 

@@ -6,9 +6,9 @@ import type {
 import { ZodError } from "zod";
 
 import {
-  createBulkImportedProfiles,
   createImportedProfile,
   getImportedProfiles,
+  moveImportedProfiles
 } from "@/lib/modules/imported-profile/imported-profile.service";
 import { createImportedProfileSchema } from "@/lib/modules/imported-profile/imported-profile.validation";
 
@@ -27,41 +27,34 @@ export default async function handler(
       const action = req.query.action as string;
 
       /**
-       * BULK CREATE / UPLOAD
+       * BULK CREATE / MOVED
        */
-      if (action === "bulkCreate") {
 
+      console.log('+++', action)
+
+      if (action === "bulkMove") {
 
         if (!Array.isArray(req.body)) {
           return res.status(400).json({
             success: false,
-            message: "Payload must be an array",
+            message: "Ids must be an array"
           });
         }
 
-
-        /**
-         * Validate all profiles
-         */
-        const validatedProfiles =
-          req.body.map((item: any) =>
-            createImportedProfileSchema.parse(item)
+        const ids =
+          req.body.map(
+            (id) => Number(id)
           );
-
-
         const result =
-          await createBulkImportedProfiles(
-            validatedProfiles
-          );
+          await moveImportedProfiles(ids);
 
 
-        return res.status(201).json({
+        return res.status(200).json({
           success: true,
-          count: result.length,
-          data: result,
+          ...result
         });
-      }
 
+      }
 
       /**
        * SINGLE CREATE

@@ -11,32 +11,33 @@ const { Title } = Typography;
 
 const PasswordLoginForm = memo(() => {
   const router = useRouter();
-    const [adminLogin] = useAdminLoginMutation();
+  const [adminLogin] = useAdminLoginMutation();
+
   const onFinish = async (values: {
     mobile: number;
     password: any;
     remember?: boolean;
   }) => {
-    
-   if (!values.mobile || !values.password) {
-  appMessage.error("Mobile and Password are required");
-  return;
-}
+
+    if (!values.mobile || !values.password) {
+      appMessage.error("Mobile and Password are required");
+      return;
+    }
     try {
       const res = await adminLogin(values).unwrap();
       if (res.success) {
         appMessage.success(res.message);
-          router.push("/dashboard");
+        router.push("/dashboard");
       }
     } catch (error: any) {
       appMessage.error(
         error?.data?.message ||
-          error?.response?.data?.message ||
-          "Something went wrong",
+        error?.response?.data?.message ||
+        "Something went wrong",
       );
     }
   };
-  
+
 
   return (
     <PublicLayout>
@@ -57,6 +58,7 @@ const PasswordLoginForm = memo(() => {
             onFinish={onFinish}
             initialValues={{
               remember: true,
+              mobile: 9784139574
             }}
           >
             <Form.Item

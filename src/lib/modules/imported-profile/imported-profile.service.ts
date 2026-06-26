@@ -10,10 +10,12 @@ import { db } from "@/lib/db";
 
 import { importedProfile } from "@/lib/schema/importedProfile";
 import { masterGotra } from "@/lib/schema/masterGotra";
+import { profiles } from "@/lib/schema/profiles";
 
 import { alias } from "drizzle-orm/mysql-core";
 import { GetImportedProfilesProps } from "./imported-profile.types";
-import { CreateImportedProfileInput, UpdateImportedProfileInput } from "./imported-profile.validation";
+
+import { CreateImportedProfileInput, moveImportedProfileSchema, UpdateImportedProfileInput } from "./imported-profile.validation";
 
 const selfGotra = alias(masterGotra, "selfGotra");
 const motherGotra = alias(masterGotra, "motherGotra");
@@ -260,33 +262,51 @@ export async function moveImportedProfile(
             )
           );
 
+
       if (!item) {
         throw new Error(
           "Profile not found"
         );
       }
 
-      const [profile] =
+
+      /**
+       * VALIDATE BEFORE MOVE
+       */
+      const validatedProfile =
+        moveImportedProfileSchema.parse(item);
+
+      /**
+       * MOVE TO PROFILE TABLE
+       */
+      const profile =
         await tx
-          .insert(importedProfile)
+          .insert(profiles)
           .values({
-            name: item.name,
-            gender: item.gender,
-            mobile: item.mobile,
-            fathersname: item.fathersname,
-
-            self_gotra: item.self_gotra,
-            m_gotra: item.m_gotra,
-            gm_gotra: item.gm_gotra,
-            mat_gm_gotra:
-              item.mat_gm_gotra,
-
-            otherinfo: item.otherinfo,
-
+            name: validatedProfile.name,
+            mobile: validatedProfile.mobile,
+            gender: validatedProfile.gender,
+            fathersname: validatedProfile.fathersname,
+            self_gotra: validatedProfile.self_gotra,
+            m_gotra: validatedProfile.m_gotra,
+            gm_gotra: validatedProfile.gm_gotra,
+            mat_gm_gotra: validatedProfile.mat_gm_gotra,
+            otherinfo: validatedProfile.otherinfo,
             status: "draft",
+            dob:
+              validatedProfile.dob
+                ? new Date(validatedProfile.dob)
+                : null,
+            height: null,
+            education: null,
+            occupation: null,
           })
           .$returningId();
 
+
+      /**
+       * MARK IMPORTED RECORD AS MOVED
+       */
       await tx
         .update(importedProfile)
         .set({
@@ -299,7 +319,9 @@ export async function moveImportedProfile(
           )
         );
 
+
       return profile;
+
     }
   );
 }
@@ -308,11 +330,141 @@ export async function moveImportedProfiles(
   ids: number[]
 ) {
 
+  let moved = 0;
+
+  const errors: {
+    id: number;
+    error: string;
+  }[] = [];
+
+
   for (const id of ids) {
-    await moveImportedProfile(id);
+
+    try {
+
+      await db.transaction(
+        async (tx) => {
+
+
+          const [item] =
+            await tx
+              .select()
+              .from(importedProfile)
+              .where(
+                eq(
+                  importedProfile.id,
+                  id
+                )
+              );
+
+
+          if (!item) {
+            throw new Error(
+              "Profile not found"
+            );
+          }
+
+
+          const validatedProfile =
+            moveImportedProfileSchema.parse(item);
+
+
+
+          await tx
+            .insert(profiles)
+            .values({
+
+              name:
+                validatedProfile.name,
+
+              mobile:
+                validatedProfile.mobile,
+
+              gender:
+                validatedProfile.gender,
+
+
+              fathersname:
+                validatedProfile.fathersname,
+
+
+              self_gotra:
+                validatedProfile.self_gotra,
+
+              m_gotra:
+                validatedProfile.m_gotra,
+
+              gm_gotra:
+                validatedProfile.gm_gotra,
+
+              mat_gm_gotra:
+                validatedProfile.mat_gm_gotra,
+
+
+              otherinfo:
+                validatedProfile.otherinfo,
+
+
+              status: "draft",
+
+
+              dob:
+                validatedProfile.dob
+                  ? new Date(validatedProfile.dob)
+                  : null,
+
+            });
+
+
+
+          await tx
+            .update(importedProfile)
+            .set({
+              status: "moved"
+            })
+            .where(
+              eq(
+                importedProfile.id,
+                id
+              )
+            );
+
+
+        });
+
+
+      moved++;
+
+
+    } catch (error) {
+
+
+      if (error instanceof Error) {
+
+        errors.push({
+          id,
+          error: error.message
+        });
+
+      }
+      else {
+
+        errors.push({
+          id,
+          error: "Unknown error"
+        });
+
+      }
+
+    }
+
   }
 
+
   return {
-    moved: ids.length
+    moved,
+    failed: errors.length,
+    errors
   };
+
 }

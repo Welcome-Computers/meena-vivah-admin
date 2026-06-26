@@ -31,3 +31,12 @@ export type GetMatchedProfilesProps = {
   req_occupation?: string[];
   exclude_gotra?: string[];
 };
+
+export type moveBulkProfilesProps = {
+  dob: string | undefined;
+  id: number;
+  name: string;
+  mobile: string;
+  fathersname: string;
+  otherinfo: string;
+}[];

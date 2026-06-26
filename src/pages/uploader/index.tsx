@@ -3,7 +3,7 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateBulkImportedProfilesMutation, useLazyGetImportedProfilesQuery } from "@/redux/features/importedProfile/srevices";
+import { useCreateBulkImportedProfilesMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
 
 import { ParsedProfile } from "@/redux/types";
 import { Button, Space } from "antd";
@@ -21,6 +21,7 @@ const Imports = () => {
 
   const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
+  const [moveImportedProfilesAction, { isLoading: isLoadingProfiles }] = useMoveBulkImportedProfilesMutation();
 
   const fetchDraftsProfilesHandler = useCallback(async () => {
     try {
@@ -38,7 +39,7 @@ const Imports = () => {
   }, [fetchDraftsProfilesHandler])
 
 
-  const handleFromSubmit = useCallback(async () => {
+  const handleFromSubmit = useCallback(async (type: "permanent" | "draft") => {
     const updatedProfiles = profiles.map((pData) => {
       const { dob, ...rest } = pData || {};
       const formattedDob = dob
@@ -56,7 +57,12 @@ const Imports = () => {
     // return;
 
     try {
-      const res = await createImportedProfilesAction(updatedProfiles).unwrap();
+      let res = null;
+      if (type === "permanent") {
+        res = await moveImportedProfilesAction(updatedProfiles).unwrap();
+      } else {
+        res = await createImportedProfilesAction(updatedProfiles).unwrap();
+      }
 
       if (res.success) {
         appMessage.success("Profiles created successfully");
@@ -77,14 +83,7 @@ const Imports = () => {
 
   return (
     <AdminLayout
-      breadcrumbItems={[
-        {
-          title: "Dashboard",
-        },
-        {
-          title: "All Imports",
-        },
-      ]}
+      breadcrumbItems={[{ title: "Dashboard", }, { title: "All Imports" }]}
 
       headerRightSec={<div>
         <Space orientation="horizontal">

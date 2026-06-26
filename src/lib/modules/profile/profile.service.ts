@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { addresses } from "@/lib/schema/address";
 import { masterGotra } from "@/lib/schema/masterGotra";
 import { otherGotras } from '@/lib/schema/otherGotra';
-import { profiles } from "@/lib/schema/profile";
+import { profiles } from "@/lib/schema/profiles";
 
 import { masterOccupation } from "@/lib/schema/masterOccupation";
 import { alias } from "drizzle-orm/mysql-core";

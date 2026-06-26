@@ -1,14 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { db } from "@/lib/db";
+import { adminAuth } from "@/lib/modules/admin/adminAuth";
 import {
   deleteGotra,
   getGotraById,
   updateGotra,
 } from "@/lib/modules/master-gotra/master-gotra.service";
-import { profiles } from "@/lib/schema/profile";
+import { profiles } from "@/lib/schema/profiles";
 import { eq, or } from "drizzle-orm";
-import { adminAuth } from "@/lib/modules/admin/adminAuth";
 
 export default async function handler(
   req: NextApiRequest,

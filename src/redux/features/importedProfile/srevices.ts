@@ -12,6 +12,7 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 
+import { moveBulkProfilesProps } from "@/lib/modules/profile/profile.types";
 import { queryString } from "object-query-string";
 
 
@@ -126,6 +127,19 @@ export const importedProfileApi = createApi({
       invalidatesTags: ["ImportedProfiles"],
     }),
 
+    // CREATE BULK IMPORTED PROFILE
+    moveBulkImportedProfiles: builder.mutation({
+      query: (
+        body: moveBulkProfilesProps
+      ) => ({
+        url: `/api/imported-profile?action=bulkMove`,
+        method: "POST",
+        body,
+      }),
+
+      invalidatesTags: ["ImportedProfiles"],
+    }),
+
 
     // MOVE BULK PROFILES
     moveImportedProfiles: builder.mutation({
@@ -160,5 +174,6 @@ export const {
 
   useMoveImportedProfileMutation,
   useMoveImportedProfilesMutation,
+  useMoveBulkImportedProfilesMutation
 
 } = importedProfileApi;

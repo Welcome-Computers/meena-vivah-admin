@@ -8,8 +8,8 @@
     "clean": "rimraf .next",
     "start": "next start -p 3006",
     "lint": "eslint",
-    "migrate": "drizzle-kit migrate",
-    "generate": "drizzle-kit generate"
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.1",

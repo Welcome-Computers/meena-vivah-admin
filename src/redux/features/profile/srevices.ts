@@ -9,7 +9,7 @@ export const profileApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
   }),
 
-  tagTypes: ["Users"],
+  tagTypes: ["Profiles"],
 
   endpoints: (builder) => ({
     // GET USERS
@@ -22,7 +22,7 @@ export const profileApi = createApi({
         })
       },
 
-      providesTags: ["Users"],
+      providesTags: ["Profiles"],
     }),
 
     // CREATE USER
@@ -42,7 +42,7 @@ export const profileApi = createApi({
         };
       },
 
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["Profiles"],
     }),
 
     // UPDATE USER
@@ -53,7 +53,7 @@ export const profileApi = createApi({
         body,
       }),
 
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["Profiles"],
     }),
 
     // DELETE USER
@@ -63,7 +63,7 @@ export const profileApi = createApi({
         method: "DELETE",
       }),
 
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["Profiles"],
     }),
 
     getSingleProfileById: builder.query({
@@ -84,7 +84,9 @@ export const profileApi = createApi({
         })
       },
       providesTags: [],
-    })
+    }),
+
+
 
   }),
 });

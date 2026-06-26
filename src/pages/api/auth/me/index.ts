@@ -6,15 +6,6 @@ export default async function handler(
 ) {
   try {
 
-    return res.status(200).json({
-      success: true,
-      admin: {
-        id: 1,
-        mobile: "9784139574",
-        role: "admin"
-      },
-    });
-
     const token = req.cookies.accessToken;
 
     if (!token) {

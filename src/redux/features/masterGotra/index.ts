@@ -47,7 +47,7 @@ export const masterGotraApi = createApi({
 
     // // Update USER
     updateGotra: builder.mutation({
-      query: ({id,body}) => ({
+      query: ({ id, body }) => ({
         url: `/api/master-gotra/${id}`,
         method: "PUT",
         body
@@ -56,7 +56,6 @@ export const masterGotraApi = createApi({
       invalidatesTags: ["Gotras"],
     }),
 
-    
   }),
 });
 

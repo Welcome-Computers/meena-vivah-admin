@@ -33,13 +33,6 @@
     {
       "idx": 4,
       "version": "5",
-      "when": 1782390706496,
-      "tag": "0001_lucky_midnight",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
       "when": 1782433511209,
       "tag": "0005_grey_mulholland_black",
       "breakpoints": true

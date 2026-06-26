@@ -13,7 +13,6 @@ export default async function handler(
 
         const result = await getAdmin(payload);
 
-
         const accessCookie = serialize("accessToken", result.accessToken, {
           httpOnly: true,
           path: "/",

@@ -1,4 +1,4 @@
-import { cmToFeetInch, getAge } from "@/lib/utility";
+import { cmToFeetInch, getAge } from "@/lib/utility/helper";
 import { IPagination, IProfile } from "@/redux/types";
 
 import { Avatar, Button, Form, Space, Table, Tag } from "antd";

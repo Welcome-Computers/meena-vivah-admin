@@ -167,3 +167,4 @@ export const cmToFeetInch = (
 export const isEnglishName = (record?: string | undefined) => {
   return /[a-zA-Z]/.test(record || "");
 };
+

@@ -6,3 +6,12 @@ export type GetImportedProfilesProps = {
   draft?: "draft" | "reviewed" | "moved" | "rejected";
 };
 
+
+export type FailedProfile = {
+  id: number;
+  error: {
+    field: string;
+    message: string;
+  }[];
+};
+

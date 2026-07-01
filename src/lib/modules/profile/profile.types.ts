@@ -33,8 +33,8 @@ export type GetMatchedProfilesProps = {
 };
 
 export type moveBulkProfilesProps = {
-  dob: string | undefined;
   id: number;
+  dob: string | undefined;
   name: string;
   mobile: string;
   fathersname: string;

@@ -20,11 +20,11 @@ export default function BiodataUploader({
       const file = e.target.files?.[0];
       if (!file) return;
       const html = await file.text();
-      console.log("HTML length:", html.length);
+      // console.log("HTML length:", html.length);
       const profiles = parseTelegramHtml(html);
       // console.log("Parsed profiles:", profiles);
       const updatedProfile = profiles.map((item: any, index: any) => {
-        return { ...item, id: index + 1 }
+        return { ...item, temp_id: index + 1 }
       })
       onParsed(updatedProfile);
       e.target.value = "";

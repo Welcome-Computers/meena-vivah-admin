@@ -6,7 +6,7 @@ import style from "../../pages/profiles/style.module.css";
 import RichTextEditor from "./ReactQuill";
 
 interface iProps {
-  callingFrom: string;
+  callingFrom: 'update' | 'create';
 }
 
 const OtherDetails = memo((props: iProps) => {

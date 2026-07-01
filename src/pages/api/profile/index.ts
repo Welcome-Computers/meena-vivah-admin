@@ -194,7 +194,7 @@ export default async function handler(
 
   } catch (error: any) {
 
-    console.log(error);
+    // console.log(error);
 
     /**
      * Zod Error

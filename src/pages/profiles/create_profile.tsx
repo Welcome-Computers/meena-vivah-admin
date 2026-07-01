@@ -1,4 +1,4 @@
-import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
+import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateUserMutation } from "@/redux/features/profile/srevices";
 import { Form } from "antd";

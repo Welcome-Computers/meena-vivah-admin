@@ -78,7 +78,7 @@ export default async function PersonalDetails(
 
     return res.status(200).json({ message: "Success" });
   } catch (e) {
-    console.log("ERROR ", e);
+    // console.log("ERROR ", e);
     await connection.rollback();
     return res.status(400).json({ message: "err" });
   }

@@ -7,7 +7,7 @@ import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
 import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
-import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility";
+import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
 import { useLazyGetProfilesByMobileQuery } from "@/redux/features/profile/srevices";
@@ -131,9 +131,7 @@ const ProfileForm = (props: iProps) => {
           <Row gutter={40}>
             <Col md={10} lg={10} xl={10}>
               <div className="editor-sticky">
-                <OtherDetails
-                  callingFrom={callingFrom}
-                />
+                <OtherDetails callingFrom={callingFrom} />
               </div>
             </Col>
             <Col md={14} lg={14} xl={14}>

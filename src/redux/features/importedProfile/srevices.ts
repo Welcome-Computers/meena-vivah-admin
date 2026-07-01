@@ -12,7 +12,6 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 
-import { moveBulkProfilesProps } from "@/lib/modules/profile/profile.types";
 import { queryString } from "object-query-string";
 
 
@@ -85,6 +84,18 @@ export const importedProfileApi = createApi({
       invalidatesTags: ["ImportedProfiles"],
     }),
 
+    // UPDATE BULK IMPORTED PROFILE
+    updateBulkImportedProfiles: builder.mutation({
+      query: (
+        body: UpdateImportedProfileInput[]
+      ) => ({
+        url: `/api/imported-profile?action=bulkUpdate`,
+        method: "PUT",
+        body,
+      }),
+
+      invalidatesTags: ["ImportedProfiles"],
+    }),
 
     // DELETE SINGLE
     deleteImportedProfile: builder.mutation({
@@ -127,10 +138,10 @@ export const importedProfileApi = createApi({
       invalidatesTags: ["ImportedProfiles"],
     }),
 
-    // CREATE BULK IMPORTED PROFILE
+    // MOVE BULK IMPORTED PROFILE
     moveBulkImportedProfiles: builder.mutation({
       query: (
-        body: moveBulkProfilesProps
+        body: number[]
       ) => ({
         url: `/api/imported-profile?action=bulkMove`,
         method: "POST",
@@ -140,21 +151,6 @@ export const importedProfileApi = createApi({
       invalidatesTags: ["ImportedProfiles"],
     }),
 
-
-    // MOVE BULK PROFILES
-    moveImportedProfiles: builder.mutation({
-      query: (
-        ids: number[]
-      ) => ({
-        url: "/api/imported-profile/move-many",
-        method: "POST",
-        body: {
-          ids,
-        },
-      }),
-
-      invalidatesTags: ["ImportedProfiles"],
-    }),
 
   }),
 });
@@ -168,12 +164,13 @@ export const {
   useCreateBulkImportedProfilesMutation,
 
   useUpdateImportedProfileMutation,
+  useUpdateBulkImportedProfilesMutation,
 
   useDeleteImportedProfileMutation,
   useDeleteImportedProfilesMutation,
 
   useMoveImportedProfileMutation,
-  useMoveImportedProfilesMutation,
   useMoveBulkImportedProfilesMutation
 
 } = importedProfileApi;
+

@@ -46,7 +46,9 @@ const OtheGotraDetails = memo((props: any) => {
   return (
     <FormListComponent
       form={form}
-      formListName="other_gotra" style={{ marginBottom: 16 }} isDisabled={isDisabled}>
+      formListName="other_gotra"
+      style={{ marginBottom: 16 }}
+      isDisabled={isDisabled}>
       {(value: any) => (
         <>
           <div className="otherGotraSection"
@@ -55,6 +57,7 @@ const OtheGotraDetails = memo((props: any) => {
               gridTemplateColumns: "1fr 1fr",
               gap: "12px",
             }}>
+
             <div className="otherGotraSection_type">
               <label>Gotra Name</label>
               <SearchableSelectField

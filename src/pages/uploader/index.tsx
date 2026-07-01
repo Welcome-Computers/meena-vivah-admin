@@ -3,9 +3,9 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateBulkImportedProfilesMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
+import { useCreateBulkImportedProfilesMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
+import { EditableProfile } from "@/redux/types";
 
-import { ParsedProfile } from "@/redux/types";
 import { Button, Space } from "antd";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
@@ -17,11 +17,14 @@ const Imports = () => {
   const [page, setPage] = useState(1);
   const [limit, setlimit] = useState(10);
 
-  const [profiles, setProfiles] = useState<ParsedProfile[]>([]);
+  const [profiles, setProfiles] = useState<EditableProfile[]>([]);
 
   const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
+  const [updateImportedProfilesAction, { isLoading: isLoadingUpdateUser }] = useUpdateBulkImportedProfilesMutation();
   const [moveImportedProfilesAction, { isLoading: isLoadingProfiles }] = useMoveBulkImportedProfilesMutation();
+
+  // console.log(data)
 
   const fetchDraftsProfilesHandler = useCallback(async () => {
     try {
@@ -38,35 +41,66 @@ const Imports = () => {
     fetchDraftsProfilesHandler()
   }, [fetchDraftsProfilesHandler])
 
+  console.log(profiles)
 
   const handleFromSubmit = useCallback(async (type: "permanent" | "draft") => {
-    const updatedProfiles = profiles.map((pData) => {
-      const { dob, ...rest } = pData || {};
-      const formattedDob = dob
-        ? dayjs(dob, 'YYYY, MM, DD').format("YYYY-MM-DD")
-        : undefined;
-
-      const formData = {
-        ...rest,
-        dob: formattedDob,
-      };
-      return formData;
-    })
-
-    // console.log(updatedProfiles)
-    // return;
 
     try {
       let res = null;
+
       if (type === "permanent") {
-        res = await moveImportedProfilesAction(updatedProfiles).unwrap();
+
+        const profileIds = profiles
+          .map((p) => p.id)
+          .filter((id): id is number => id !== undefined);
+
+        res = await moveImportedProfilesAction(profileIds).unwrap();
+
       } else {
-        res = await createImportedProfilesAction(updatedProfiles).unwrap();
+
+        const updatedProfiles = profiles.map((pData) => {
+          const { dob, ...rest } = pData || {};
+          const formattedDob = dob
+            ? dayjs(dob, 'YYYY, MM, DD').format("YYYY-MM-DD")
+            : undefined;
+
+          const formData = {
+            ...rest,
+            dob: formattedDob,
+          };
+          return formData;
+        })
+
+        const hasInvalidIds = updatedProfiles.some((el) => !el.id);
+
+        if (hasInvalidIds) {
+          const profilesWithIds = updatedProfiles.filter(
+            (p): p is typeof p & { id: number } => p.id !== undefined
+          );
+          res = await updateImportedProfilesAction(profilesWithIds).unwrap();
+        } else {
+          res = await createImportedProfilesAction(updatedProfiles).unwrap();
+        }
+
       }
 
       if (res.success) {
         appMessage.success("Profiles created successfully");
       } else {
+
+        const updatedProfiles = profiles.map((profile) => {
+          const failedProfile = res.errors.find(
+            (e: any) => e.id === profile.id
+          );
+
+          return {
+            ...profile,
+            errors: failedProfile?.error ?? [],
+          };
+        });
+
+        setProfiles(updatedProfiles);
+
         appMessage.error(
           res.message || "Profiles not created"
         );
@@ -89,8 +123,7 @@ const Imports = () => {
         <Space orientation="horizontal">
           <Button danger onClick={() => setProfiles([])}>Clear</Button>
           <h3>Telegram Biodata Import</h3>
-          <BiodataUploader
-            onParsed={setProfiles} />
+          <BiodataUploader onParsed={setProfiles} />
         </Space >
       </div>
       }

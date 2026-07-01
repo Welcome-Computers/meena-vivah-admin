@@ -6,6 +6,7 @@ import type {
 import { ZodError } from "zod";
 
 import {
+  createBulkImportedProfiles,
   createImportedProfile,
   getImportedProfiles,
   moveImportedProfiles
@@ -27,10 +28,44 @@ export default async function handler(
       const action = req.query.action as string;
 
       /**
+      * BULK CREATE / UPLOAD
+      */
+      if (action === "bulkCreate") {
+
+
+        if (!Array.isArray(req.body)) {
+          return res.status(400).json({
+            success: false,
+            message: "Payload must be an array",
+          });
+        }
+
+
+        /**
+         * Validate all profiles
+         */
+        const validatedProfiles =
+          req.body.map((item: any) =>
+            createImportedProfileSchema.parse(item)
+          );
+
+
+        const result =
+          await createBulkImportedProfiles(
+            validatedProfiles
+          );
+
+
+        return res.status(201).json({
+          success: true,
+          count: result.length,
+          data: result,
+        });
+      }
+
+      /**
        * BULK CREATE / MOVED
        */
-
-      console.log('+++', action)
 
       if (action === "bulkMove") {
 
@@ -41,17 +76,26 @@ export default async function handler(
           });
         }
 
-        const ids =
-          req.body.map(
-            (id) => Number(id)
-          );
-        const result =
-          await moveImportedProfiles(ids);
+        const ids = req.body.map((id) => Number(id));
 
+        // console.log(req.body);
+
+        const result = await moveImportedProfiles(ids);
+
+        let message: string;
+
+        if (result.moved === ids.length) {
+          message = "All profiles moved successfully.";
+        } else if (result.moved > 0) {
+          message = "Some profiles could not be moved.";
+        } else {
+          message = "No profiles were moved.";
+        }
 
         return res.status(200).json({
-          success: true,
-          ...result
+          success: result.failed === 0,
+          message,
+          ...result,
         });
 
       }
@@ -95,7 +139,7 @@ export default async function handler(
 
   } catch (error: any) {
 
-    console.log(error);
+    // console.log(error);
     /**
      * Zod Error
      */

@@ -1,4 +1,4 @@
-import { getAge, isEnglishName } from "@/lib/utility";
+import { getAge, isEnglishName } from "@/lib/utility/helper";
 import { IPagination, IProfile } from "@/redux/types";
 import { Avatar, Button, Pagination } from "antd";
 import Image from "next/image";

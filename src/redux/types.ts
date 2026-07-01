@@ -101,13 +101,36 @@ export type IOccupation = {
 
 
 
+export interface ProfileError {
+  field: string;
+  message: string;
+}
+
 export interface ParsedProfile {
-  id: number;
+  temp_id?: number;
   name: string;
   dob: string;
   mobile: string;
-
   fathersname: string;
-
   otherinfo: string;
+}
+
+export interface ImportedProfile extends ParsedProfile {
+  id: number;
+}
+
+export interface EditableProfile {
+  id?: number;
+  temp_id?: number;
+
+  name: string;
+  dob: string;
+  mobile: string;
+  fathersname: string;
+  otherinfo: string;
+
+  errors?: {
+    field: string;
+    message: string;
+  }[];
 }

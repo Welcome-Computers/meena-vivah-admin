@@ -33,37 +33,18 @@ export type UpdateImportedProfileInput = z.infer<typeof updateImportedProfileSch
 export const moveImportedProfileSchema =
   z.object({
 
-    name: z.string()
-      .min(1, "Name is required"),
+    name: z.string().min(1, "Name is required"),
+    mobile: z.string().min(1, "Mobile is required"),
+    gender: z.string().min(1, "Gender is required"),
 
-    mobile: z.string()
-      .min(1, "Mobile is required"),
+    self_gotra: z.string().min(1, "Self gotra is required"),
+    m_gotra: z.string().min(1, "M gotra is required"),
+    gm_gotra: z.string().min(1, "GM gotra is required"),
+    mat_gm_gotra: z.string().optional(),
 
-    gender: z.string()
-      .min(1, "Gender is required"),
-
-
-    self_gotra: z.string()
-      .min(1, "Self gotra is required"),
-
-    m_gotra: z.string()
-      .min(1, "M gotra is required"),
-
-    gm_gotra: z.string()
-      .min(1, "GM gotra is required"),
-
-
-    mat_gm_gotra: z.string()
-      .optional(),
-
-    dob: z.string()
-      .optional(),
-
-    fathersname: z.string()
-      .optional(),
-
-    otherinfo: z.string()
-      .optional(),
+    dob: z.string().optional(),
+    fathersname: z.string().optional(),
+    otherinfo: z.string().optional(),
 
   });
 

@@ -46,13 +46,49 @@ const SearchableSelectField = memo((props: IProps) => {
   } = props;
 
   const [searchText, setSearchText] = useState("");
+  const [creating, setCreating] = useState(false);
 
   const exists = (text: string) =>
     options.some(
       (o) => o.label.toLowerCase().trim() === text.toLowerCase().trim()
     );
 
+
   const handleCreate = async (value: string) => {
+    if (creating || !allowCreate || !onCreateOption) return;
+
+    setCreating(true);
+
+    try {
+      const confirmed = await new Promise<boolean>((resolve) => {
+        Modal.confirm({
+          title: "Create new option?",
+          content: `Do you want to add "${value}"?`,
+          onOk: () => resolve(true),
+          onCancel: () => resolve(false),
+        });
+      });
+
+      if (!confirmed) return;
+
+      const created = await onCreateOption(value);
+
+      if (created) {
+        const current = form.getFieldValue(name);
+
+        form.setFieldValue(
+          name,
+          mode === "multiple" || mode === "tags"
+            ? [...(current || []), created.value]
+            : created.value
+        );
+      }
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleCreate1 = async (value: string) => {
     if (!allowCreate || !onCreateOption) return;
 
     const confirmed = await new Promise<boolean>((resolve) => {
@@ -79,6 +115,15 @@ const SearchableSelectField = memo((props: IProps) => {
     }
   };
 
+  const filteredOptions = options.filter((o) =>
+    o.label.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const canCreate =
+    allowCreate &&
+    searchText.trim() &&
+    filteredOptions.length === 0;
+
   return (
     <Form.Item
       name={name}
@@ -102,11 +147,19 @@ const SearchableSelectField = memo((props: IProps) => {
         }
         size="medium"
         className="custom-input"
+        onInputKeyDown={(e) => {
+          if (e.key === "Enter" && canCreate) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            handleCreate(searchText.trim());
+          }
+        }}
         popupRender={(menu) => (
           <>
             {menu}
 
-            {allowCreate && searchText.trim() && !exists(searchText) && (
+            {canCreate && (
               <>
                 <Divider style={{ margin: 4 }} />
                 <div

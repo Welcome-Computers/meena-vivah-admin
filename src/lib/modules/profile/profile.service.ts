@@ -358,7 +358,7 @@ export async function createProfile(
   payload: CreateProfileInput
 ) {
 
-  console.log(payload)
+  // console.log(payload)
 
   return await db.transaction(
     async (tx) => {

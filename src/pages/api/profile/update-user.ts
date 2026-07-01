@@ -47,13 +47,13 @@ export default async function handler(
   } catch (error) {
 
     if (error instanceof ZodError) {
-      console.log(
-        JSON.stringify(
-          error.issues,
-          null,
-          2
-        )
-      );
+      // console.log(
+      //   JSON.stringify(
+      //     error.issues,
+      //     null,
+      //     2
+      //   )
+      // );
 
       return res.status(400).json({
         success: false,
@@ -61,7 +61,7 @@ export default async function handler(
       });
     }
 
-    console.log(error);
+    // console.log(error);
 
     return res.status(500).json({
       success: false,

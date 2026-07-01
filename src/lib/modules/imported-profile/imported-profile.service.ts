@@ -13,8 +13,9 @@ import { masterGotra } from "@/lib/schema/masterGotra";
 import { profiles } from "@/lib/schema/profiles";
 
 import { alias } from "drizzle-orm/mysql-core";
-import { GetImportedProfilesProps } from "./imported-profile.types";
+import { FailedProfile, GetImportedProfilesProps } from "./imported-profile.types";
 
+import { ZodError } from "zod";
 import { CreateImportedProfileInput, moveImportedProfileSchema, UpdateImportedProfileInput } from "./imported-profile.validation";
 
 const selfGotra = alias(masterGotra, "selfGotra");
@@ -113,7 +114,7 @@ export async function createImportedProfile(
   payload: CreateImportedProfileInput
 ) {
 
-  console.log(payload)
+  // console.log(payload)
 
   return await db.transaction(
     async (tx) => {
@@ -329,137 +330,84 @@ export async function moveImportedProfile(
 export async function moveImportedProfiles(
   ids: number[]
 ) {
-
   let moved = 0;
 
-  const errors: {
-    id: number;
-    error: string;
-  }[] = [];
-
+  const errors: FailedProfile[] = [];
 
   for (const id of ids) {
-
     try {
-
       await db.transaction(
         async (tx) => {
-
 
           const [item] =
             await tx
               .select()
               .from(importedProfile)
-              .where(
-                eq(
-                  importedProfile.id,
-                  id
-                )
-              );
-
+              .where(eq(importedProfile.id, id));
 
           if (!item) {
-            throw new Error(
-              "Profile not found"
-            );
+            throw new Error("Profile not found");
           }
 
-
-          const validatedProfile =
-            moveImportedProfileSchema.parse(item);
-
-
+          const validatedProfile = moveImportedProfileSchema.parse(item);
 
           await tx
             .insert(profiles)
             .values({
-
-              name:
-                validatedProfile.name,
-
-              mobile:
-                validatedProfile.mobile,
-
-              gender:
-                validatedProfile.gender,
-
-
-              fathersname:
-                validatedProfile.fathersname,
-
-
-              self_gotra:
-                validatedProfile.self_gotra,
-
-              m_gotra:
-                validatedProfile.m_gotra,
-
-              gm_gotra:
-                validatedProfile.gm_gotra,
-
-              mat_gm_gotra:
-                validatedProfile.mat_gm_gotra,
-
-
-              otherinfo:
-                validatedProfile.otherinfo,
-
-
+              name: validatedProfile.name,
+              mobile: validatedProfile.mobile,
+              gender: validatedProfile.gender,
+              fathersname: validatedProfile.fathersname,
+              self_gotra: validatedProfile.self_gotra,
+              m_gotra: validatedProfile.m_gotra,
+              gm_gotra: validatedProfile.gm_gotra,
+              mat_gm_gotra: validatedProfile.mat_gm_gotra,
+              otherinfo: validatedProfile.otherinfo,
               status: "draft",
-
-
-              dob:
-                validatedProfile.dob
-                  ? new Date(validatedProfile.dob)
-                  : null,
-
+              dob: validatedProfile.dob ? new Date(validatedProfile.dob) : null,
             });
-
-
 
           await tx
             .update(importedProfile)
-            .set({
-              status: "moved"
-            })
-            .where(
-              eq(
-                importedProfile.id,
-                id
-              )
-            );
+            .set({ status: "moved" })
+            .where(eq(importedProfile.id, id));
 
 
         });
-
-
       moved++;
 
-
     } catch (error) {
-
-
-      if (error instanceof Error) {
-
+      if (error instanceof ZodError) {
         errors.push({
           id,
-          error: error.message
+          error: error.issues.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+          })),
         });
-
-      }
-      else {
-
+      } else if (error instanceof Error) {
         errors.push({
           id,
-          error: "Unknown error"
+          error: [
+            {
+              field: "general",
+              message: error.message,
+            },
+          ],
         });
-
+      } else {
+        errors.push({
+          id,
+          error: [
+            {
+              field: "general",
+              message: "Unknown error",
+            },
+          ],
+        });
       }
-
     }
-
   }
-
 
   return {
     moved,

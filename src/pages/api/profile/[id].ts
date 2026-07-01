@@ -19,9 +19,9 @@ export default async function handler(
   try {
 
     const id = Number(req.query.id);
-    console.log("id", id)
-    console.log("method", req.method)
-    console.log("body", req.body)
+    // console.log("id", id)
+    // console.log("method", req.method)
+    // console.log("body", req.body)
 
     if (!id) {
       return res.status(400).json({
@@ -80,7 +80,7 @@ export default async function handler(
 
   } catch (error) {
 
-    console.log(error);
+    // console.log(error);
 
     if (error instanceof ZodError) {
       return res.status(400).json({

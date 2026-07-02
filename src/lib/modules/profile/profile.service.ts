@@ -207,8 +207,6 @@ export async function getProfiles(
     limit = 10,
   } = params;
 
-  // console.log("profile default ", params)
-
   const conditions = [eq(profiles.isSuspended, false),];
   // filters add here...
 
@@ -357,8 +355,6 @@ export async function getProfileMatches(
 export async function createProfile(
   payload: CreateProfileInput
 ) {
-
-  // console.log(payload)
 
   return await db.transaction(
     async (tx) => {

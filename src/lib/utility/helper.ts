@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const getAge = (
   dob?: string | null
 ) => {
@@ -168,3 +170,10 @@ export const isEnglishName = (record?: string | undefined) => {
   return /[a-zA-Z]/.test(record || "");
 };
 
+
+
+export const formattedDob = (dob: any) => {
+  return dob
+    ? dayjs(`${dob.year}-${dob.month}-${dob.day}`).format("YYYY-MM-DD")
+    : null;
+};

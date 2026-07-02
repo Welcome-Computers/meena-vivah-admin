@@ -2,7 +2,6 @@
 
 import {
   and, desc, eq,
-  inArray,
   sql
 } from "drizzle-orm";
 
@@ -16,7 +15,7 @@ import { alias } from "drizzle-orm/mysql-core";
 import { FailedProfile, GetImportedProfilesProps } from "./imported-profile.types";
 
 import { ZodError } from "zod";
-import { CreateImportedProfileInput, moveImportedProfileSchema, UpdateImportedProfileInput } from "./imported-profile.validation";
+import { CreateImportedProfileInput, MoveImportedProfileInput, moveImportedProfileSchema, UpdateImportedProfileInput } from "./imported-profile.validation";
 
 const selfGotra = alias(masterGotra, "selfGotra");
 const motherGotra = alias(masterGotra, "motherGotra");
@@ -87,8 +86,6 @@ export async function getImportedProfiles(
     limit = 10,
   } = params;
 
-  // console.log("profile default ", params)
-
   const conditions = [eq(importedProfile.status, "draft"),];
   // filters add here...
 
@@ -113,8 +110,6 @@ export async function getImportedProfiles(
 export async function createImportedProfile(
   payload: CreateImportedProfileInput
 ) {
-
-  // console.log(payload)
 
   return await db.transaction(
     async (tx) => {
@@ -215,38 +210,87 @@ export async function createBulkImportedProfiles(
 
 }
 
-export async function deleteImportedProfile(
-  id: number
-) {
+export async function deleteImportedProfile(id: number) {
+  const [profile] = await db
+    .select({ id: importedProfile.id })
+    .from(importedProfile)
+    .where(eq(importedProfile.id, id));
+
+  if (!profile) {
+    throw new Error("Profile not found");
+  }
   await db
-    .delete(importedProfile)
-    .where(
-      eq(importedProfile.id, id)
-    );
+    .update(importedProfile)
+    .set({
+      status: "deleted", // or "delete" if that's your enum value
+    })
+    .where(eq(importedProfile.id, id));
 
   return { id };
 }
 
-export async function deleteImportedProfiles(
-  ids: number[]
+export async function moveImportedProfileService(
+  id: number,
+  body: Partial<MoveImportedProfileInput>
 ) {
+  return db.transaction(async (tx) => {
+    const [existing] = await tx
+      .select()
+      .from(importedProfile)
+      .where(eq(importedProfile.id, id));
 
-  await db
-    .delete(importedProfile)
-    .where(
-      inArray(
-        importedProfile.id,
-        ids
-      )
-    );
+    if (!existing) {
+      throw new Error("Profile not found");
+    }
 
-  return {
-    deleted: ids.length
-  };
+    // Merge DB data with edited values
+    const profileData = {
+      ...existing,
+      ...body,
+    };
+
+    // Validate merged data
+    const validatedProfile = moveImportedProfileSchema.parse(profileData);
+
+    // Update imported profile with edited values + moved status
+    await tx
+      .update(importedProfile)
+      .set({
+        ...body,
+        status: "moved",
+      })
+      .where(eq(importedProfile.id, id));
+
+    // Insert into profiles table
+    const profile = await tx
+      .insert(profiles)
+      .values({
+        name: validatedProfile.name,
+        mobile: validatedProfile.mobile,
+        gender: validatedProfile.gender,
+        fathersname: validatedProfile.fathersname,
+        self_gotra: validatedProfile.self_gotra,
+        m_gotra: validatedProfile.m_gotra,
+        gm_gotra: validatedProfile.gm_gotra,
+        mat_gm_gotra: validatedProfile.mat_gm_gotra,
+        otherinfo: validatedProfile.otherinfo,
+        status: "draft",
+        dob: validatedProfile.dob
+          ? new Date(validatedProfile.dob)
+          : null,
+        height: null,
+        education: null,
+        occupation: null,
+      })
+      .$returningId();
+
+    return profile;
+  });
 }
 
-export async function moveImportedProfile(
-  id: number
+export async function moveImportedProfileService1(
+  id: number,
+  body: any
 ) {
 
   return db.transaction(

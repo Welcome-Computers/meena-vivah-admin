@@ -1,0 +1,1 @@
+ALTER TABLE `imported_profile` MODIFY COLUMN `status` enum('draft','reviewed','deleted','moved','rejected') NOT NULL DEFAULT 'draft';

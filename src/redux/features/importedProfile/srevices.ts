@@ -12,6 +12,7 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 
+import { EditableProfile } from "@/redux/types";
 import { queryString } from "object-query-string";
 
 
@@ -44,7 +45,7 @@ export const importedProfileApi = createApi({
       query: (
         body: CreateImportedProfileInput
       ) => ({
-        url: "/api/imported-profile",
+        url: "/api/imported-profile?action=singleCreate",
         method: "POST",
         body,
       }),
@@ -127,12 +128,11 @@ export const importedProfileApi = createApi({
 
 
     // MOVE SINGLE PROFILE
-    moveImportedProfile: builder.mutation({
-      query: (
-        id: number
-      ) => ({
-        url: `/api/imported-profile/${id}/move`,
+    moveImportedProfile: builder.mutation<any, EditableProfile>({
+      query: ({ id, ...body }) => ({
+        url: `/api/imported-profile/${id}?action=singleMove`,
         method: "POST",
+        body,
       }),
 
       invalidatesTags: ["ImportedProfiles"],
@@ -157,6 +157,7 @@ export const importedProfileApi = createApi({
 
 
 export const {
+
   useGetImportedProfilesQuery,
   useLazyGetImportedProfilesQuery,
 
@@ -170,7 +171,9 @@ export const {
   useDeleteImportedProfilesMutation,
 
   useMoveImportedProfileMutation,
-  useMoveBulkImportedProfilesMutation
+  useMoveBulkImportedProfilesMutation,
+
+
 
 } = importedProfileApi;
 

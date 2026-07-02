@@ -103,11 +103,18 @@ export default async function handler(
       /**
        * SINGLE CREATE
        */
+      if (action === "singleCreate") {
+        const validatedData = createImportedProfileSchema.parse(req.body);
+        const result = await createImportedProfile(validatedData);
 
-      const validatedData = createImportedProfileSchema.parse(req.body);
-      const result = await createImportedProfile(validatedData);
+        return res.status(201).json({ success: true, data: result });
+      }
 
-      return res.status(201).json({ success: true, data: result });
+      return res.status(405).json({
+        success: false,
+        message:
+          "Method not allowed",
+      });
     }
 
 

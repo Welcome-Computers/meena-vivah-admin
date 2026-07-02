@@ -10,12 +10,16 @@ import {
   Col,
   Form,
   Input,
+  Modal,
   Pagination,
   Row,
   Space,
   Table
 } from "antd";
 
+import { formattedDob } from "@/lib/utility/helper";
+import { appMessage } from "@/lib/utility/message";
+import { useDeleteImportedProfileMutation, useMoveImportedProfileMutation } from "@/redux/features/importedProfile/srevices";
 import { useGetGotrasQuery } from "@/redux/features/masterGotra";
 import { EditableProfile } from "@/redux/types";
 import { RuleObject } from "antd/es/form";
@@ -27,21 +31,23 @@ import {
 import GotraDetials from "../formComponents/GotraDetails";
 import OtherDetails from "../formComponents/OtherDetails";
 import CheckBoxField from "../InputElements/CheckBoxField";
+import DobField from "../InputElements/DobField";
 import InputField from "../InputElements/InputField";
 
 interface Props {
   profiles: any[];
   setProfiles: Dispatch<SetStateAction<EditableProfile[]>>;
-  handleFromSubmit: (type: "draft" | "permanent") => Promise<void>
+  handleFromSubmit: (type: "draft" | "permanent") => Promise<void>;
+  refetchProfiles: () => Promise<void>
 }
 
 const BiodataPreviewTable = ({
   profiles,
   setProfiles,
-  handleFromSubmit
+  handleFromSubmit,
+  refetchProfiles
 }: Props) => {
 
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form] = Form.useForm();
   const [pagination, setPagination] = useState({
@@ -51,6 +57,8 @@ const BiodataPreviewTable = ({
   });
 
   const { data, isFetching, refetch } = useGetGotrasQuery({});
+  const [deleteImportedProfile, { data: deletedData, isLoading, }] = useDeleteImportedProfileMutation();
+  const [moveImportedProfile, { isLoading: isLoadingCreateUser }] = useMoveImportedProfileMutation();
 
   const getGotraName = (recordCode: string) => {
     if (recordCode) {
@@ -58,30 +66,23 @@ const BiodataPreviewTable = ({
     }
   }
 
-  const updateField = (
-    id: number,
-    field: string,
-    value: string
-  ) => {
-
-    setProfiles(prev =>
-      prev.map(item =>
-        item.id === id
-          ? {
-            ...item,
-            [field]: value,
-          }
-          : item
-      )
-    );
-  };
-
   const editableRender = (field: string) => (value: string, record: any) => {
-
-    const editable = selectedKeys.includes(record.id);
     const error = record?.errors?.find((e: any) => e.field === field)?.message;
 
-    if (!editable) {
+    if (field === "dob" && value) {
+      const formattedValue = formattedDob(value);
+      return (
+        <div>
+          {formattedValue}
+          {error && (
+            <div style={{ color: "red" }}>
+              {error}
+            </div>
+          )}
+        </div>
+      );
+    } else {
+
       return (
         <div>
           {value}
@@ -94,12 +95,6 @@ const BiodataPreviewTable = ({
       );
     }
 
-    return (
-      <Input
-        value={value || ""}
-        onChange={(e) => updateField(record.id, field, e.target.value)}
-      />
-    );
   };
 
   const copyHtml = async (
@@ -159,8 +154,39 @@ const BiodataPreviewTable = ({
     </Space>
   );
 
-  const columns: any[] = [
+  const deleteRow = (record: any) => {
+    const hasTempId = record?.temp_id;
+    const hasId = record?.id;
 
+    Modal.confirm({
+      centered: true,
+      title: "Delete biodata?",
+      content: "Are you sure you want to remove this record?",
+      okText: "Delete",
+      okType: "danger",
+      async onOk() {
+
+
+        if (hasTempId) {
+          setProfiles(prev =>
+            prev.filter(
+              x => String(x.temp_id) !== String(hasTempId)
+            )
+          );
+        } else if (hasId) {
+          const res = await deleteImportedProfile(hasId).unwrap();
+          if (res.success) {
+            appMessage.success(res.message || "Profile deleted successfully");
+            refetchProfiles()
+          }
+        } else {
+          appMessage.error("Profile Id or Temp Id not found");
+        }
+      },
+    });
+  };
+
+  const columns: any[] = [
     {
       title: "#",
       key: "index",
@@ -188,17 +214,7 @@ const BiodataPreviewTable = ({
             danger
             icon={<DeleteOutlined />}
             onClick={() => {
-              setProfiles(prev =>
-                prev.filter(
-                  x => String(x.temp_id) !== String(record.temp_id)
-                )
-              );
-
-              setSelectedKeys(prev =>
-                prev.filter(
-                  x => String(x) !== String(record.temp_id)
-                )
-              );
+              deleteRow(record)
             }}
           />
         </Space>
@@ -257,17 +273,34 @@ const BiodataPreviewTable = ({
 
   ];
 
-  const saveSingleRow = async (record: any) => {
-    console.log("saving single", record);
-
+  const moveSingleImportedRow = async (record: any) => {
     // call RTK mutation here
-    setProfiles(prev =>
-      prev.map(item =>
-        item?.id === record?.id
-          ? record
-          : item
-      )
-    );
+
+    // console.log(record)
+    // return;
+    // debugger;
+    const { dob, ...rest } = record || {};
+    const formattedDobValue = formattedDob(dob);
+    const profileData = {
+      ...rest,
+      dob: formattedDobValue,
+    };
+
+    const res = await moveImportedProfile(profileData).unwrap()
+
+    if (res.success) {
+      appMessage.success("Profile created successfully");
+      refetchProfiles()
+      // setProfiles(prev =>
+      //   prev.map(item =>
+      //     item?.id === record?.id
+      //       ? record
+      //       : item
+      //   )
+      // );
+    } else {
+      appMessage.error(res.message || "Profile not created");
+    }
 
   };
 
@@ -358,6 +391,11 @@ const BiodataPreviewTable = ({
                 ]}
               />
 
+              <DobField
+                name="dob"
+                label="Date of Birth"
+              />
+
               <InputField
                 name="fathersname"
                 label="Father Name"
@@ -377,10 +415,9 @@ const BiodataPreviewTable = ({
                   htmlType="submit"
                   onClick={async () => {
                     const values = await form.validateFields();
-
-                    saveSingleRow(values)
+                    moveSingleImportedRow(values)
                   }}>
-                  Save
+                  Move Imported
                 </Button>
               </Space>
             </Col>
@@ -404,6 +441,7 @@ const BiodataPreviewTable = ({
       setExpandedId(null);
     }
   };
+
 
   return (
     <div>

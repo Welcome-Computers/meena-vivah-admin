@@ -28,9 +28,27 @@ const Imports = () => {
 
   const fetchDraftsProfilesHandler = useCallback(async () => {
     try {
-      const responce = await fetchProfiles({ page, limit }).unwrap()
-      if (responce.success) {
-        setProfiles(responce.data)
+      const response = await fetchProfiles({ page, limit }).unwrap()
+      if (response.success) {
+
+        const updatedProfiles = response?.data?.map((el: any) => {
+          const { dob, ...rest } = el || {};
+
+          const dobValue = dob
+            ? {
+              year: dayjs(dob).year(),
+              month: dayjs(dob).month() + 1, // dayjs month is 0-11
+              day: dayjs(dob).date(),
+            }
+            : null;
+
+          return {
+            ...rest,
+            dob: dobValue,
+          };
+        });
+
+        setProfiles(updatedProfiles)
       }
     } catch (error) {
 
@@ -40,8 +58,6 @@ const Imports = () => {
   useEffect(() => {
     fetchDraftsProfilesHandler()
   }, [fetchDraftsProfilesHandler])
-
-  console.log(profiles)
 
   const handleFromSubmit = useCallback(async (type: "permanent" | "draft") => {
 
@@ -71,9 +87,9 @@ const Imports = () => {
           return formData;
         })
 
-        const hasInvalidIds = updatedProfiles.some((el) => !el.id);
+        const hasImportedIds = updatedProfiles.some((el) => !el.id);
 
-        if (hasInvalidIds) {
+        if (hasImportedIds) {
           const profilesWithIds = updatedProfiles.filter(
             (p): p is typeof p & { id: number } => p.id !== undefined
           );
@@ -121,6 +137,7 @@ const Imports = () => {
 
       headerRightSec={<div>
         <Space orientation="horizontal">
+          <Button type="primary" onClick={fetchDraftsProfilesHandler}>Get Draft Data</Button>
           <Button danger onClick={() => setProfiles([])}>Clear</Button>
           <h3>Telegram Biodata Import</h3>
           <BiodataUploader onParsed={setProfiles} />
@@ -133,6 +150,7 @@ const Imports = () => {
           profiles={profiles}
           setProfiles={setProfiles}
           handleFromSubmit={handleFromSubmit}
+          refetchProfiles={fetchDraftsProfilesHandler}
         />
       </div>
     </AdminLayout >

@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "1f314905-c5f2-40f5-b5c9-15fde344a70c",
-  "prevId": "17033fe7-ca06-4d01-8877-b05adfb3eba8",
+  "id": "021c52e7-9717-4b6b-9d3b-2017fc95ec10",
+  "prevId": "1f314905-c5f2-40f5-b5c9-15fde344a70c",
   "tables": {
     "address": {
       "name": "address",
@@ -311,7 +311,7 @@
         },
         "status": {
           "name": "status",
-          "type": "enum('draft','reviewed','moved','rejected')",
+          "type": "enum('draft','reviewed','deleted','moved','rejected')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,

@@ -15,7 +15,7 @@ export const createImportedProfileSchema =
     mat_gm_gotra: z.string().optional(),
     otherinfo: z.string().optional(),
     remarks: z.string().optional(),
-    status: z.enum(["draft", "reviewed", "moved", "rejected",]).optional(),
+    status: z.enum(["draft", "reviewed", "deleted", "moved", "rejected",]).optional(),
   });
 
 export const updateImportedProfileSchema = createImportedProfileSchema
@@ -40,7 +40,7 @@ export const moveImportedProfileSchema =
     self_gotra: z.string().min(1, "Self gotra is required"),
     m_gotra: z.string().min(1, "M gotra is required"),
     gm_gotra: z.string().min(1, "GM gotra is required"),
-    mat_gm_gotra: z.string().optional(),
+    mat_gm_gotra: z.string().nullish(),
 
     dob: z.string().optional(),
     fathersname: z.string().optional(),

@@ -1,8 +1,7 @@
-import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility/helper";
+import { firstComponentFocusHandler, formattedDob, removeEmptyObjects } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateUserMutation } from "@/redux/features/profile/srevices";
 import { Form } from "antd";
-import dayjs from "dayjs";
 import { useRef } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
@@ -30,15 +29,11 @@ const CreateProfile = () => {
 
     const { need_duplicate, dob, ...rest } = form.getFieldsValue();
 
-    const formattedDob = dob
-      ? dayjs(
-        new Date(dob.year, dob.month, dob.day)
-      ).format("YYYY-MM-DD")
-      : null;
+    const formattedDobValue = formattedDob(dob);
 
     const formData = {
       ...rest,
-      dob: formattedDob,
+      dob: formattedDobValue,
 
       other_gotra: removeEmptyObjects(rest.other_gotra),
       other_mobile: removeEmptyObjects(rest.other_mobile),

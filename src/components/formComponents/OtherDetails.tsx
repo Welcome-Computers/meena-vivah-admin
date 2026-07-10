@@ -1,4 +1,5 @@
 import { parseBiodata } from "@/lib/helpers_uploader/biodataParser";
+import { formatedEditableRecord } from "@/lib/utility/helper";
 import { useAppSelector } from "@/redux/hooks";
 import { Button, Form } from "antd";
 import { memo, useEffect } from "react";
@@ -27,15 +28,16 @@ const OtherDetails = memo((props: iProps) => {
     Object.keys(profile_data).length > 0;
 
   const handleAutoFill = (fieldName: string) => {
+
     const html = form.getFieldValue(fieldName);
 
     if (!html) return;
 
     const parsedData = parseBiodata(html, 1);
 
-    console.log(parsedData);
+    const editableRecord = formatedEditableRecord(parsedData)
 
-    form.setFieldsValue(parsedData);
+    form.setFieldsValue(editableRecord);
   };
 
   return (
@@ -53,8 +55,9 @@ const OtherDetails = memo((props: iProps) => {
               />
             </Form.Item>
             <Button
-              onClick={() => handleAutoFill("old_detials")}
-            >Auto Fill from old_detials</Button>
+              onClick={() => handleAutoFill("old_detials")} >
+              Auto Fill from old_detials
+            </Button>
           </div>
           : null}
 

@@ -134,3 +134,11 @@ export interface EditableProfile {
     message: string;
   }[];
 }
+
+
+export interface PaginationState {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}

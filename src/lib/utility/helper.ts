@@ -171,9 +171,17 @@ export const isEnglishName = (record?: string | undefined) => {
 };
 
 
+export const formatedEditableRecord = (record: any) => {
+  const { dob, ...rest } = record || {}
+  // const { year = null, month = 1, day = 1 } = dob || {}
 
-export const formattedDob = (dob: any) => {
-  return dob
-    ? dayjs(`${dob.year}-${dob.month}-${dob.day}`).format("YYYY-MM-DD")
-    : null;
-};
+  const date = dayjs(dob);
+
+  const year = date.year();
+  const month = date.month() + 1; // dayjs में month 0-based होता है
+  const day = date.date();
+
+  const editableRecord = { ...rest, dob: { year, month, day } }
+
+  return editableRecord;
+}

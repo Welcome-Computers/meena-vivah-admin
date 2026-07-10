@@ -2,7 +2,7 @@ import { DatePickerProps, Form, Select } from "antd";
 import { RuleObject } from "antd/es/form";
 import { useWatch } from "antd/es/form/Form";
 import dayjs from "dayjs";
-import { memo } from "react";
+import { useRef } from "react";
 
 
 
@@ -12,13 +12,17 @@ interface DobProps extends DatePickerProps {
   label?: string;
 }
 
-const DobField = memo((props: DobProps) => {
+const DobField = (props: DobProps) => {
   const { name, label, ...rest } = props;
+
+  const yearRef = useRef<any>(null);
+  const monthRef = useRef<any>(null);
+  const dayRef = useRef<any>(null);
 
   // validtion for day Length according to month and year
   const selectedMonth = useWatch([name, "month"]);
   const selectedYear = useWatch([name, "year"]);
-  const dayLength = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+  const dayLength = new Date(selectedYear, selectedMonth, 0).getDate();
 
   const dayOptions = Array.from({ length: dayLength }, (_, index) => ({
     label: index + 1,
@@ -43,8 +47,7 @@ const DobField = memo((props: DobProps) => {
 
   const currentYear = dayjs().year();
 
-  const maxAllowedYear =
-    currentYear - 18;
+  const maxAllowedYear = currentYear - 18;
 
   const yearOptions = Array.from(
     { length: 70 },
@@ -56,10 +59,6 @@ const DobField = memo((props: DobProps) => {
 
   const form = Form.useFormInstance();
 
-
-  // console.log(form.getFieldsValue(true));
-
-  // dob age validation
 
   const ageValidation = (_: RuleObject, value: any) => {
     if (
@@ -93,6 +92,19 @@ const DobField = memo((props: DobProps) => {
     return Promise.resolve();
   };
 
+  const filterSelectOption = (
+    input: string,
+    option?: { label?: React.ReactNode; value?: unknown }
+  ) => {
+    const label = String(option?.label ?? "").toLowerCase();
+    const value = String(option?.value ?? "");
+
+    return (
+      label.includes(input.toLowerCase()) ||
+      value.startsWith(input)
+    );
+  };
+
   return (
     <Form.Item
       name={name}
@@ -117,15 +129,13 @@ const DobField = memo((props: DobProps) => {
           ]}
         >
           <Select
+            ref={yearRef}
             showSearch
             className="custom-input"
             placeholder="Year" options={yearOptions}
-            onChange={(year) => {
-              const dob = form.getFieldValue(name) || {};
-
-              form.setFieldValue(name, {
-                year, month: dob.month === undefined ? 1 : dob.month,
-                day: dob.day === undefined ? 1 : dob.day,
+            onChange={() => {
+              requestAnimationFrame(() => {
+                monthRef.current?.focus();
               });
             }}
           />
@@ -140,8 +150,20 @@ const DobField = memo((props: DobProps) => {
           ]}
         >
           <Select
+            showSearch={{
+              filterOption: filterSelectOption,
+              autoClearSearchValue: true,
+            }}
+            ref={monthRef}
             className="custom-input"
-            placeholder="Month" options={monthOptions}></Select>
+            placeholder="Month"
+            options={monthOptions}
+            onChange={() => {
+              requestAnimationFrame(() => {
+                dayRef.current?.focus();
+              });
+            }}
+          />
         </Form.Item>
 
         {/* day field */}
@@ -153,13 +175,22 @@ const DobField = memo((props: DobProps) => {
           ]}
         >
           <Select
+            ref={dayRef}
+            showSearch
             className="custom-input"
-            placeholder="Day" options={dayOptions}></Select>
+            placeholder="Day" options={dayOptions}
+          // onChange={() => {
+          //   requestAnimationFrame(() => {
+          //     fatherNameRef.current?.focus();
+          //   });
+          // }}
+          ></Select>
         </Form.Item>
       </div>
     </Form.Item>
   );
-});
+};
+
 DobField.displayName = "DobField";
 export default DobField;
 

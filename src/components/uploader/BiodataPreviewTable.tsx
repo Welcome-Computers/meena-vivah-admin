@@ -3,11 +3,13 @@
 import {
   CopyOutlined,
   DeleteOutlined,
+  EditFilled,
 } from "@ant-design/icons";
 
 import {
   Button,
   Col,
+  Drawer,
   Form,
   Input,
   Modal,
@@ -17,12 +19,13 @@ import {
   Table
 } from "antd";
 
-import { formattedDob } from "@/lib/utility/helper";
+import { formatedEditableRecord } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useDeleteImportedProfileMutation, useMoveImportedProfileMutation } from "@/redux/features/importedProfile/srevices";
 import { useGetGotrasQuery } from "@/redux/features/masterGotra";
-import { EditableProfile } from "@/redux/types";
+import { EditableProfile, PaginationState } from "@/redux/types";
 import { RuleObject } from "antd/es/form";
+import dayjs from "dayjs";
 import {
   Dispatch,
   SetStateAction,
@@ -38,31 +41,36 @@ interface Props {
   profiles: any[];
   setProfiles: Dispatch<SetStateAction<EditableProfile[]>>;
   handleFromSubmit: (type: "draft" | "permanent") => Promise<void>;
-  refetchProfiles: () => Promise<void>
+  refetchProfiles: () => Promise<void>;
+  setPagination: any;
+  pagination: PaginationState;
+  drawerWidth: number;
 }
 
 const BiodataPreviewTable = ({
   profiles,
   setProfiles,
   handleFromSubmit,
-  refetchProfiles
+  refetchProfiles,
+  setPagination,
+  pagination,
+  drawerWidth
 }: Props) => {
 
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [form] = Form.useForm();
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 50,
-    total: profiles.length, // or API total
-  });
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { data, isFetching, refetch } = useGetGotrasQuery({});
+  const [form] = Form.useForm();
+
+  const { data: gotraData, isFetching, refetch } = useGetGotrasQuery({});
   const [deleteImportedProfile, { data: deletedData, isLoading, }] = useDeleteImportedProfileMutation();
   const [moveImportedProfile, { isLoading: isLoadingCreateUser }] = useMoveImportedProfileMutation();
 
+  // console.log(profiles)
+
   const getGotraName = (recordCode: string) => {
     if (recordCode) {
-      return data.find((item: any) => item.code === recordCode).name
+      return gotraData.find((item: any) => item.code === recordCode).name
     }
   }
 
@@ -70,10 +78,9 @@ const BiodataPreviewTable = ({
     const error = record?.errors?.find((e: any) => e.field === field)?.message;
 
     if (field === "dob" && value) {
-      const formattedValue = formattedDob(value);
       return (
         <div>
-          {formattedValue}
+          {dayjs(value).format("YYYY-MMM-DD")}
           {error && (
             <div style={{ color: "red" }}>
               {error}
@@ -81,6 +88,7 @@ const BiodataPreviewTable = ({
           )}
         </div>
       );
+
     } else {
 
       return (
@@ -129,9 +137,7 @@ const BiodataPreviewTable = ({
     ]);
   };
 
-  const htmlRender = (
-    value: string
-  ) => (
+  const htmlRender = (value: string) => (
     <Space orientation="vertical" size={8}>
       <div
         style={{
@@ -186,6 +192,17 @@ const BiodataPreviewTable = ({
     });
   };
 
+  const handleEdit = (record: any, opration: boolean) => {
+    if (opration && record) {
+      const editableRecord = formatedEditableRecord(record)
+
+      form.setFieldsValue(editableRecord);
+    } else {
+      form.resetFields()
+    }
+    setDrawerOpen(opration);
+  };
+
   const columns: any[] = [
     {
       title: "#",
@@ -206,16 +223,19 @@ const BiodataPreviewTable = ({
     {
       title: "Action",
       fixed: "right",
-      width: 100,
+      width: 150,
 
       render: (_: any, record: any) => (
         <Space>
           <Button
             danger
             icon={<DeleteOutlined />}
-            onClick={() => {
-              deleteRow(record)
-            }}
+            onClick={() => deleteRow(record)}
+          />
+          <Button
+            type="primary"
+            icon={<EditFilled />}
+            onClick={() => handleEdit(record, true)}
           />
         </Space>
       )
@@ -279,18 +299,13 @@ const BiodataPreviewTable = ({
     // console.log(record)
     // return;
     // debugger;
-    const { dob, ...rest } = record || {};
-    const formattedDobValue = formattedDob(dob);
-    const profileData = {
-      ...rest,
-      dob: formattedDobValue,
-    };
 
-    const res = await moveImportedProfile(profileData).unwrap()
+    const res = await moveImportedProfile(record).unwrap()
 
     if (res.success) {
       appMessage.success("Profile created successfully");
-      refetchProfiles()
+      // refetchProfiles()
+      handleEdit(null, false)
       // setProfiles(prev =>
       //   prev.map(item =>
       //     item?.id === record?.id
@@ -304,10 +319,7 @@ const BiodataPreviewTable = ({
 
   };
 
-  const handleFormSubmit = (
-    values: any
-  ) => {
-
+  const handleFormSubmit = (values: any) => {
     if (!expandedId) return;
 
     setProfiles(prev =>
@@ -324,7 +336,7 @@ const BiodataPreviewTable = ({
     setExpandedId(null);
   };
 
-  const expandedRowRender = () => {
+  const ExpandedRow = ({ form }: any) => {
     return (
       <Space orientation="vertical" style={{ width: "100%" }}>
         <Form
@@ -337,13 +349,11 @@ const BiodataPreviewTable = ({
         >
           <Row gutter={20}>
             <Col span={12}>
-              <Form.Item hidden name="id">
-                <Input />
-              </Form.Item>
-
+              <Form.Item hidden name="id"><Input /></Form.Item>
               <OtherDetails callingFrom={'update'} />
             </Col>
             <Col span={12}>
+              <div style={{ height: "50px", width: "100%" }}></div>
               <CheckBoxField
                 form={form}
                 name="gender"
@@ -428,19 +438,32 @@ const BiodataPreviewTable = ({
     );
   };
 
-  const handleExpand = (
-    expanded: boolean,
-    record: any
+
+  // const handleExpand = (
+  //   expanded: boolean,
+  //   record: any
+  // ) => {
+  //   if (expanded) {
+  //     setExpandedId(record.id);
+  //     form.setFieldsValue({
+  //       ...record,
+  //     });
+  //   } else {
+  //     setExpandedId(null);
+  //   }
+  // };
+
+  const handlePaginationChange = (
+    page: number,
+    pageSize: number
   ) => {
-    if (expanded) {
-      setExpandedId(record.id);
-      form.setFieldsValue({
-        ...record,
-      });
-    } else {
-      setExpandedId(null);
-    }
+    setPagination((prev: PaginationState) => ({
+      ...prev,
+      page,
+      limit: pageSize,
+    }));
   };
+
 
 
   return (
@@ -449,11 +472,11 @@ const BiodataPreviewTable = ({
         rowKey="id"
         columns={columns}
         dataSource={profiles}
-        expandable={{
-          expandedRowRender,
-          expandedRowKeys: expandedId ? [expandedId] : [],
-          onExpand: handleExpand,
-        }}
+        // expandable={{
+        //   expandedRowRender,
+        //   expandedRowKeys: expandedId ? [expandedId] : [],
+        //   onExpand: handleExpand,
+        // }}
         scroll={{
           x: 1600,
           y: 800,
@@ -490,19 +513,25 @@ const BiodataPreviewTable = ({
           pageSize={pagination.limit}
           total={pagination.total}
           showSizeChanger
-          pageSizeOptions={["50", "100", "150", "200"]}
+          pageSizeOptions={["10", "20", "50", "100"]}
           showTotal={(total) => `Total ${total} profiles`}
-          onChange={(page, pageSize) =>
-            setPagination(prev => ({
-              ...prev,
-              page,
-              limit: pageSize,
-            }))
-          }
+          onChange={handlePaginationChange}
         />
+
       </div>
 
 
+      <Drawer
+        title="Edit Imported Profile"
+        open={drawerOpen}
+        size={`${drawerWidth}px`}
+        closable={{
+          placement: "end",
+        }}
+        onClose={() => handleEdit(null, false)}
+        destroyOnHidden>
+        <ExpandedRow form={form} />
+      </Drawer>
 
     </div>
   );

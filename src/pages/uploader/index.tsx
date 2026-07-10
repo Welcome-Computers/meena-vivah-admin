@@ -4,20 +4,26 @@ import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateBulkImportedProfilesMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
-import { EditableProfile } from "@/redux/types";
+import { EditableProfile, PaginationState } from "@/redux/types";
 
 import { Button, Space } from "antd";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 
 
 const Imports = () => {
 
-  const [page, setPage] = useState(1);
-  const [limit, setlimit] = useState(10);
-
   const [profiles, setProfiles] = useState<EditableProfile[]>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [drawerWidth, setDrawerWidth] = useState<number>(900);
+
 
   const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
@@ -28,23 +34,27 @@ const Imports = () => {
 
   const fetchDraftsProfilesHandler = useCallback(async () => {
     try {
-      const response = await fetchProfiles({ page, limit }).unwrap()
+      const response = await fetchProfiles({
+        page: pagination.page,
+        limit: pagination.limit,
+      }).unwrap()
+
       if (response.success) {
 
         const updatedProfiles = response?.data?.map((el: any) => {
           const { dob, ...rest } = el || {};
 
-          const dobValue = dob
-            ? {
-              year: dayjs(dob).year(),
-              month: dayjs(dob).month() + 1, // dayjs month is 0-11
-              day: dayjs(dob).date(),
-            }
-            : null;
+          // const dobValue = dob
+          //   ? {
+          //     year: dayjs(dob).year(),
+          //     month: dayjs(dob).month() + 1, // dayjs month is 0-11
+          //     day: dayjs(dob).date(),
+          //   }
+          //   : null;
 
           return {
             ...rest,
-            dob: dobValue,
+            dob,
           };
         });
 
@@ -53,14 +63,13 @@ const Imports = () => {
     } catch (error) {
 
     }
-  }, [page, limit, setProfiles])
+  }, [pagination, setProfiles])
 
   useEffect(() => {
     fetchDraftsProfilesHandler()
   }, [fetchDraftsProfilesHandler])
 
   const handleFromSubmit = useCallback(async (type: "permanent" | "draft") => {
-
     try {
       let res = null;
 
@@ -130,6 +139,23 @@ const Imports = () => {
     }
   }, [profiles]);
 
+  useEffect(() => {
+    if (data?.pagination) {
+      setPagination(prev => ({
+        ...prev,
+        page: data.pagination.page,
+        limit: data.pagination.limit,
+        total: data.pagination.total,
+        totalPages: data.pagination.totalPages,
+      }));
+    }
+  }, [data]);
+
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      setDrawerWidth(containerRef.current.offsetWidth);
+    }
+  }, [containerRef]);
 
   return (
     <AdminLayout
@@ -145,12 +171,15 @@ const Imports = () => {
       </div>
       }
     >
-      <div>
+      <div ref={containerRef}>
         <BiodataPreviewTable
           profiles={profiles}
           setProfiles={setProfiles}
           handleFromSubmit={handleFromSubmit}
           refetchProfiles={fetchDraftsProfilesHandler}
+          setPagination={setPagination}
+          pagination={pagination}
+          drawerWidth={drawerWidth}
         />
       </div>
     </AdminLayout >

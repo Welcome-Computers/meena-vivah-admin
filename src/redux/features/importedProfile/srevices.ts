@@ -129,11 +129,13 @@ export const importedProfileApi = createApi({
 
     // MOVE SINGLE PROFILE
     moveImportedProfile: builder.mutation<any, EditableProfile>({
-      query: ({ id, ...body }) => ({
-        url: `/api/imported-profile/${id}?action=singleMove`,
-        method: "POST",
-        body,
-      }),
+      query: ({ id, ...body }) => {
+        return ({
+          url: `/api/imported-profile/${id}?action=singleMove`,
+          method: "POST",
+          body,
+        })
+      },
 
       invalidatesTags: ["ImportedProfiles"],
     }),
@@ -143,7 +145,7 @@ export const importedProfileApi = createApi({
       query: (
         body: number[]
       ) => ({
-        url: `/api/imported-profile?action=bulkMove`,
+        url: `/ api / imported - profile ? action = bulkMove`,
         method: "POST",
         body,
       }),

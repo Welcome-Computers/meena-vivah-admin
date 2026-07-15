@@ -8,63 +8,37 @@ import {
 
 import {
   Button,
-  Col,
-  Drawer,
-  Form,
-  Input,
-  Modal,
   Pagination,
-  Row,
   Space,
   Table
 } from "antd";
 
-import { formatedEditableRecord } from "@/lib/utility/helper";
-import { appMessage } from "@/lib/utility/message";
-import { useDeleteImportedProfileMutation, useMoveImportedProfileMutation } from "@/redux/features/importedProfile/srevices";
 import { useGetGotrasQuery } from "@/redux/features/masterGotra";
-import { EditableProfile, PaginationState } from "@/redux/types";
-import { RuleObject } from "antd/es/form";
+import { PaginationState } from "@/redux/types";
 import dayjs from "dayjs";
-import {
-  Dispatch,
-  SetStateAction,
-  useState
-} from "react";
-import GotraDetials from "../formComponents/GotraDetails";
-import OtherDetails from "../formComponents/OtherDetails";
-import CheckBoxField from "../InputElements/CheckBoxField";
-import DobField from "../InputElements/DobField";
-import InputField from "../InputElements/InputField";
 
 interface Props {
   profiles: any[];
-  setProfiles: Dispatch<SetStateAction<EditableProfile[]>>;
   handleFromSubmit: (type: "draft" | "permanent") => Promise<void>;
-  refetchProfiles: () => Promise<void>;
   setPagination: any;
   pagination: PaginationState;
-  drawerWidth: number;
+  handleEdit: (record: any, operation: boolean) => void;
+  deleteProfile: (record: any, callingFrom: "table" | "form") => void;
 }
 
 const BiodataPreviewTable = ({
   profiles,
-  setProfiles,
   handleFromSubmit,
-  refetchProfiles,
   setPagination,
   pagination,
-  drawerWidth
+  handleEdit,
+  deleteProfile
 }: Props) => {
 
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  // const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  const [form] = Form.useForm();
 
   const { data: gotraData, isFetching, refetch } = useGetGotrasQuery({});
-  const [deleteImportedProfile, { data: deletedData, isLoading, }] = useDeleteImportedProfileMutation();
-  const [moveImportedProfile, { isLoading: isLoadingCreateUser }] = useMoveImportedProfileMutation();
 
   // console.log(profiles)
 
@@ -160,48 +134,7 @@ const BiodataPreviewTable = ({
     </Space>
   );
 
-  const deleteRow = (record: any) => {
-    const hasTempId = record?.temp_id;
-    const hasId = record?.id;
 
-    Modal.confirm({
-      centered: true,
-      title: "Delete biodata?",
-      content: "Are you sure you want to remove this record?",
-      okText: "Delete",
-      okType: "danger",
-      async onOk() {
-
-
-        if (hasTempId) {
-          setProfiles(prev =>
-            prev.filter(
-              x => String(x.temp_id) !== String(hasTempId)
-            )
-          );
-        } else if (hasId) {
-          const res = await deleteImportedProfile(hasId).unwrap();
-          if (res.success) {
-            appMessage.success(res.message || "Profile deleted successfully");
-            refetchProfiles()
-          }
-        } else {
-          appMessage.error("Profile Id or Temp Id not found");
-        }
-      },
-    });
-  };
-
-  const handleEdit = (record: any, opration: boolean) => {
-    if (opration && record) {
-      const editableRecord = formatedEditableRecord(record)
-
-      form.setFieldsValue(editableRecord);
-    } else {
-      form.resetFields()
-    }
-    setDrawerOpen(opration);
-  };
 
   const columns: any[] = [
     {
@@ -230,7 +163,7 @@ const BiodataPreviewTable = ({
           <Button
             danger
             icon={<DeleteOutlined />}
-            onClick={() => deleteRow(record)}
+            onClick={() => deleteProfile(record, "table")}
           />
           <Button
             type="primary"
@@ -293,166 +226,6 @@ const BiodataPreviewTable = ({
 
   ];
 
-  const moveSingleImportedRow = async (record: any) => {
-    // call RTK mutation here
-
-    // console.log(record)
-    // return;
-    // debugger;
-
-    const res = await moveImportedProfile(record).unwrap()
-
-    if (res.success) {
-      appMessage.success("Profile created successfully");
-      // refetchProfiles()
-      handleEdit(null, false)
-      // setProfiles(prev =>
-      //   prev.map(item =>
-      //     item?.id === record?.id
-      //       ? record
-      //       : item
-      //   )
-      // );
-    } else {
-      appMessage.error(res.message || "Profile not created");
-    }
-
-  };
-
-  const handleFormSubmit = (values: any) => {
-    if (!expandedId) return;
-
-    setProfiles(prev =>
-      prev.map(item =>
-        item.id === expandedId
-          ? {
-            ...item,
-            ...values,
-          }
-          : item
-      )
-    );
-    form.resetFields();
-    setExpandedId(null);
-  };
-
-  const ExpandedRow = ({ form }: any) => {
-    return (
-      <Space orientation="vertical" style={{ width: "100%" }}>
-        <Form
-          layout="horizontal"
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
-          labelAlign="left"
-          form={form}
-          onFinish={handleFormSubmit}
-        >
-          <Row gutter={20}>
-            <Col span={12}>
-              <Form.Item hidden name="id"><Input /></Form.Item>
-              <OtherDetails callingFrom={'update'} />
-            </Col>
-            <Col span={12}>
-              <div style={{ height: "50px", width: "100%" }}></div>
-              <CheckBoxField
-                form={form}
-                name="gender"
-                label="Gender"
-                rules={[{ required: true, message: "Select Gender First" }]}
-                options={[
-                  { option: "Boy", value: "boy" },
-                  { option: "Girl", value: "girl" },
-                ]}
-              />
-
-              <InputField
-                name="name"
-                label="Name"
-                rules={[
-                  { required: true, message: "Enter first name " },
-                  { max: 100, message: "Maximum 100 characters" },
-                ]}
-              />
-
-              <InputField
-                name="mobile"
-                label="Mobile"
-                placeholder="e.g. 9988771234"
-                rules={[
-                  {
-                    validator: (_: RuleObject, val: any) => {
-
-                      if (!val) {
-                        return Promise.resolve();
-                      }
-                      if (val.length < 10) {
-                        return Promise.reject(
-                          new Error("Enter 10 Digit Mobile Number"),
-                        );
-                      }
-                      if (!/^(\+91)?[6-9]\d{9}$/.test(val)) {
-                        return Promise.reject(new Error("Check Mobile Number"));
-                      }
-
-                      return Promise.resolve();
-                    },
-                  },
-                  { required: "true", message: "Mobile number must be required" }
-                ]}
-              />
-
-              <DobField
-                name="dob"
-                label="Date of Birth"
-              />
-
-              <InputField
-                name="fathersname"
-                label="Father Name"
-                rules={[
-                  { max: 30, message: "Maximum 30 characters" },
-                ]}
-              />
-
-              <GotraDetials
-                showOtherGotra={false}
-                showTitle={false}
-                form={form} />
-
-              <Space>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={async () => {
-                    const values = await form.validateFields();
-                    moveSingleImportedRow(values)
-                  }}>
-                  Move Imported
-                </Button>
-              </Space>
-            </Col>
-          </Row>
-        </Form>
-
-      </Space >
-    );
-  };
-
-
-  // const handleExpand = (
-  //   expanded: boolean,
-  //   record: any
-  // ) => {
-  //   if (expanded) {
-  //     setExpandedId(record.id);
-  //     form.setFieldsValue({
-  //       ...record,
-  //     });
-  //   } else {
-  //     setExpandedId(null);
-  //   }
-  // };
-
   const handlePaginationChange = (
     page: number,
     pageSize: number
@@ -464,19 +237,13 @@ const BiodataPreviewTable = ({
     }));
   };
 
-
-
   return (
     <div>
       <Table
         rowKey="id"
         columns={columns}
         dataSource={profiles}
-        // expandable={{
-        //   expandedRowRender,
-        //   expandedRowKeys: expandedId ? [expandedId] : [],
-        //   onExpand: handleExpand,
-        // }}
+
         scroll={{
           x: 1600,
           y: 800,
@@ -517,22 +284,7 @@ const BiodataPreviewTable = ({
           showTotal={(total) => `Total ${total} profiles`}
           onChange={handlePaginationChange}
         />
-
       </div>
-
-
-      <Drawer
-        title="Edit Imported Profile"
-        open={drawerOpen}
-        size={`${drawerWidth}px`}
-        closable={{
-          placement: "end",
-        }}
-        onClose={() => handleEdit(null, false)}
-        destroyOnHidden>
-        <ExpandedRow form={form} />
-      </Drawer>
-
     </div>
   );
 

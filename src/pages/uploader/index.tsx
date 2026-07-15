@@ -1,18 +1,22 @@
 
 import AdminLayout from "@/components/layout/AdminLayout";
+import BiodataEdiableDrawer from "@/components/uploader/BiodataEdiableDrawer";
 import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
+import { formatedEditableRecord } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
-import { useCreateBulkImportedProfilesMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
+import { useCreateBulkImportedProfilesMutation, useDeleteImportedProfileMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
 import { EditableProfile, PaginationState } from "@/redux/types";
 
-import { Button, Space } from "antd";
+import { Button, Form, Modal, Space } from "antd";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 
 
 const Imports = () => {
+
+  const [form] = Form.useForm();
 
   const [profiles, setProfiles] = useState<EditableProfile[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -23,14 +27,22 @@ const Imports = () => {
   });
   const containerRef = useRef<HTMLDivElement>(null);
   const [drawerWidth, setDrawerWidth] = useState<number>(900);
-
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editNavigation, setEditNavigation] = useState<{
+    current: any;
+    previous: any | null;
+    next: any | null;
+  }>({
+    current: null,
+    previous: null,
+    next: null,
+  });
 
   const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
   const [updateImportedProfilesAction, { isLoading: isLoadingUpdateUser }] = useUpdateBulkImportedProfilesMutation();
   const [moveImportedProfilesAction, { isLoading: isLoadingProfiles }] = useMoveBulkImportedProfilesMutation();
-
-  // console.log(data)
+  const [deleteImportedProfile, { data: deletedData, isLoading: isLoadingDelete, }] = useDeleteImportedProfileMutation();
 
   const fetchDraftsProfilesHandler = useCallback(async () => {
     try {
@@ -43,14 +55,6 @@ const Imports = () => {
 
         const updatedProfiles = response?.data?.map((el: any) => {
           const { dob, ...rest } = el || {};
-
-          // const dobValue = dob
-          //   ? {
-          //     year: dayjs(dob).year(),
-          //     month: dayjs(dob).month() + 1, // dayjs month is 0-11
-          //     day: dayjs(dob).date(),
-          //   }
-          //   : null;
 
           return {
             ...rest,
@@ -72,7 +76,7 @@ const Imports = () => {
   const handleFromSubmit = useCallback(async (type: "permanent" | "draft") => {
     try {
       let res = null;
-
+      debugger;
       if (type === "permanent") {
 
         const profileIds = profiles
@@ -139,6 +143,103 @@ const Imports = () => {
     }
   }, [profiles]);
 
+  const handleEdit = useCallback((record: any, operation: boolean) => {
+    if (operation && record) {
+      const editableRecord = formatedEditableRecord(record);
+
+      form.setFieldsValue(editableRecord);
+
+      const currentIndex = profiles.findIndex(
+        (item: any) => item.id === record.id
+      );
+
+      setEditNavigation({
+        current: record,
+        previous:
+          currentIndex > 0
+            ? profiles[currentIndex - 1]
+            : null,
+        next:
+          currentIndex < profiles.length - 1
+            ? profiles[currentIndex + 1]
+            : null,
+      });
+    } else {
+      form.resetFields();
+
+      setEditNavigation({
+        current: null,
+        previous: null,
+        next: null,
+      });
+    }
+
+    setDrawerOpen(operation);
+  }, [profiles]);
+
+  const deleteProfile = useCallback((record: any, callingFrom: "table" | "form") => {
+    const hasTempId = record?.temp_id;
+    const hasId = record?.id;
+
+    Modal.confirm({
+      centered: true,
+      title: "Delete biodata?",
+      content: "Are you sure you want to remove this record?",
+      okText: "Delete",
+      okType: "danger",
+      async onOk() {
+
+        if (hasTempId) {
+          setProfiles(prev =>
+            prev.filter(
+              x => String(x.temp_id) !== String(hasTempId)
+            )
+          );
+        } else if (hasId) {
+
+          const currentIndex = profiles.findIndex(
+            (item: any) => item.id === record.id
+          );
+
+          const nextItem =
+            currentIndex < profiles.length - 1
+              ? profiles[currentIndex + 1]
+              : null;
+
+
+          const res = await deleteImportedProfile(hasId).unwrap();
+
+          if (res.success) {
+
+            appMessage.success(res.message || "Profile deleted successfully");
+            debugger;
+            await fetchDraftsProfilesHandler();
+            debugger;
+
+            if (callingFrom === "form" && nextItem) {
+              handleEdit(nextItem, true);
+            } else {
+              setDrawerOpen(false)
+            }
+
+          }
+        } else {
+          appMessage.error("Profile Id or Temp Id not found");
+        }
+      },
+    });
+  },
+    [
+      profiles,
+      deleteImportedProfile,
+      fetchDraftsProfilesHandler,
+      handleEdit,
+      appMessage,
+      setDrawerOpen
+    ]
+  );
+
+
   useEffect(() => {
     if (data?.pagination) {
       setPagination(prev => ({
@@ -174,14 +275,25 @@ const Imports = () => {
       <div ref={containerRef}>
         <BiodataPreviewTable
           profiles={profiles}
-          setProfiles={setProfiles}
           handleFromSubmit={handleFromSubmit}
-          refetchProfiles={fetchDraftsProfilesHandler}
           setPagination={setPagination}
           pagination={pagination}
-          drawerWidth={drawerWidth}
+          handleEdit={handleEdit}
+          deleteProfile={deleteProfile}
         />
       </div>
+
+      <BiodataEdiableDrawer
+        form={form}
+        handleEdit={handleEdit}
+        drawerOpen={drawerOpen}
+        // setProfiles={setProfiles}
+        drawerWidth={drawerWidth}
+        editNavigation={editNavigation}
+        deleteProfile={deleteProfile}
+        isLoadingDeleteProfile={isLoadingDelete}
+      />
+
     </AdminLayout >
   );
 };

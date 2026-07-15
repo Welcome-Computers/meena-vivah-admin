@@ -247,99 +247,28 @@ export function extractGotras(text: string) {
 }
 
 export const nameKeywords = [
-  "Boy Name",
-  "Girl Name",
+  "Candidate Name",
   "Bride Name",
   "Groom Name",
-  "Candidate Name",
+  "Boy Name",
+  "Girl Name",
   "Name of Boy",
   "Name of Girl",
+  "Profile Name",
+  "Full Name",
+  "Name :",
   "Name:-",
+  "Name:",
   "Name-",
   "Name",
   "Boy",
   "Girl",
-  "*Name*:"
 ];
 
-export function extractName(text: string) {
-  const clean = text
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/?p[^>]*>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/\s+/g, " ")
-    .trim();
 
-  const keywordPattern = new RegExp(
-    createKeywordRegex(nameKeywords),
-    "i"
-  );
-
-  const keywordMatch = clean.match(keywordPattern);
-
-  const searchText = keywordMatch
-    ? keywordMatch[1].substring(0, 120)
-    : clean;
-
-  const stopWords = [
-    "dob",
-    "d\\.?o\\.?b",
-    "date",
-    "birth",
-    "height",
-    "colour",
-    "education",
-    "qualification",
-    "occupation",
-    "job",
-    "father",
-    "mother",
-    "gotra",
-    "address",
-    "contact",
-    "mobile",
-    "phone",
-    "village",
-    "native",
-    "email",
-
-  ];
-
-  const stopWordRegex = new RegExp(
-    `\\b(${stopWords.join("|")})\\b`,
-    "i"
-  );
-
-  const patterns = [
-    /^([A-Za-z][A-Za-z.\s]{2,60})/,
-    /^([\u0900-\u097F\s]{2,60})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = searchText.match(pattern);
-
-    if (!match) continue;
-
-    let name = match[1];
-
-    name = name.split(stopWordRegex)[0];
-
-    name = name
-      .replace(/\b(mr|mrs|ms|dr|shri|late)\.?\s*/gi, "")
-      .replace(/[,:;-]+$/, "")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    if (name.length >= 3) {
-      return name;
-    }
-  }
-
-  return "";
-}
-
-export function extractName1(text: string) {
+export const extractName = (
+  text: string
+) => {
 
   const clean = text
     .replace(/<br\s*\/?>/gi, "\n")
@@ -349,83 +278,42 @@ export function extractName1(text: string) {
     .replace(/\s+/g, " ")
     .trim();
 
-  const keywordPattern = new RegExp(
-    createKeywordRegex(nameKeywords),
-    "i"
-  );
-
-  const keywordMatch = clean.match(keywordPattern);
-
-  const searchText = keywordMatch
-    ? keywordMatch[1].substring(0, 120)
-    : clean;
-
   const patterns = [
 
-    /\b\d*\s*[-.)]?\s*name\s*[:\-]*\s*([A-Za-z.\s]{3,60})/i,
+    // Name:- Hariom Meena DOB...
+    /(?:name|boy\s*name|groom\s*name|girl\s*name)\s*[-:.]*\s*([^,\n]+?)(?=\s*(?:dob|d\.o\.b|date|height|education|colour|occupation|job|father|gotra|address|contact|mobile|$))/i,
 
-    /\b(?:boy|girl|groom|bride)\s+name\s*[:\-]*\s*([A-Za-z.\s]{3,60})/i,
 
-    /\bname\s+of\s+(?:boy|girl)\s*[:\-]*\s*([A-Za-z.\s]{3,60})/i,
+    // 1-Name:- dinesh kumar
+    /\d+\s*[-.)]?\s*name\s*[-:.]*\s*([a-z .]+?)(?=\s*(?:dob|d\.o\.b|height|education|occupation|father|gotra|address|contact|$))/i,
 
-    /\b(?:boy|girl)\s*[:\-]*\s*([A-Za-z.\s]{3,60})/i,
+
+    // "A suitable match is required for my son: Hariom Meena DOB"
+    /(?:son|daughter|boy|girl).*?(?:required|match)?\s*[:\-]?\s*([a-z .]+?)(?=\s*(?:dob|d\.o\.b|height|education|occupation|father|gotra|$))/i,
+
+
+    // Mahesh Meena<br>Father...
+    /^([a-z .]{3,50}?)(?=\s*(?:father|dob|height|qualification|education|occupation))/i,
 
   ];
 
-  const stopWords = [
-    "dob",
-    "d\\.?o\\.?b",
-    "date",
-    "birth",
-    "height",
-    "colour",
-    "education",
-    "qualification",
-    "occupation",
-    "job",
-    "father",
-    "mother",
-    "gotra",
-    "address",
-    "contact",
-    "mobile",
-    "phone",
-    "village",
-    "native",
-    "email",
-  ];
 
-  const stopWordRegex = new RegExp(
-    `\\b(${stopWords.join("|")})\\b`,
-    "i"
-  );
+  for (const p of patterns) {
 
-  for (const pattern of patterns) {
+    const match = clean.match(p);
 
-    const match = searchText.match(pattern);
+    if (match) {
 
-    if (!match) continue;
-
-    let name = match[1];
-
-    name = name.replace(stopWordRegex, "");
-
-    name = name.replace(
-      /\b(mr|mrs|ms|dr|shri|late)\.?\s*/gi,
-      ""
-    );
-
-    name = name
-      .replace(/\s+/g, " ")
-      .trim();
-
-    if (name.length >= 3) {
-      return name;
+      return match[1]
+        .replace(/^(mr|mrs|ms|dr)\.?\s*/i, "")
+        .replace(/\s+\d+.*$/, "")
+        .trim();
     }
   }
 
+
   return "";
-}
+};
 
 export const fatherKeywords = [
   "Father",

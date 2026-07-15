@@ -1,5 +1,6 @@
 // imported-profile.validation.ts
 
+import dayjs from "dayjs";
 import { z } from "zod";
 
 export const createImportedProfileSchema =
@@ -42,7 +43,18 @@ export const moveImportedProfileSchema =
     gm_gotra: z.string().min(1, "GM gotra is required"),
     mat_gm_gotra: z.string().nullish(),
 
-    dob: z.string().optional(),
+    // dob: z.string().optional(),
+    dob: z
+      .string()
+      .refine(
+        (value) => dayjs(value, "YYYY-MM-DD", true).isValid(),
+        {
+          message: "DOB must be in YYYY-MM-DD format",
+        }
+      )
+      .optional(),
+
+
     fathersname: z.string().optional(),
     otherinfo: z.string().optional(),
 

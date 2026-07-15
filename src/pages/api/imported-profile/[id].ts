@@ -52,8 +52,6 @@ export default async function handler(
             "importedProfile moved",
         });
       }
-
-
     }
 
     if (req.method === "DELETE") {

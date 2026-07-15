@@ -45,3 +45,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/b
 ----------------
 8-july-2026
 i was working on dob not proper fill in editable form if dob is "22/08/1998" like that. 
+
+10-july-2026
+i was working on prev/next functionality 
+
+13-July-2026
+I was working on save/move draft data into active table. from drawar.
+
+15-July-2026
+now need to create login/logout using nextAuth with refresh and access token

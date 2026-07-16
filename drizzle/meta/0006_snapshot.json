@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "e9925b20-9f7b-498e-9120-ba97fb2203f5",
-  "prevId": "1f314905-c5f2-40f5-b5c9-15fde344a70c",
+  "id": "c524e47f-ae96-484f-aada-834c84358f53",
+  "prevId": "e9925b20-9f7b-498e-9120-ba97fb2203f5",
   "tables": {
     "address": {
       "name": "address",
@@ -172,15 +172,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "access_token_hash": {
-          "name": "access_token_hash",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "refresh_token_hash": {
-          "name": "refresh_token_hash",
+        "session_id": {
+          "name": "session_id",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
@@ -218,7 +211,22 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "session_id_idx": {
+          "name": "session_id_idx",
+          "columns": [
+            "session_id"
+          ],
+          "isUnique": true
+        },
+        "admin_id_idx": {
+          "name": "admin_id_idx",
+          "columns": [
+            "admin_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "admin_sessions_id": {

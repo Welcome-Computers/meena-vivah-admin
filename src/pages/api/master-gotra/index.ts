@@ -9,7 +9,8 @@ import {
   createGotraSchema,
   createGotrasSchema,
 } from "@/lib/modules/master-gotra/master-gotra.validation";
-import { adminAuth } from "@/lib/modules/admin/adminAuth";
+import { apiErrorHandler } from "@/lib/utility/apiErrorHandler";
+import { VerifySession } from "@/lib/modules/admin/VerifySession";
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,15 +30,21 @@ export default async function handler(
 
     if (req.method === "POST") {
       try {
-        // get admin id
-        const decodedToken = adminAuth(req) as { id: number };
+        const auth = await VerifySession(req);
+        if (!auth) {
+          return res.status(401).json({
+            success: false,
+    message: "Unauthorized Please Login",
+
+          });
+        }
 
         // existing code
         const payload = Array.isArray(req.body)
           ? createGotrasSchema.parse(req.body)
           : createGotraSchema.parse(req.body);
 
-        const result = await createGotra(payload, decodedToken);
+        const result = await createGotra(payload, auth.id);
 
         return res.status(201).json({
           success: true,
@@ -45,26 +52,7 @@ export default async function handler(
           data: result,
         });
       } catch (error: any) {
-        if (error?.message?.includes("already exists")) {
-          return res.status(409).json({
-            success: false,
-            message: error.message,
-          });
-        }
-
-        if (error?.code === "ER_DUP_ENTRY") {
-          return res.status(409).json({
-            success: false,
-            message: "Gotra already exists.",
-            error: error.sqlMessage,
-          });
-        }
-
-        return res.status(500).json({
-          success: false,
-          message: "Something went wrong.",
-          error: error.message,
-        });
+        return apiErrorHandler(error, res);
       }
     }
 
@@ -72,6 +60,6 @@ export default async function handler(
       message: "Method not allowed",
     });
   } catch (error) {
-    return res.status(500).json(error);
+    return apiErrorHandler(error, res);
   }
 }

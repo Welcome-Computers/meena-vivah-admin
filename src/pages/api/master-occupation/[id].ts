@@ -8,7 +8,6 @@ import {
 import Occupation from "@/pages/master-occupation";
 import { db } from "@/lib/db";
 import { profiles } from "@/lib/schema";
-import { message } from "antd";
 import { eq } from "drizzle-orm";
 
 export default async function handler(

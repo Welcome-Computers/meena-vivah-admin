@@ -14,6 +14,12 @@ export default async function handler(
         const result = await getAdmin(payload);
 
 
+        const sessionCookie = serialize("session_id", result.sessionId, {
+  httpOnly: true,
+  path: "/",
+  maxAge: 2 * 24 * 60 * 60,
+});
+
         const accessCookie = serialize("accessToken", result.accessToken, {
           httpOnly: true,
           path: "/",
@@ -26,7 +32,7 @@ export default async function handler(
           maxAge: 2 * 24 * 60 * 60,
         });
 
-        res.setHeader("Set-Cookie", [accessCookie, refreshCookie]);
+        res.setHeader("Set-Cookie", [accessCookie, refreshCookie,sessionCookie]);
 
         return res.status(201).json({
           success: true,
@@ -34,6 +40,11 @@ export default async function handler(
           data: result.admin,
         });
       } catch (error: any) {
+
+
+        console.error("Error in login API:", error);
+
+        
         return res.status(409).json({
           success: false,
           message: error.message,

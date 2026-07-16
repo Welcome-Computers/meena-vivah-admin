@@ -1,60 +1,58 @@
 import { db } from "@/lib/db";
 import { asc, desc, eq, like } from "drizzle-orm";
-import { masterGotra } from '../../schema/masterGotra';
+import { masterGotra } from "../../schema/masterGotra";
 
-
-import {
-  CreateGotraDto,
-  UpdateGotraDto,
-} from "./master-gotra.types";
+import { CreateGotraDto, UpdateGotraDto } from "./master-gotra.types";
 import { createAuditLog } from "@/lib/utility/audit";
 
-export const getGotras =
-  async ({search ,sortField,sortOrder}:{search:string ,sortField:string,sortOrder:string}) => {
-    let query=db.select().from(masterGotra).$dynamic();
-   if(search){
-        query=query.where(like(masterGotra.name,`%${search}%`))
-      }
-  
-       if(sortField == "name"){
-        query=query.orderBy((sortOrder === "ascend") ?asc(masterGotra.name) : desc(masterGotra.name))
-      }
-  
-       if(sortField == "code"){
-        query=query.orderBy((sortOrder === "ascend") ?asc(masterGotra.code) : desc(masterGotra.code))
-      }
-  
-      return query;
-  };
-  
-export const getGotraById =
-  async (id: number) => {
-    const rows =
-      await db
-        .select()
-        .from(masterGotra)
-        .where(
-          eq(
-            masterGotra.id,
-            id
-          )
-        );
+export const getGotras = async ({
+  search,
+  sortField,
+  sortOrder,
+}: {
+  search: string;
+  sortField: string;
+  sortOrder: string;
+}) => {
+  let query = db.select().from(masterGotra).$dynamic();
+  if (search) {
+    query = query.where(like(masterGotra.name, `%${search}%`));
+  }
 
-    return rows[0];
-  };
+  if (sortField == "name") {
+    query = query.orderBy(
+      sortOrder === "ascend" ? asc(masterGotra.name) : desc(masterGotra.name),
+    );
+  }
 
+  if (sortField == "code") {
+    query = query.orderBy(
+      sortOrder === "ascend" ? asc(masterGotra.code) : desc(masterGotra.code),
+    );
+  }
 
-export const createGotra = async (data: CreateGotraDto | CreateGotraDto[] , decodedToken:any) => {
+  return query;
+};
 
+export const getGotraById = async (id: number) => {
+  const rows = await db
+    .select()
+    .from(masterGotra)
+    .where(eq(masterGotra.id, id));
+
+  return rows[0];
+};
+
+export const createGotra = async (
+  data: CreateGotraDto | CreateGotraDto[],
+  adminId: number,
+) => {
   const items = Array.isArray(data) ? data : [data];
-   
+
   return db.transaction(async (tx) => {
-
-
     const created = [];
 
     for (const item of items) {
-
       const existing = await tx
         .select({ id: masterGotra.id })
         .from(masterGotra)
@@ -62,17 +60,13 @@ export const createGotra = async (data: CreateGotraDto | CreateGotraDto[] , deco
         .limit(1);
 
       if (existing.length) {
-        throw new Error(
-          `Gotra '${item.name}' already exists`
-        );
+        throw new Error(`Gotra '${item.name}' already exists`);
       }
 
-      const result = await tx
-        .insert(masterGotra)
-        .values({
-          name: item.name,
-          code: "",
-        });
+      const result = await tx.insert(masterGotra).values({
+        name: item.name,
+        code: "",
+      });
 
       const insertId = result[0].insertId;
 
@@ -83,56 +77,46 @@ export const createGotra = async (data: CreateGotraDto | CreateGotraDto[] , deco
         .set({ code })
         .where(eq(masterGotra.id, insertId));
 
-    const createdRecord = {
-  id: insertId,
-  code,
-  name: item.name,
-};
+      const createdRecord = {
+        id: insertId,
+        code,
+        name: item.name,
+      };
 
-created.push(createdRecord);
+      created.push(createdRecord);
 
-await createAuditLog({
-  adminId:decodedToken.id,
-  action: "CREATE",
-  module: "gotra",
-  recordId: insertId,
-  oldData: null,
-  newData: createdRecord,
-});
+      await createAuditLog({
+        adminId,
+        action: "CREATE",
+        module: "gotra",
+        recordId: insertId,
+        oldData: null,
+        newData: createdRecord,
+      });
     }
-return created;
-});
+    return created;
+  });
 };
 
-
-export const updateGotra =
-  async (
-    data: UpdateGotraDto,
-    adminId: number
-  ) => {
-    const { id,...payload } = data;
+export const updateGotra = async (data: UpdateGotraDto, adminId: number) => {
+  const { id, ...payload } = data;
 
   // get old data
   const oldGotra = await getGotraById(id);
 
- if (!oldGotra) {
+  if (!oldGotra) {
     throw new Error("Gotra not found");
   }
 
-   // update
+  // update
   const result = await db
     .update(masterGotra)
     .set(payload)
-    .where(
-      eq(
-        masterGotra.id,
-        id
-      )
-    );
-// latest data update
-    const updatedGotra = await getGotraById(id);
-    // create audit log
-    await createAuditLog({
+    .where(eq(masterGotra.id, id));
+  // latest data update
+  const updatedGotra = await getGotraById(id);
+  // create audit log
+  await createAuditLog({
     adminId,
     action: "UPDATE",
     module: "gotra",
@@ -141,33 +125,26 @@ export const updateGotra =
     newData: updatedGotra,
   });
 
+  return result;
+};
 
-return result;
-  };
+export const deleteGotra = async (id: number, adminId: number) => {
+  const oldGotra = await getGotraById(id);
 
+  if (!oldGotra) {
+    throw new Error("Gotra not found");
+  }
 
+  const result = await db.delete(masterGotra).where(eq(masterGotra.id, id));
 
+  await createAuditLog({
+    adminId,
+    action: "DELETE",
+    module: "gotra",
+    recordId: id,
+    oldData: oldGotra,
+    newData: null,
+  });
 
-export const deleteGotra =
-  async (id: number ,adminId: number) => {
-    const oldGotra = await getGotraById(id);
-
-if (!oldGotra) {
-  throw new Error("Gotra not found");
-}
-
-const result = await db
-  .delete(masterGotra)
-  .where(eq(masterGotra.id, id));
-
-await createAuditLog({
-  adminId,
-  action: "DELETE",
-  module: "gotra",
-  recordId: id,
-  oldData: oldGotra,
-  newData: null,
-});
-
-   return result;
-  };
+  return result;
+};

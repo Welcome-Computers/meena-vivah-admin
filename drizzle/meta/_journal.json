@@ -36,6 +36,20 @@
       "when": 1782433511209,
       "tag": "0005_grey_mulholland_black",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1783650372671,
+      "tag": "0005_nappy_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1784112087495,
+      "tag": "0006_petite_captain_marvel",
+      "breakpoints": true
     }
   ]
 }

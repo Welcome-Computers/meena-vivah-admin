@@ -58,7 +58,8 @@ if (actionFilter) {
 }
 
 if (conditions.length) {
-  query = query.where(and(...conditions));
+  query = query.where(and(...conditions)); 
+  
 }
 
   if (sortField == "createdAt") {

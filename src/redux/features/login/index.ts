@@ -1,9 +1,13 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "../baseQuery";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const AuthApi = createApi({
   reducerPath: "authApi",
-  baseQuery: baseQueryWithReauth,
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    credentials: "include",
+  }),
+  
+
 
   endpoints: (builder) => ({
     adminLogin: builder.mutation({

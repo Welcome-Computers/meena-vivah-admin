@@ -7,16 +7,15 @@ import { store } from "@/redux/store";
 import "@/styles/globals.css";
 import "react-quill-new/dist/quill.snow.css";
 
-export default function App({
-  Component,
-  pageProps,
-}: AppProps) {
+
+
+export default function App({ Component, pageProps }: AppProps) {
+ 
   return (
     <Provider store={store}>
       <ConfigProvider theme={antdTheme}>
         <AntdApp>
-
-          <Component {...pageProps} />
+              <Component {...pageProps} />
         </AntdApp>
       </ConfigProvider>
     </Provider>

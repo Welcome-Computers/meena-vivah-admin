@@ -6,4 +6,6 @@ export * from "./masterGotra";
 export * from "./masterOccupation";
 export * from "./otherGotra";
 export * from "./profiles";
+export * from "./adminSession";
+
 

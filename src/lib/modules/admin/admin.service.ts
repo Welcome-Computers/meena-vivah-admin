@@ -4,9 +4,11 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 import jwt from "jsonwebtoken";
+import { adminSessions } from "@/lib/schema";
+import { randomUUID } from "crypto";
 
 export const getAdmin = async (data: any) => {
-  const { mobile, password} = data;
+  const { mobile, password } = data;
   if (!mobile || !password) {
     throw new Error("Passowrd and Mobile required");
   }
@@ -27,10 +29,25 @@ export const getAdmin = async (data: any) => {
     throw new Error("Invalid Password");
   }
 
+  // create session id
+
+  const sessionId = randomUUID();
+// // delet old session id
+//   await db
+//   .delete(adminSessions)
+//   .where(eq(adminSessions.adminId, admin.id));
+
+  // store session id in database
+  await db.insert(adminSessions).values({
+    adminId: admin.id,
+    sessionId,
+    expiresAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days
+  });
+
   // create refresh token
   const accessToken = jwt.sign(
     {
-       id: admin.id,
+      id: admin.id,
       name: admin.name,
       mobile: admin.mobile,
       role: admin.role,
@@ -45,7 +62,7 @@ export const getAdmin = async (data: any) => {
   // refresh token
   const refreshToken = jwt.sign(
     {
-       id: admin.id,
+      id: admin.id,
       name: admin.name,
       mobile: admin.mobile,
       role: admin.role,
@@ -58,6 +75,7 @@ export const getAdmin = async (data: any) => {
   );
 
   return {
+    sessionId,
     accessToken,
     refreshToken,
     admin: {
@@ -67,4 +85,18 @@ export const getAdmin = async (data: any) => {
       role: admin.role,
     },
   };
+};
+
+
+
+export const logoutAdmin = async (sessionId: string) => {
+  if (!sessionId) {
+    throw new Error("Session Id required");
+  }
+
+  const result = await db
+    .delete(adminSessions)
+    .where(eq(adminSessions.sessionId, sessionId));
+
+  return result;
 };

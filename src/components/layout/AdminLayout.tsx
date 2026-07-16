@@ -12,7 +12,7 @@ import { ReactNode, useEffect } from "react";
 
 const { Header, Sider, Content } = Layout;
 
-interface AdminLayoutProps {
+interface AdminLayoutProps {    
   title?: ReactNode;
   headerRightSec?: ReactNode;
   children: ReactNode;
@@ -22,14 +22,19 @@ interface AdminLayoutProps {
 export default function AdminLayout(props: AdminLayoutProps) {
   const { children, title, headerRightSec, breadcrumbItems } = props || {};
   const router = useRouter();
-  const { data, isLoading, error } = useGetMeQuery({});
 
 
-  useEffect(() => {
-    if (!isLoading && error) {
-      router.push("/");
-    }
-  }, [error, isLoading, router]);
+  const { data, isLoading, error } = useGetMeQuery(undefined, {
+  refetchOnMountOrArgChange: true,
+});
+
+useEffect(() => {
+  if (!isLoading && (error || !data)) {
+    router.replace("/login/admin");
+  }
+}, [isLoading, error, router,data]);
+
+
 
   const [adminLogout] = useAdminLogoutMutation();
 
@@ -128,15 +133,18 @@ export default function AdminLayout(props: AdminLayoutProps) {
   if (isLoading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        Loading...
+       Authenticating ...
       </div>
     );
   }
 
   if (error || !data) {
-    return null;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        Redirecting...
+      </div>
+    );
   }
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider breakpoint="lg" collapsedWidth="0">

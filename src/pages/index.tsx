@@ -23,7 +23,7 @@ const Home = () => {
         <>
           <HeroSection />
           <FooterComponent />
-        </>
+        </>   
       }
     >
       <div style={{ marginTop: 30 }}>

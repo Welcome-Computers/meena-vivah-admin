@@ -185,3 +185,9 @@ export const formatedEditableRecord = (record: any) => {
 
   return editableRecord;
 }
+
+export const formattedDob = (dob: any) => {
+  // get 
+  return dob
+
+}

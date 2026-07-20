@@ -30,7 +30,7 @@ const CreateProfile = () => {
     const { need_duplicate, dob, ...rest } = form.getFieldsValue();
 
     const formattedDobValue = formattedDob(dob);
-
+    debugger;
     const formData = {
       ...rest,
       dob: formattedDobValue,

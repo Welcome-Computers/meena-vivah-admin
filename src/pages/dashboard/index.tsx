@@ -1,13 +1,9 @@
-import AdminLayout from "@/components/layout/AdminLayout";
-
-import {
-  Row,
-  Typography
-} from "antd";
-
 import TopStatics from "@/components/dashboard/TopStatics";
+import AdminLayout from "@/components/layout/AdminLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { useGetUsersQuery } from "@/redux/features/profile/srevices";
+// import api from '@/utils/axios';
+import { Row, Typography } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -21,7 +17,7 @@ const Dashboard = () => {
     matched: 18,
   };
 
-  const router = useRouter()
+  const { push } = useRouter()
 
   const [page, setPage] = useState(1);
 
@@ -33,8 +29,6 @@ const Dashboard = () => {
   const getProfiles = (page: number) => {
     setPage(page);
   };
-
-
 
   return (
     <AdminLayout

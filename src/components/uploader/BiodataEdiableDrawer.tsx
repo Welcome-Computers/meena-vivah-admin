@@ -99,7 +99,6 @@ const BiodataEdiableDrawer = ({
 
   // const handleFormSubmit = (values: any) => {
   //   if (!editNavigation?.current?.id) return;
-  //   debugger;
   //   setProfiles(prev =>
   //     prev.map(item =>
   //       item.id === editNavigation?.current?.id

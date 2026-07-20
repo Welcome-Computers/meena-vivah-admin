@@ -54,3 +54,12 @@ I was working on save/move draft data into active table. from drawar.
 
 15-July-2026
 now need to create login/logout using nextAuth with refresh and access token
+
+16-July-2026 
+  working on login section here currently we are login successfully. 
+  and get useSession() to data. i am working on it. 
+  
+17-July-2026 
+  I was working on the logout implementation. 
+  Currently, I am implementing the signOut function using NextAuth.
+  

@@ -76,7 +76,6 @@ const Imports = () => {
   const handleFromSubmit = useCallback(async (type: "permanent" | "draft") => {
     try {
       let res = null;
-      debugger;
       if (type === "permanent") {
 
         const profileIds = profiles
@@ -212,9 +211,7 @@ const Imports = () => {
           if (res.success) {
 
             appMessage.success(res.message || "Profile deleted successfully");
-            debugger;
             await fetchDraftsProfilesHandler();
-            debugger;
 
             if (callingFrom === "form" && nextItem) {
               handleEdit(nextItem, true);

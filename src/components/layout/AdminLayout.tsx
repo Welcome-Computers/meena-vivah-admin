@@ -1,4 +1,5 @@
-import { useAdminLogoutMutation, useGetMeQuery } from "@/redux/features/login";
+import { useAuth } from "@/hook/useAuth";
+import { useAdminLogoutMutation } from "@/redux/features/login";
 import {
   DashboardOutlined,
   ProfileFilled,
@@ -7,8 +8,9 @@ import {
   UserOutlined
 } from "@ant-design/icons";
 import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 
 const { Header, Sider, Content } = Layout;
 
@@ -22,14 +24,13 @@ interface AdminLayoutProps {
 export default function AdminLayout(props: AdminLayoutProps) {
   const { children, title, headerRightSec, breadcrumbItems } = props || {};
   const router = useRouter();
-  const { data, isLoading, error } = useGetMeQuery({});
+  // const { data, isLoading, error } = useGetMeQuery({});
+
+  const { userName, profilePick, userRole, status } = useAuth();
 
 
-  useEffect(() => {
-    if (!isLoading && error) {
-      router.push("/");
-    }
-  }, [error, isLoading, router]);
+  const allowedRoles = ["admin", "super_admin"];
+
 
   const [adminLogout] = useAdminLogoutMutation();
 
@@ -111,21 +112,31 @@ export default function AdminLayout(props: AdminLayoutProps) {
   ];
 
   // Logout funtion
+  // const handleLogout1 = async () => {
+  //   try {
+  //     const res = await adminLogout({}).unwrap();
+
+  //     if (res.success) {
+  //       router.push("/");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+
   const handleLogout = async () => {
     try {
-      const res = await adminLogout({}).unwrap();
-
-      if (res.success) {
-        router.push("/");
-      }
+      await signOut({
+        callbackUrl: "/signIn",
+      });
     } catch (error) {
-      console.log(error);
+      console.error("Logout error:", error);
     }
   };
 
 
-
-  if (isLoading) {
+  if (status === "loading") {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         Loading...
@@ -133,9 +144,16 @@ export default function AdminLayout(props: AdminLayoutProps) {
     );
   }
 
-  if (error || !data) {
+  if (status === "unauthenticated") {
+    router.replace("/");
     return null;
   }
+
+  if (userRole && !allowedRoles.includes(userRole)) {
+    router.replace("/403");
+    return null;
+  }
+
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -160,7 +178,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
       <Layout>
         {/* Header */}
         <Header style={{ background: "#fff", paddingLeft: 16 }}>
-          <h3>Welcome Admin</h3>
+          <h3>Welcome Mr. {userName}</h3>
           <Button
             type="primary"
             style={{ position: "absolute", top: 16, right: 16 }}

@@ -61,6 +61,13 @@ export const NavBar = ({
               >
                 Admin
               </Button>
+              <Button
+                type="default"
+                onClick={() => router.push('/login/auth')}
+                className={style.button}
+              >
+                Next Auth
+              </Button>
             </Space>
           )}
         </div>

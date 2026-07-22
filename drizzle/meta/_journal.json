@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1781858843599,
-      "tag": "0000_left_kronos",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1782250371569,
-      "tag": "0001_sharp_shinko_yamashiro",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1782350321622,
-      "tag": "0002_lean_the_initiative",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1782350672765,
-      "tag": "0003_damp_redwing",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1782433511209,
-      "tag": "0005_grey_mulholland_black",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1782949144466,
-      "tag": "0005_luxuriant_dragon_man",
+      "when": 1784516432849,
+      "tag": "0000_clammy_the_captain",
       "breakpoints": true
     }
   ]

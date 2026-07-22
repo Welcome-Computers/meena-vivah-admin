@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "241ecfa8-e8f5-44c5-86c0-d4a342cb9a3d",
+  "id": "aab7a506-a71a-4198-a032-836f4ced57cc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "address": {
@@ -87,6 +87,13 @@
           "notNull": true,
           "autoincrement": true
         },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "mobile": {
           "name": "mobile",
           "type": "varchar(10)",
@@ -100,6 +107,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'admin'"
         },
         "is_active": {
           "name": "is_active",
@@ -132,6 +147,205 @@
       "compositePrimaryKeys": {
         "admins_id": {
           "name": "admins_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "audit_logs": {
+      "name": "audit_logs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "action": {
+          "name": "action",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "module": {
+          "name": "module",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "record_id": {
+          "name": "record_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "old_data": {
+          "name": "old_data",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "new_data": {
+          "name": "new_data",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "audit_logs_id": {
+          "name": "audit_logs_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "imported_profile": {
+      "name": "imported_profile",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "mobile": {
+          "name": "mobile",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dob": {
+          "name": "dob",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fathersname": {
+          "name": "fathersname",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "self_gotra": {
+          "name": "self_gotra",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "m_gotra": {
+          "name": "m_gotra",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "gm_gotra": {
+          "name": "gm_gotra",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "mat_gm_gotra": {
+          "name": "mat_gm_gotra",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "otherinfo": {
+          "name": "otherinfo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('draft','reviewed','deleted','moved','rejected')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'draft'"
+        },
+        "remarks": {
+          "name": "remarks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "imported_profile_id": {
+          "name": "imported_profile_id",
           "columns": [
             "id"
           ]
@@ -444,6 +658,14 @@
           "notNull": false,
           "autoincrement": false,
           "default": "(now())"
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('draft','approved','rejected','suspended')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'draft'"
         }
       },
       "indexes": {},
@@ -459,57 +681,125 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "sibling_details": {
-      "name": "sibling_details",
+    "user_tokens": {
+      "name": "user_tokens",
       "columns": {
         "id": {
           "name": "id",
-          "type": "int",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": true
         },
         "user_id": {
           "name": "user_id",
-          "type": "int",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "relation": {
-          "name": "relation",
-          "type": "varchar(50)",
+        "user_type": {
+          "name": "user_type",
+          "type": "enum('admin','profile','executive')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "refresh_token_hash": {
+          "name": "refresh_token_hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token_version": {
+          "name": "token_version",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "device_name": {
+          "name": "device_name",
+          "type": "varchar(150)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
+        "ip_address": {
+          "name": "ip_address",
+          "type": "varchar(45)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "education": {
-          "name": "education",
-          "type": "varchar(255)",
+        "user_agent": {
+          "name": "user_agent",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "occupation": {
-          "name": "occupation",
-          "type": "varchar(255)",
+        "last_used_at": {
+          "name": "last_used_at",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "idx_user": {
+          "name": "idx_user",
+          "columns": [
+            "user_id",
+            "user_type"
+          ],
+          "isUnique": false
+        },
+        "idx_refresh_token": {
+          "name": "idx_refresh_token",
+          "columns": [
+            "refresh_token_hash"
+          ],
+          "isUnique": false
+        },
+        "idx_expires": {
+          "name": "idx_expires",
+          "columns": [
+            "expires_at"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "sibling_details_id": {
-          "name": "sibling_details_id",
+        "user_tokens_id": {
+          "name": "user_tokens_id",
           "columns": [
             "id"
           ]

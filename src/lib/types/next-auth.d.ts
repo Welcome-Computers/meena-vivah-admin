@@ -31,7 +31,8 @@ declare module "next-auth" {
     // after succefull login we will put this from next-auth;
     access_token?: string;
     refresh_token?: string;
-    expires_in?: number;
+    // expires_in?: number;
+    access_token_expires?: number;
   }
 
   interface Session {
@@ -48,9 +49,8 @@ declare module "next-auth/jwt" {
     user: MyUser;
     access_token?: string;
     refresh_token?: string;
-    expires_in?: number;
+    // expires_in?: number;
     access_token_expires?: number;
   }
 }
 
- 

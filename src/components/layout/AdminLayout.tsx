@@ -111,29 +111,20 @@ export default function AdminLayout(props: AdminLayoutProps) {
     },
   ];
 
-  // Logout funtion
-  // const handleLogout1 = async () => {
-  //   try {
-  //     const res = await adminLogout({}).unwrap();
-
-  //     if (res.success) {
-  //       router.push("/");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-
   const handleLogout = async () => {
     try {
-      await signOut({
-        callbackUrl: "/signIn",
+      const res = await signOut({
+        redirect: false,
       });
+
+      router.push("/");
+
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
+
+
 
 
   if (status === "loading") {

@@ -14,13 +14,26 @@ export default async function handler(
       });
     }
 
-    const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
+    const accessToken =
+      req.headers.authorization?.replace("Bearer ", "");
 
-    await logoutService({
+    const { refreshToken } = req.body;
+
+    if (!accessToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Access token is missing",
+      });
+    }
+
+    const result = await logoutService({
       accessToken,
       refreshToken,
     });
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
 
     res.setHeader("Set-Cookie", [
       serialize("accessToken", "", {
@@ -35,10 +48,7 @@ export default async function handler(
       }),
     ]);
 
-    return res.status(200).json({
-      success: true,
-      message: "Logout successful",
-    });
+    return res.status(200).json(result);
 
   } catch (error) {
 

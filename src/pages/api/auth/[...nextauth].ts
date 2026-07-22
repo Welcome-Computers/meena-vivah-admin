@@ -2,7 +2,6 @@
 
 // import { LoginApiResponse, RegisterApiResponse } from "@/types/auth";
 // import { INACTIVITY_TIME } from "@/utils/constants";
-import { INACTIVITY_TIME } from "@/lib/modules/admin/admin.types";
 import { LoginApiResponse, RegisterApiResponse } from "@/lib/types/auth";
 import type { NextAuthOptions, User } from "next-auth";
 import NextAuth, { Session } from "next-auth";
@@ -40,27 +39,14 @@ const fetchAPI = async (url: string, data: any, options: RequestInit = {}) => {
   }
 };
 
-export const authenticatedFetch = async (
-  url: string,
-  accessToken: string,
-  data?: any
-) => {
-  return fetchAPI(url, data, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      credentials: "include"
-    },
-  });
-};
-
 // ✅ Helper to store access and refresh tokens inside JWT
 const setTokens = (token: any, newData: any) => {
-  const { expires_in, access_token, refresh_token } = newData || {};
+  const { access_token_expires, access_token, refresh_token } = newData || {};
 
   // Set access token expiration (in ms)
-  const access_token_expires = expires_in
-    ? Date.now() + expires_in * 60 * 1000
-    : Date.now() + INACTIVITY_TIME * 60 * 1000;
+  // const access_token_expires = expires_in
+  //   ? Date.now() + expires_in * 60 * 1000
+  //   : Date.now() + INACTIVITY_TIME * 60 * 1000;
 
   token.access_token = access_token;
   token.refresh_token = refresh_token;
@@ -153,7 +139,7 @@ export const authOptions: NextAuthOptions = {
             ...user,
             access_token: response?.data?.access_token,
             refresh_token: response?.data?.refresh_token,
-            expires_in: response?.data?.expires_in,
+            access_token_expires: response?.data?.access_token_expires,
           } as User;
 
         } catch (error: any) {
@@ -166,7 +152,7 @@ export const authOptions: NextAuthOptions = {
   // 🔁 Custom pages
   pages: {
     signIn: "/signin",
-    signOut: "/",
+    // signOut: "/",
     error: "/auth/error",
   },
 
@@ -176,9 +162,11 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }) {
       // First time login: set token info from user
 
+      // console.log("+++++++", user)
+
       if (user) {
         const updatedToken = setTokens(token, user);
-        const { access_token, refresh_token, expires_in, ...restUser } = user || {};
+        const { access_token, refresh_token, access_token_expires, ...restUser } = user || {};
         updatedToken.user = restUser;
         return updatedToken;
       }
@@ -192,20 +180,24 @@ export const authOptions: NextAuthOptions = {
       try {
         console.log('++++++++++ USED REFRESH TOKEN +++++++++++++');
 
-        const refreshResponse = await fetch(`${API_ENDPOINT}/auth/refresh-token`, {
-          method: "POST",
-          credentials: "include",
-        });
+        // const response = await fetch(`${API_ENDPOINT}/auth/refresh-token`, {
+        //   method: "POST",
+        //   credentials: "include",
+        // });
 
-        const data = await refreshResponse.json();
+        const requestBody = {
+          refreshToken: token.refresh_token,
+        };
 
-        const { access_token } = data?.data || {};
+        const response = await fetchAPI("/auth/refresh-token", requestBody);
 
-        if (!refreshResponse.ok || !access_token) {
+        const { access_token } = response?.data || {};
+
+        if (!response.ok || !access_token) {
           throw new Error("Refresh failed");
         }
 
-        return setTokens(token, data?.data);
+        return setTokens(token, response?.data);
 
       } catch (error) {
         // ❌ Refresh token expired or invalid
@@ -246,7 +238,7 @@ export const authOptions: NextAuthOptions = {
 
     // ✅ Control redirection after sign-in / sign-out / error
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }): Promise<string> {
-      const correctedBaseUrl = process.env.NEXTAUTH_URL || "http://localhost:4411";
+      const correctedBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4411";
 
       try {
         const fullUrl = new URL(url, correctedBaseUrl);
@@ -276,18 +268,29 @@ export const authOptions: NextAuthOptions = {
 
   // 🐞 Enable debug logging in development
   debug: true,
-
   events: {
     async signOut({ token }) {
-      // console.log("++++", token)
-      if (!token?.access_token) {
+      const accessToken = token?.access_token;
+      const refreshToken = token?.refresh_token;
+
+      if (!accessToken) {
         return;
       }
-      // console.log("####")
+
       try {
-        await authenticatedFetch("/auth/logout", token?.access_token);
-      } catch (err) {
-        console.error(err);
+        await fetch(`${API_ENDPOINT}/auth/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            refreshToken,
+          }),
+        });
+
+      } catch (error) {
+        console.error("Logout API error:", error);
       }
     },
   },

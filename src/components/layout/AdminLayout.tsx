@@ -10,7 +10,7 @@ import {
 import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 const { Header, Sider, Content } = Layout;
 
@@ -33,6 +33,71 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
 
   const [adminLogout] = useAdminLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      const res = await signOut({
+        redirect: false,
+      });
+
+      router.push("/");
+
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  useEffect(() => {
+    const handlePageHide = () => {
+      // Only lightweight fire-and-forget request if required
+      navigator.sendBeacon("/api/auth/logout");
+    };
+
+    window.addEventListener("pagehide", handlePageHide);
+
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, []);
+
+  useEffect(() => {
+    const session = sessionStorage.getItem("admin_session");
+
+    if (!session) {
+      signOut({
+        redirect: false,
+      }).then(() => {
+        router.replace("/");
+      });
+    }
+  }, [router]);
+
+
+
+  if (status === "loading") {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
+
+  if (
+    status === "authenticated" &&
+    userRole &&
+    !allowedRoles.includes(userRole)
+  ) {
+    return null;
+  }
+
+  if (userRole && !allowedRoles.includes(userRole)) {
+    router.replace("/403");
+    return null;
+  }
 
   const menuItems = [
     {
@@ -110,41 +175,6 @@ export default function AdminLayout(props: AdminLayoutProps) {
       ],
     },
   ];
-
-  const handleLogout = async () => {
-    try {
-      const res = await signOut({
-        redirect: false,
-      });
-
-      router.push("/");
-
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
-
-
-
-
-  if (status === "loading") {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        Loading...
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") {
-    router.replace("/");
-    return null;
-  }
-
-  if (userRole && !allowedRoles.includes(userRole)) {
-    router.replace("/403");
-    return null;
-  }
-
 
   return (
     <Layout style={{ minHeight: "100vh" }}>

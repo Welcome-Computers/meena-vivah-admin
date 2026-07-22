@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { admins } from "@/lib/schema/admin";
+import { profiles } from "@/lib/schema/profiles";
 import { userTokens } from "@/lib/schema/userTokens";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
@@ -177,13 +178,13 @@ export const refreshAccessToken = async ({
       break;
 
     // Future:
-    // case "profile":
-    //   user = await getProfileById(tokenRecord.userId);
-    //   break;
+    case "profile":
+      user = await getProfileById(tokenRecord.userId);
+      break;
 
-    // case "executive":
-    //   user = await getExecutiveById(tokenRecord.userId);
-    //   break;
+    case "executive":
+      user = await getExecutiveById(tokenRecord.userId);
+      break;
 
     default:
       throw new Error(
@@ -209,8 +210,9 @@ export const refreshAccessToken = async ({
   // 8. Generate new access token
   const accessToken = generateAccessToken({
     id: user.id,
-    userType: tokenRecord.userType,
-    tokenVersion: tokenRecord.tokenVersion,
+    role: tokenRecord.userType,
+    name: user.name,
+    mobile: user.mobile,
   });
 
   // 9. New access token expiry = 30 minutes
@@ -235,19 +237,39 @@ export const getAdminById = async (id: number) => {
   return admin;
 };
 
+export const getProfileById = async (id: number) => {
+  const profile = await db.query.profiles.findFirst({
+    where: eq(profiles.id, id),
+  });
 
-export const generateAccessToken = (admin: {
+  return profile;
+};
+
+export const getExecutiveById = async (id: number) => {
+  const executive = await db.query.admins.findFirst({
+    where: eq(admins.id, id),
+  });
+
+  return executive;
+};
+
+export const generateAccessToken = ({
+  id,
+  name,
+  mobile,
+  role,
+}: {
   id: number;
   name: string | null;
   mobile: string;
-  role: string;
+  role: "admin" | "profile" | "executive";
 }) => {
   return jwt.sign(
     {
-      id: admin.id,
-      name: admin.name,
-      mobile: admin.mobile,
-      role: admin.role,
+      id,
+      name,
+      mobile,
+      role,
     },
     process.env.JWT_SECRET_TOKEN || DEFAUTL_JWT_SECRET,
     {
@@ -260,7 +282,7 @@ export const generateRefreshToken = (admin: {
   id: number;
   name: string | null;
   mobile: string;
-  role: string;
+  role: "admin" | "profile" | "executive"
 }) => {
   return jwt.sign(
     {

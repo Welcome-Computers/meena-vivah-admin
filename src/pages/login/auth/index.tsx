@@ -38,6 +38,7 @@ const PasswordLoginForm = memo(() => {
         appMessage.error(response.error);
       } else {
         router.push(`/dashboard`);
+        sessionStorage.setItem("admin_session", "active");
       }
     } catch (error) {
       console.error("Sign-in error:", error);

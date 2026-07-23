@@ -1,4 +1,4 @@
-import { ParsedProfile } from "@/redux/types";
+import { ParsedProfile } from "@/redux/features/shared/types";
 import { extractDob, extractFatherName, extractMobile, extractName } from "./regex";
 
 export const parseBiodata = (

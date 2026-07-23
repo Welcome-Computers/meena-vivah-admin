@@ -1,7 +1,14 @@
-import { IGotra } from "@/redux/types";
+
 import { Button, Popconfirm, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { GenericTable } from "../common/GenericTable";
+
+
+export type IGotra = {
+  id?: number;
+  code?: string;
+  name?: string;
+};
 
 interface iProps {
   handleDelete: any;

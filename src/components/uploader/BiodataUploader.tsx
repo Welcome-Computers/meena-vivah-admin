@@ -1,7 +1,7 @@
 "use client";
 
 import { parseTelegramHtml } from "@/lib/helpers_uploader/telegramParser";
-import { ParsedProfile } from "@/redux/types";
+import { ParsedProfile } from "@/redux/features/shared/types";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {

@@ -1,17 +1,8 @@
-import { useState } from "react";
-
+import { IProfile } from "@/redux/features/profile/types";
+import { IPagination, } from "@/redux/features/shared/types";
+import { AppstoreOutlined, TableOutlined, } from "@ant-design/icons";
 import { Button, Space } from "antd";
-
-import {
-  AppstoreOutlined,
-  TableOutlined,
-} from "@ant-design/icons";
-
-import {
-  IPagination,
-  IProfile,
-} from "@/redux/types";
-
+import { useState } from "react";
 import { ProfileCard } from "./ProfileCard";
 import ProfileTable from "./ProfileTable";
 

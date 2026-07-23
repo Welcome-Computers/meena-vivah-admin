@@ -6,7 +6,8 @@ import BiodataUploader from "@/components/uploader/BiodataUploader";
 import { formatedEditableRecord } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateBulkImportedProfilesMutation, useDeleteImportedProfileMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
-import { EditableProfile, PaginationState } from "@/redux/types";
+import { EditableProfile } from "@/redux/features/importedProfile/types";
+import { IPagination } from "@/redux/features/shared/types";
 
 import { Button, Form, Modal, Space } from "antd";
 import dayjs from "dayjs";
@@ -19,7 +20,7 @@ const Imports = () => {
   const [form] = Form.useForm();
 
   const [profiles, setProfiles] = useState<EditableProfile[]>([]);
-  const [pagination, setPagination] = useState<PaginationState>({
+  const [pagination, setPagination] = useState<IPagination>({
     page: 1,
     limit: 10,
     total: 0,

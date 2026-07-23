@@ -1,5 +1,6 @@
 import { getAge, isEnglishName } from "@/lib/utility/helper";
-import { IPagination, IProfile } from "@/redux/types";
+import { IProfile } from "@/redux/features/profile/types";
+import { IPagination } from "@/redux/features/shared/types";
 import { Avatar, Button, Pagination } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/router";

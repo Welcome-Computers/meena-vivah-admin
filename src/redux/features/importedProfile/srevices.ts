@@ -12,8 +12,8 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 
-import { EditableProfile } from "@/redux/types";
 import { queryString } from "object-query-string";
+import { EditableProfile } from "./types";
 
 
 export const importedProfileApi = createApi({

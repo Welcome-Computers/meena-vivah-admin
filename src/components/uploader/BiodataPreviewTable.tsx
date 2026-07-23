@@ -14,14 +14,14 @@ import {
 } from "antd";
 
 import { useGetGotrasQuery } from "@/redux/features/masterGotra";
-import { PaginationState } from "@/redux/types";
+import { IPagination } from "@/redux/features/shared/types";
 import dayjs from "dayjs";
 
 interface Props {
   profiles: any[];
   handleFromSubmit: (type: "draft" | "permanent") => Promise<void>;
   setPagination: any;
-  pagination: PaginationState;
+  pagination: IPagination;
   handleEdit: (record: any, operation: boolean) => void;
   deleteProfile: (record: any, callingFrom: "table" | "form") => void;
 }
@@ -230,7 +230,7 @@ const BiodataPreviewTable = ({
     page: number,
     pageSize: number
   ) => {
-    setPagination((prev: PaginationState) => ({
+    setPagination((prev: IPagination) => ({
       ...prev,
       page,
       limit: pageSize,

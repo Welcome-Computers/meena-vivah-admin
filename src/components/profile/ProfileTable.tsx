@@ -1,10 +1,9 @@
 import { cmToFeetInch, getAge } from "@/lib/utility/helper";
-import { IPagination, IProfile } from "@/redux/types";
-
-import { Avatar, Button, Form, Space, Table, Tag } from "antd";
-
 import { setProfileData } from "@/redux/features/profile";
+import { IProfile } from "@/redux/features/profile/types";
+import { IPagination } from "@/redux/features/shared/types";
 import { useAppDispatch } from "@/redux/hooks";
+import { Avatar, Button, Form, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { useRouter } from "next/router";

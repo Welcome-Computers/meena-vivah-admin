@@ -41,6 +41,32 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
 
 
+---------------
+Common Rules : 
+* backend use only type
+* frontend use only interface
+
+All type of backend 
+  every modules has just like :
+  src\lib\modules\admin\admin.types.ts
+
+All constant/type of backend 
+  src\lib\modules\common
+
+All interface of frontend
+  every redux has a file for interface, just like : (for redux)
+  src\redux\features\importedProfile\type.ts
+
+All interface of used in component  
+  write at the top of every component but 
+  we can use interface of redux in component
+  keep in mind should we not directly take these. 
+  we just use like below example.
+
+  interface UserCardProps {
+    user: User;
+    showActions?: boolean;
+  }
 
 ----------------
 8-july-2026

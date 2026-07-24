@@ -1,5 +1,4 @@
 import { useAuth } from "@/hook/useAuth";
-import { useAdminLogoutMutation } from "@/redux/features/login";
 import {
   DashboardOutlined,
   ProfileFilled,
@@ -28,20 +27,17 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
   const { userName, profilePick, userRole, status } = useAuth();
 
-
   const allowedRoles = ["admin", "super_admin"];
-
-
-  const [adminLogout] = useAdminLogoutMutation();
 
   const handleLogout = async () => {
     try {
-      const res = await signOut({
+      await signOut({
         redirect: false,
       });
 
-      router.push("/");
+      sessionStorage.removeItem("admin_session");
 
+      await router.replace("/");
     } catch (error) {
       console.error("Logout error:", error);
     }

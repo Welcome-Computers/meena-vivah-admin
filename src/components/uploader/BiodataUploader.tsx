@@ -6,7 +6,6 @@ import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   onParsed: Dispatch<SetStateAction<ParsedProfile[]>>;
-
 }
 
 export default function BiodataUploader({

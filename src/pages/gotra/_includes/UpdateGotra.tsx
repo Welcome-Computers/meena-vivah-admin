@@ -1,4 +1,5 @@
 import GenericForm from "@/components/common/GenericForm";
+import { appMessage } from "@/lib/utility/message";
 import { useUpdateGotraMutation } from "@/redux/features/masterGotra";
 import Modal from "antd/es/modal/Modal";
 

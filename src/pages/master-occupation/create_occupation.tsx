@@ -1,5 +1,6 @@
 import GenericForm from "@/components/common/GenericForm";
 import AdminLayout from "@/components/layout/AdminLayout";
+import { appMessage } from "@/lib/utility/message";
 import { FormInstance } from "antd/es/form/Form";
 import Title from "antd/es/typography/Title";
 import { useCreateOccupationMutation } from "../../redux/features/masterOccupation";

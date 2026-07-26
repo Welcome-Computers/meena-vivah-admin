@@ -1,4 +1,5 @@
 import GenericForm from "@/components/common/GenericForm";
+import { appMessage } from "@/lib/utility/message";
 import { useUpdateOccupationMutation } from "@/redux/features/masterOccupation";
 import Modal from "antd/es/modal/Modal";
 

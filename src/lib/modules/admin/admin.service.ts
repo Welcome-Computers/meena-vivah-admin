@@ -7,7 +7,8 @@ import crypto from "crypto";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
-import { DEFAUTL_JWT_SECRET, LogoutServiceProps } from "./admin.types";
+import { otpVerifications } from './../../schema/otpVerifications';
+import { DEFAUTL_JWT_SECRET, LoginWithOtpProps, LogoutServiceProps, ROLE_TYPES } from "./admin.types";
 import { SaveUserTokenInput, saveUserTokenSchema } from "./admin.validation";
 
 
@@ -37,32 +38,6 @@ export const getAdmin = async (data: any) => {
   const accessToken = generateAccessToken(admin)
   const refreshToken = generateRefreshToken(admin)
 
-  // const accessToken1 = jwt.sign(
-  //   {
-  //     id: admin.id,
-  //     name: admin.name,
-  //     mobile: admin.mobile,
-  //     role: admin.role,
-  //   },
-  //   process.env.JWT_SECRET_TOKEN || DEFAUTL_JWT_SECRET, {
-  //   expiresIn: "15m",
-  // },
-  // );
-
-  // refresh token
-  // const refreshToken = jwt.sign(
-  //   {
-  //     id: admin.id,
-  //     name: admin.name,
-  //     mobile: admin.mobile,
-  //     role: admin.role,
-  //   },
-  //   process.env.JWT_SECRET_REFRESH_TOKEN || DEFAUTL_JWT_SECRET,
-  //   {
-  //     expiresIn: "2d",
-  //   },
-  // );
-
   return {
     accessToken,
     refreshToken,
@@ -75,6 +50,111 @@ export const getAdmin = async (data: any) => {
   };
 };
 
+export const sendProfileOtp = async (data: { mobile: string }) => {
+  const { mobile } = data;
+
+  if (!mobile) {
+    throw new Error("Mobile number is required");
+  }
+
+  // Check whether profile exists with this mobile number
+  const [profile] = await db
+    .select({
+      id: profiles.id,
+    })
+    .from(profiles)
+    .where(eq(profiles.mobile, mobile))
+    .limit(1);
+
+  if (!profile) {
+    throw new Error("Invalid Mobile Number");
+  }
+
+  // Generate 6-digit OTP
+  const otp = crypto
+    .randomInt(100000, 1000000)
+    .toString();
+
+  // Hash OTP
+  const otpHash = await bcrypt.hash(otp, 10);
+
+  // OTP expires after 5 minutes
+  const expiresAt = new Date(
+    Date.now() + 5 * 60 * 1000
+  );
+
+  // Remove previous OTP for this mobile
+  await db
+    .delete(otpVerifications)
+    .where(eq(otpVerifications.mobile, mobile));
+
+  // Insert latest OTP
+  await db.insert(otpVerifications).values({
+    mobile,
+    otpHash,
+    attempts: 0,
+    expiresAt,
+  });
+
+  // Send OTP
+  // await sendSms(mobile, `Your OTP is ${otp}`);
+
+  // Development only
+  console.log("OTP:", otp);
+
+  return {
+    success: true,
+    message: "OTP sent to your registered mobile number",
+  };
+};
+
+export const getProfile = async (data: any) => {
+  const { mobile, otp } = data;
+
+  if (!mobile || !otp) {
+    throw new Error("OTP and Mobile are required");
+  }
+
+  // Find OTP verification record using mobile
+  const [otpVerification] = await db
+    .select()
+    .from(otpVerifications)
+    .where(eq(otpVerifications.mobile, mobile));
+
+  if (!otpVerification) {
+    throw new Error("Invalid Mobile Number");
+  }
+
+
+  // Verify OTP
+  const isMatch = await bcrypt.compare(otp, otpVerification.otpHash);
+
+  if (!isMatch) {
+    throw new Error("Invalid OTP");
+  }
+
+  const { id, mobile: vMobile } = otpVerification || {};
+
+  const otpVerificationData: LoginWithOtpProps = { id, mobile: vMobile, name: "Profile Creator", role: "profile" }
+
+  // console.log("### ", otpVerificationData);
+
+  // Generate tokens
+  const accessToken = generateAccessToken(otpVerificationData);
+  const refreshToken = generateRefreshToken(otpVerificationData);
+
+  return {
+    accessToken,
+    refreshToken,
+
+    profile: {
+      id: otpVerification.id,
+      name: "Profile Creator",
+      mobile: otpVerification.mobile,
+      role: "profile",
+    },
+  };
+};
 
 export const logoutService = async ({
   accessToken,
@@ -258,12 +338,7 @@ export const generateAccessToken = ({
   name,
   mobile,
   role,
-}: {
-  id: number;
-  name: string | null;
-  mobile: string;
-  role: "admin" | "profile" | "executive";
-}) => {
+}: LoginWithOtpProps) => {
   return jwt.sign(
     {
       id,
@@ -282,7 +357,7 @@ export const generateRefreshToken = (admin: {
   id: number;
   name: string | null;
   mobile: string;
-  role: "admin" | "profile" | "executive"
+  role: ROLE_TYPES
 }) => {
   return jwt.sign(
     {
@@ -296,4 +371,17 @@ export const generateRefreshToken = (admin: {
       expiresIn: "2d",
     }
   );
+};
+
+export const verifyAccessToken = (token: string) => {
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET_TOKEN!
+    );
+
+    return decoded;
+  } catch (error) {
+    return null;
+  }
 };

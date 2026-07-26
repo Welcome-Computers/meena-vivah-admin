@@ -1,8 +1,12 @@
+import { ROLE_TYPES } from "../admin/admin.types";
+
 export type GetProfilesProps = {
   action?: "matches" | "list" | undefined,
 
   page?: number;
   limit?: number;
+  role?: ROLE_TYPES;
+  mobile?: string;
 
   occupation?: string;
   gender?: string;
@@ -26,6 +30,7 @@ export type GetMatchedProfilesProps = {
   page?: number;
   limit?: number;
   action?: string;
+  role?: ROLE_TYPES;
   looking_for?: string;
   preferredAge?: [number, number];
   req_occupation?: string[];

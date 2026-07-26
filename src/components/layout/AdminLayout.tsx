@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect } from "react";
 
@@ -23,11 +24,12 @@ interface AdminLayoutProps {
 export default function AdminLayout(props: AdminLayoutProps) {
   const { children, title, headerRightSec, breadcrumbItems } = props || {};
   const router = useRouter();
-  // const { data, isLoading, error } = useGetMeQuery({});
 
   const { userName, profilePick, userRole, status } = useAuth();
 
-  const allowedRoles = ["admin", "super_admin"];
+  console.log({ userName, profilePick, userRole, status })
+
+  const allowedRoles = ["admin", "profile"];
 
   const handleLogout = async () => {
     try {
@@ -79,7 +81,25 @@ export default function AdminLayout(props: AdminLayoutProps) {
   }
 
   if (status === "unauthenticated") {
-    return null;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          gap: 8,
+        }}
+      >
+        <span>
+          Something went wrong. Please try logging in again.
+        </span>
+
+        <Link href="/">
+          Login
+        </Link>
+      </div>
+    );
   }
 
   if (
@@ -87,7 +107,9 @@ export default function AdminLayout(props: AdminLayoutProps) {
     userRole &&
     !allowedRoles.includes(userRole)
   ) {
-    return null;
+    return (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      Your role is not authorized to access this page.
+    </div>);
   }
 
   if (userRole && !allowedRoles.includes(userRole)) {
@@ -180,7 +202,6 @@ export default function AdminLayout(props: AdminLayoutProps) {
         </div>
 
         <Menu
-          theme="dark"
           mode="inline"
           selectedKeys={[router.pathname]}
           items={menuItems}
@@ -189,7 +210,8 @@ export default function AdminLayout(props: AdminLayoutProps) {
               router.push(e.key);
             }
           }}
-        />
+          theme="dark" />
+
       </Sider>
 
       <Layout>

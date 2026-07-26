@@ -1,4 +1,5 @@
 // hooks/useAuth.ts
+import { ROLE_TYPES } from "@/lib/modules/admin/admin.types";
 import { getSession, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -32,9 +33,10 @@ export const useAuth = () => {
         return session?.user?.profile_pick ?? "/profile-1.jpg";
     }, [isAuthenticated, session]);
 
-    const userRole = useMemo(() => {
+    const userRole: ROLE_TYPES | null = useMemo(() => {
         if (!isAuthenticated) return null;
-        return session?.user?.role ?? null;
+
+        return (session?.user?.role as ROLE_TYPES) ?? null;
     }, [isAuthenticated, session]);
 
     return {

@@ -1,42 +1,54 @@
-import { Flex, Space, Typography } from "antd";
-import "./CopyrightSection.module.scss";
+// src/components/home/CopyrightSection.tsx
 
-const { Text, Link } = Typography;
+import { Space } from "antd";
+import Link from "next/link";
+import styles from "./CopyrightSection.module.scss";
+
 
 const CopyrightSection = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="copyright-section">
-      <Flex
-        align="center"
-        justify="space-between"
-        wrap="wrap"
-        gap={16}
-      >
+    <footer className={styles.copyrightSection}>
+      <div className={styles.container}>
         {/* Copyright */}
-        <Text type="secondary">
+        <div className={styles.copyrightText}>
           © {currentYear} Your Company Name. All rights reserved.
-        </Text>
+        </div>
 
-        {/* Links */}
-        <Space size="large" wrap>
-          <Link href="/about">About Us</Link>
-          <Link href="/contact">Contact Us</Link>
-          <Link href="/privacy-policy">Privacy Policy</Link>
-          <Link href="/terms-and-conditions">
+        {/* Footer Links */}
+        <Space
+          className={styles.links}
+          size="large"
+          wrap
+        >
+          <Link href="/about" className={styles.link}>
+            About Us
+          </Link>
+
+          <Link href="/contact" className={styles.link}>
+            Contact Us
+          </Link>
+
+          <Link href="/privacy-policy" className={styles.link}>
+            Privacy Policy
+          </Link>
+
+          <Link
+            href="/terms-and-conditions"
+            className={styles.link}
+          >
             Terms & Conditions
           </Link>
+          <Link
+            href="/login/auth"
+            className={styles.link}
+          >
+            Office
+          </Link>
         </Space>
-
-        {/* Social / Other Links */}
-        <Space>
-          <Link href="#">Facebook</Link>
-          <Link href="#">Instagram</Link>
-          <Link href="#">LinkedIn</Link>
-        </Space>
-      </Flex>
-    </div>
+      </div>
+    </footer>
   );
 };
 

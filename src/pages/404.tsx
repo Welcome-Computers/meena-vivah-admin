@@ -1,9 +1,7 @@
 import CopyrightSection from "@/components/home/CopyrightSection";
-import { HeroSection } from "@/components/home/HeroSection";
-import { FooterComponent } from "@/components/layout/Footer";
 import PublicLayout from "@/components/layout/PublicLayout";
-import ProfileContainer from "@/components/profile/ProfileContainer";
 import { useGetProfilesQuery } from "@/redux/features/profile/srevices";
+import Link from "next/link";
 import { useState } from "react";
 
 const Home = () => {
@@ -19,22 +17,22 @@ const Home = () => {
   };
 
   return (
-    <PublicLayout
-      headerSection={
-        <>
-          <HeroSection />
-          <FooterComponent />
-        </>
-      }>
+    <PublicLayout>
 
-      <div style={{ marginTop: 30 }}>
-        <ProfileContainer
-          title="Latest Profiles"
-          loading={isFetching}
-          data={userList}
-          pagination={pagination}
-          getProfiles={getProfiles}
-        />
+      <div style={{ marginTop: 30, textAlign: "center", height: 250 }}>
+
+        <h1>404</h1>
+
+        <h2>Page Not Found</h2>
+
+        <p>
+          Sorry, the page you are looking for does not exist.
+        </p>
+
+        <Link href="/">
+          Go back to Home
+        </Link>
+
       </div>
 
       <CopyrightSection />

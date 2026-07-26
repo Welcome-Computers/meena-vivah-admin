@@ -199,16 +199,73 @@ async function attachProfileRelations(
   );
 }
 
-export async function getProfiles(
-  params: GetProfilesProps
-) {
+export async function getProfiles(params: GetProfilesProps) {
   const {
     page = 1,
     limit = 10,
+    role,
+    mobile,
   } = params;
+
+  const conditions = [
+    eq(profiles.isSuspended, false),
+  ];
+
+  // Profile user can only see profiles
+  // associated with their mobile number
+  if (role === "profile") {
+    if (!mobile) {
+      throw new Error(
+        "Mobile number is required for profile user"
+      );
+    }
+
+    conditions.push(
+      eq(profiles.mobile, mobile)
+    );
+  }
+
+  // Add other filters here...
+
+  const data = await getBaseProfiles(
+    conditions,
+    page,
+    limit
+  );
+
+  const finalData = await attachProfileRelations(data);
+
+  // Use the SAME conditions for count
+  const [totalResult] = await db
+    .select({
+      count: sql<number>`count(*)`,
+    })
+    .from(profiles)
+    .where(
+      and(...conditions)
+    );
+
+  const total = Number(totalResult.count);
+
+  return {
+    data: finalData,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+}
+
+export async function getProfiles1(params: GetProfilesProps) {
+
+  const { page = 1, limit = 10, role, mobile } = params;
 
   const conditions = [eq(profiles.isSuspended, false),];
   // filters add here...
+
+
 
   const data = await getBaseProfiles(conditions, page, limit);
 
@@ -228,9 +285,7 @@ export async function getProfiles(
   };
 }
 
-export async function getProfileMatches(
-  params: GetMatchedProfilesProps
-) {
+export async function getProfileMatches(params: GetMatchedProfilesProps) {
   const {
     page = 1,
     limit = 10,
@@ -239,6 +294,7 @@ export async function getProfileMatches(
     preferredAge,
     req_occupation,
     exclude_gotra,
+    role
   } = params;
 
   const conditions = [eq(profiles.isSuspended, false),];
@@ -246,28 +302,15 @@ export async function getProfileMatches(
   /**
    * OCCUPATION
    */
-  if (
-    req_occupation &&
-    req_occupation.length > 0
-  ) {
-    conditions.push(
-      inArray(
-        profiles.occupation,
-        req_occupation
-      )
-    );
+  if (req_occupation && req_occupation.length > 0) {
+    conditions.push(inArray(profiles.occupation, req_occupation));
   }
 
   /**
    * GENDER
    */
   if (looking_for) {
-    conditions.push(
-      ne(
-        profiles.gender,
-        looking_for
-      )
-    );
+    conditions.push(ne(profiles.gender, looking_for));
   }
 
   /**

@@ -29,16 +29,10 @@ const TopStatics = (props: iProps) => {
       <Col span={6}>
         <Card>
           <Space>
-            <ProfileOutlined />
+            <ProfileOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>
-                {
-                  stats.totalMembers
-                }
-              </h3>
-              <p>
-                Total Members
-              </p>
+              <h3>{stats.totalMembers}</h3>
+              <p>Total Members</p>
             </div>
           </Space>
         </Card>
@@ -47,13 +41,9 @@ const TopStatics = (props: iProps) => {
       <Col span={6}>
         <Card>
           <Space>
-            <ManOutlined />
+            <ManOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>
-                {
-                  stats.boys
-                }
-              </h3>
+              <h3>{stats.boys}</h3>
               <p>Boys</p>
             </div>
           </Space>
@@ -63,13 +53,9 @@ const TopStatics = (props: iProps) => {
       <Col span={6}>
         <Card>
           <Space>
-            <WomanOutlined />
+            <WomanOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>
-                {
-                  stats.girls
-                }
-              </h3>
+              <h3>{stats.girls}</h3>
               <p>Girls</p>
             </div>
           </Space>
@@ -79,16 +65,10 @@ const TopStatics = (props: iProps) => {
       <Col span={6}>
         <Card>
           <Space>
-            <HeartOutlined />
+            <HeartOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>
-                {
-                  stats.matched
-                }
-              </h3>
-              <p>
-                Matched
-              </p>
+              <h3>{stats.matched}</h3>
+              <p>Matched</p>
             </div>
           </Space>
         </Card>

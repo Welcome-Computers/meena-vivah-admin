@@ -1,7 +1,6 @@
 import SearchField from "@/components/InputElements/SearchField";
 import AdminLayout from "@/components/layout/AdminLayout";
 import OccupationTable from "@/components/master-occupation/OccupationTable";
-import { appMessage } from "@/lib/utility/message";
 import {
   useDeleteOccupationMutation,
   useGetOccupationsQuery,

@@ -8,7 +8,6 @@ import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
 import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility/helper";
-import { appMessage } from "@/lib/utility/message";
 import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
 import { useLazyGetProfilesByMobileQuery } from "@/redux/features/profile/srevices";
 import { Button, Col, Form, FormInstance, Row, Space, Switch } from "antd";

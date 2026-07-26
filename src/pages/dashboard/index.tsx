@@ -1,13 +1,10 @@
 import TopStatics from "@/components/dashboard/TopStatics";
 import AdminLayout from "@/components/layout/AdminLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { useGetUsersQuery } from "@/redux/features/profile/srevices";
-// import api from '@/utils/axios';
-import { Row, Typography } from "antd";
-import { useRouter } from "next/router";
+import { useAuth } from "@/hook/useAuth";
+import { useGetProfilesQuery } from "@/redux/features/profile/srevices";
+import { Row } from "antd";
 import { useState } from "react";
-
-const { Title } = Typography;
 
 const Dashboard = () => {
   const stats = {
@@ -16,12 +13,16 @@ const Dashboard = () => {
     girls: 50,
     matched: 18,
   };
-
-  const { push } = useRouter()
+  const { userRole } = useAuth();
 
   const [page, setPage] = useState(1);
 
-  const { data, isFetching, error, } = useGetUsersQuery({ page, limit: 10 });
+  const { data, isFetching, error, } = useGetProfilesQuery(
+    { page, limit: 10, role: userRole ?? undefined },
+    {
+      refetchOnMountOrArgChange: true,
+      skip: !userRole
+    });
 
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
@@ -30,39 +31,58 @@ const Dashboard = () => {
     setPage(page);
   };
 
+
+
   return (
-    <AdminLayout
-      title="Dashboard Overview"
-    >
+    <AdminLayout title="Dashboard Overview">
       <div>
         {/* ================= STATS ================= */}
         <Row gutter={16}>
           <TopStatics stats={stats} />
         </Row>
 
-        {/* ================= TABLE 1 ================= */}
-        <div style={{ marginTop: 30, }}>
-          <ProfileContainer
-            defaultShow="table"
-            loading={isFetching}
-            title={'Last 15 Days New Registrations'}
-            data={userList || []}
-            pagination={pagination}
-            showAction={true}
-            getProfiles={getProfiles} />
-        </div>
+        {userRole === "admin" ?
+          <>
+            {/* ================= TABLE 1 ================= */}
+            <div style={{ marginTop: 30, }}>
+              <ProfileContainer
+                defaultShow="table"
+                loading={isFetching}
+                title={'Last 15 Days New Registrations'}
+                data={userList || []}
+                pagination={pagination}
+                showAction={true}
+                getProfiles={getProfiles} />
+            </div>
 
-        {/* ================= TABLE 2 ================= */}
-        <div style={{ marginTop: 30, }}>
-          <ProfileContainer
-            title={'Last 15 Days Updates'}
-            loading={isFetching}
-            defaultShow="table"
-            data={userList || []}
-            pagination={pagination}
-            showAction={true}
-            getProfiles={getProfiles} />
-        </div>
+            {/* ================= TABLE 2 ================= */}
+            <div style={{ marginTop: 30, }}>
+              <ProfileContainer
+                title={'Last 15 Days Updates'}
+                loading={isFetching}
+                defaultShow="table"
+                data={userList || []}
+                pagination={pagination}
+                showAction={true}
+                getProfiles={getProfiles} />
+            </div>
+          </> : null}
+
+        {userRole === "profile" ?
+          <>
+            {/* ================= TABLE 1 ================= */}
+            <div style={{ marginTop: 30, }}>
+              <ProfileContainer
+                defaultShow="table"
+                loading={isFetching}
+                title={'Last 15 Days New Registrations'}
+                data={userList || []}
+                pagination={pagination}
+                showAction={true}
+                getProfiles={getProfiles} />
+            </div>
+          </> : null}
+
       </div>
     </AdminLayout>
   );

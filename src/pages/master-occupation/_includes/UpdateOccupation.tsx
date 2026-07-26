@@ -1,7 +1,6 @@
-import Modal from "antd/es/modal/Modal";
-import { appMessage } from "@/lib/utility/message";
 import GenericForm from "@/components/common/GenericForm";
 import { useUpdateOccupationMutation } from "@/redux/features/masterOccupation";
+import Modal from "antd/es/modal/Modal";
 
 export default function UpdateOccupation(props: any) {
   const {

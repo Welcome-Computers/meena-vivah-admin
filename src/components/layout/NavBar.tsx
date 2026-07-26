@@ -50,23 +50,8 @@ export const NavBar = ({
               <Button
                 danger
                 onClick={() => router.push('/login')}
-                className={style.button}
-              >
+                className={style.button}>
                 Login
-              </Button>
-              <Button
-                danger
-                onClick={() => router.push('/login/admin')}
-                className={style.button}
-              >
-                Admin
-              </Button>
-              <Button
-                type="default"
-                onClick={() => router.push('/login/auth')}
-                className={style.button}
-              >
-                Next Auth
               </Button>
             </Space>
           )}

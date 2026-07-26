@@ -4,7 +4,6 @@ import BiodataEdiableDrawer from "@/components/uploader/BiodataEdiableDrawer";
 import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
 import { formatedEditableRecord } from "@/lib/utility/helper";
-import { appMessage } from "@/lib/utility/message";
 import { useCreateBulkImportedProfilesMutation, useDeleteImportedProfileMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
 import { EditableProfile } from "@/redux/features/importedProfile/types";
 import { IPagination } from "@/redux/features/shared/types";

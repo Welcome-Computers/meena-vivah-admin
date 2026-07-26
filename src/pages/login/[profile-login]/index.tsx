@@ -1,34 +1,48 @@
 import PublicLayout from "@/components/layout/PublicLayout";
 import { appMessage } from "@/lib/utility/message";
-
-import { UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Typography } from "antd";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import {
+  memo,
+  useEffect,
+  useState,
+} from "react";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
-interface GetOtpFormValues {
-  mobile: string;
+interface OtpFormValues {
+  otp: string;
 }
 
-const GetOtpForm = memo(() => {
+const OtpLoginForm = memo(() => {
   const router = useRouter();
 
   const [clicked, setClicked] = useState(false);
-  const [form] = Form.useForm<GetOtpFormValues>();
+  const [form] = Form.useForm<OtpFormValues>();
 
-  const onFinish = async (values: GetOtpFormValues) => {
+  // Get mobile from URL
+  const mobile =
+    typeof router.query.mobile === "string"
+      ? router.query.mobile
+      : "";
+
+  const onFinish = async (values: OtpFormValues) => {
+    if (!mobile) {
+      appMessage.error("Mobile number is missing");
+      return;
+    }
+
     setClicked(true);
 
     try {
-      const result = await signIn("sign_take_otp", {
-        mobile: values.mobile,
+      const result = await signIn("sign_in_profile", {
+        mobile,
+        otp: values.otp,
         redirect: false,
       });
 
-      // console.log("Get OTP response:", result);
+      console.log("OTP Login response:", result);
 
       if (result?.error) {
         appMessage.error(result.error);
@@ -36,16 +50,12 @@ const GetOtpForm = memo(() => {
       }
 
       if (result?.ok) {
-        // OTP successfully sent
-        appMessage.success("OTP sent successfully");
+        sessionStorage.setItem("admin_session", "active");
 
-        // Go to OTP verification page
-        router.push(
-          `/login/profile-login?mobile=${encodeURIComponent(values.mobile)}`
-        );
+        router.push("/dashboard");
       }
     } catch (error: any) {
-      console.error("Get OTP error:", error);
+      console.error("OTP Login error:", error);
 
       appMessage.error(
         error?.message || "Something went wrong"
@@ -70,37 +80,41 @@ const GetOtpForm = memo(() => {
             level={2}
             style={{
               textAlign: "center",
+              marginBottom: 16,
+            }}
+          >
+            Verify OTP
+          </Title>
+
+          <Text
+            type="secondary"
+            style={{
+              display: "block",
+              textAlign: "center",
               marginBottom: 32,
             }}
           >
-            Get OTP
-          </Title>
+            Enter the OTP sent to {mobile}
+          </Text>
 
           <Form
             layout="vertical"
             form={form}
             onFinish={onFinish}
-            initialValues={{ mobile: "9828784536" }}
           >
             <Form.Item
-              label="Mobile"
-              name="mobile"
+              label="OTP"
+              name="otp"
               rules={[
                 {
                   required: true,
-                  message: "Please enter your mobile",
-                },
-                {
-                  pattern: /^[6-9]\d{9}$/,
-                  message: "Please enter a valid mobile number",
+                  message: "Please enter OTP",
                 },
               ]}
             >
-              <Input
-                prefix={<UserOutlined />}
-                placeholder="Enter mobile number"
+              <Input.OTP
+                length={6}
                 size="large"
-                maxLength={10}
               />
             </Form.Item>
 
@@ -112,10 +126,18 @@ const GetOtpForm = memo(() => {
                 block
                 size="large"
               >
-                Get OTP
+                Verify OTP & Login
               </Button>
             </Form.Item>
           </Form>
+
+          <Button
+            type="link"
+            onClick={() => router.push("/login")}
+            block
+          >
+            Change Mobile Number
+          </Button>
 
         </div>
       </div>
@@ -123,6 +145,6 @@ const GetOtpForm = memo(() => {
   );
 });
 
-GetOtpForm.displayName = "GetOtpForm";
+OtpLoginForm.displayName = "OtpLoginForm";
 
-export default GetOtpForm;
+export default OtpLoginForm;

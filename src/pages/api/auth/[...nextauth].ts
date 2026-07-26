@@ -147,6 +147,90 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
+    // 🔐 GET OTP ON MOBILE
+    CredentialsProvider({
+      id: "sign_take_otp",
+      name: "Mobile",
+      credentials: {
+        mobile: { label: "Mobile", type: "text" },
+      },
+      async authorize(credentials): Promise<any | null> {
+        try {
+          const requestBody = {
+            mobile: credentials?.mobile,
+          };
+
+          const response: LoginApiResponse = await fetchAPI(
+            "/auth/login/get_otp",
+            requestBody
+          );
+
+          // console.log("Next Auth ", response)
+
+          if (!response?.success) {
+            throw new Error(response?.message || "Login failed");
+          }
+
+          if (response?.data?.user?.is_deleted) {
+            throw new Error(`is_delete_user:${response?.message}`);
+          }
+
+          return response;
+
+        } catch (error: any) {
+          throw new Error(
+            error.message || "Something went wrong during login"
+          );
+        }
+      }
+    }),
+    // 🔐 Credentials-based login (mobile + otp)
+
+    CredentialsProvider({
+      id: "sign_in_profile",
+      name: "Mobile",
+      credentials: {
+        mobile: { label: "Mobile", type: "text" },
+        otp: { label: "Otp", type: "text" },
+      },
+      async authorize(credentials): Promise<User | null> {
+        try {
+          const requestBody = {
+            mobile: credentials?.mobile,
+            otp: credentials?.otp,
+          };
+
+          const response: LoginApiResponse = await fetchAPI(
+            "/auth/login/profile_login",
+            requestBody
+          );
+
+          // console.log("Next Auth ", response)
+
+          // ❌ Reject deleted users
+          if (response?.data?.user?.is_deleted) {
+            throw new Error(`is_delete_user:${response?.message}`);
+          }
+
+          const user = response.data?.user || null;
+
+          if (!user) return null;
+
+          // ✅ Attach access/refresh token to user object
+          return {
+            ...user,
+            access_token: response?.data?.access_token,
+            refresh_token: response?.data?.refresh_token,
+            access_token_expires: response?.data?.access_token_expires,
+          } as User;
+
+        } catch (error: any) {
+          throw new Error(
+            error.message || "Something went wrong during login"
+          );
+        }
+      }
+    }),
   ],
 
   // 🔁 Custom pages
@@ -162,7 +246,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }) {
       // First time login: set token info from user
 
-      // console.log("+++++++", user)
+      // console.log(":: USER callbacks ::", user)
 
       if (user) {
         const updatedToken = setTokens(token, user);

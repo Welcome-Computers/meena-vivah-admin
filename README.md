@@ -90,9 +90,18 @@ now need to create login/logout using nextAuth with refresh and access token
   Currently, I am implementing the signOut function using NextAuth.
 
 20-July-2026
-import data from "marriageapp to meena_vivah"
+  import data from "marriageapp to meena_vivah"
 
 22-july-2026
-working on refining interface name and function name with code optimize. 
+  working on refining interface name and function name with code optimize. 
 
+24-july-2026
+  Working on the copyright section design,
+  implementing mobile number login with 6-digit OTP verification, and 
+  separating the dashboard for Admin, Executive, and Profiler roles.
 
+26-July-2026
+  working on update profile afther login a 
+  "profile" user
+  http://localhost:3006/profiles/update_profile?id=61&action=update
+  currently i am working on above URL and here mobile should not able to update....

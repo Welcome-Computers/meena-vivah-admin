@@ -1,9 +1,8 @@
-import { appMessage } from "@/lib/utility/message";
+import GenericForm from "@/components/common/GenericForm";
+import AdminLayout from "@/components/layout/AdminLayout";
 import { useCreateGotraMutation } from "@/redux/features/masterGotra";
 import { FormInstance } from "antd/es/form/Form";
-import AdminLayout from "@/components/layout/AdminLayout";
 import Title from "antd/es/typography/Title";
-import GenericForm from "@/components/common/GenericForm";
 
 interface iProps {
   form: FormInstance;

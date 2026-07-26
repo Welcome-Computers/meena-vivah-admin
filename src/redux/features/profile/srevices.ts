@@ -1,4 +1,5 @@
 import { GetMatchedProfilesProps } from "@/lib/modules/profile/profile.types";
+import { prepareAuthHeaders } from "@/lib/utility/prepareHeaders";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { queryString } from "object-query-string";
 
@@ -7,13 +8,14 @@ export const profileApi = createApi({
 
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    prepareHeaders: prepareAuthHeaders,
   }),
 
   tagTypes: ["Profiles"],
 
   endpoints: (builder) => ({
-    // GET USERS
-    getUsers: builder.query({
+    // GET PROFILES
+    getProfiles: builder.query({
       query: (params: GetMatchedProfilesProps) => {
 
         return ({
@@ -94,8 +96,8 @@ export const profileApi = createApi({
 export const {
   useGetSingleProfileByIdQuery,
   useLazyGetProfilesByMobileQuery,
-  useGetUsersQuery,
-  useLazyGetUsersQuery,
+  useGetProfilesQuery,
+  useLazyGetProfilesQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,

@@ -1,5 +1,4 @@
-import { getAdmin, saveUserToken } from "@/lib/modules/admin/admin.service";
-// import { serialize } from "cookie";
+import { getProfile, saveUserToken } from "@/lib/modules/admin/admin.service";
 import dayjs from "dayjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -12,12 +11,14 @@ export default async function handler(
       try {
         const payload = req.body;
 
-        const result = await getAdmin(payload);
+        const result = await getProfile(payload);
+
+        // console.log("++++", result)
 
         await saveUserToken({
-          userId: result.admin.id,
-          userType: "admin",
-          refreshToken: result.refreshToken,
+          userId: result.profile.id,
+          userType: "profile",
+          refreshToken: result.refreshToken || "",
           expiresAt: dayjs().add(2, "day").toDate(),
           deviceName: req.headers["sec-ch-ua-platform"] as string,
           ipAddress:
@@ -33,14 +34,15 @@ export default async function handler(
 
         return res.status(201).json({
           success: true,
-          message: "Admin Login successfully.",
+          message: "Profile Login successfully.",
           data: {
-            user: result.admin,
+            user: result.profile,
             access_token: result.accessToken,
             refresh_token: result.refreshToken,
             access_token_expires: access_token_expires
           },
         });
+
       } catch (error: any) {
         return res.status(409).json({
           success: false,

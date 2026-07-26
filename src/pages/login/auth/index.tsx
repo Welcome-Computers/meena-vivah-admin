@@ -1,5 +1,4 @@
 import PublicLayout from "@/components/layout/PublicLayout";
-import { appMessage } from "@/lib/utility/message";
 import { useAdminLoginMutation } from "@/redux/features/login";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, FormProps, Input, Typography } from "antd";

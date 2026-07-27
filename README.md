@@ -101,7 +101,7 @@ now need to create login/logout using nextAuth with refresh and access token
   separating the dashboard for Admin, Executive, and Profiler roles.
 
 26-July-2026
-  working on update profile afther login a 
+  working on update profile after login a 
   "profile" user
   http://localhost:3006/profiles/update_profile?id=61&action=update
   currently i am working on above URL and here mobile should not able to update....

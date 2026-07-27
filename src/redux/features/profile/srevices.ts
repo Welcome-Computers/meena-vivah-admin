@@ -27,6 +27,18 @@ export const profileApi = createApi({
       providesTags: ["Profiles"],
     }),
 
+    getPrivateProfiles: builder.query({
+      query: (params: GetMatchedProfilesProps) => {
+
+        return ({
+          url: `/api/profile/private?${queryString(params)}`,
+          method: "GET",
+        })
+      },
+
+      providesTags: ["Profiles"],
+    }),
+
     // CREATE USER
     createUser: builder.mutation({
       query: (body: any) => {
@@ -94,6 +106,7 @@ export const profileApi = createApi({
 });
 
 export const {
+  useGetPrivateProfilesQuery,
   useGetSingleProfileByIdQuery,
   useLazyGetProfilesByMobileQuery,
   useGetProfilesQuery,

@@ -1,5 +1,6 @@
 // _app.tsx
 
+import AppMessageProvider from "@/lib/utility/AppMessageProvider";
 import { antdTheme } from "@/lib/utility/theme";
 import { store } from "@/redux/store";
 import "@/styles/globals.css";
@@ -24,6 +25,7 @@ export default function App({
       <Provider store={store}>
         <ConfigProvider theme={antdTheme}>
           <AntdApp>
+            <AppMessageProvider />
             <Component {...pageProps} />
           </AntdApp>
         </ConfigProvider>

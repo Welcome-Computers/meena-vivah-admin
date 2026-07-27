@@ -12,6 +12,8 @@ import {
   getProfiles,
 } from "@/lib/modules/profile/profile.service";
 
+import { verifyAccessToken } from "@/lib/modules/admin/admin.service";
+import { ROLE_TYPES } from "@/lib/modules/admin/admin.types";
 import {
   createProfileSchema,
 } from "@/lib/modules/profile/profile.validation";
@@ -23,6 +25,31 @@ export default async function handler(
 
   try {
 
+    // 🔐 Get authenticated user
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        message: "Authorization token is required",
+      });
+    }
+    // console.log("+++++++++++++", authHeader)
+
+    const [type, token] = authHeader.split(" ");
+
+    if (type !== "Bearer" || !token) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid authorization header",
+      });
+    }
+
+    const decoded = verifyAccessToken(token);
+
+    const { role, mobile }: any = decoded;
+
+    // console.log({ role, mobile })
 
     /**
      * CREATE PROFILE
@@ -169,6 +196,8 @@ export default async function handler(
           limit,
           occupation,
           gender,
+          role: role as ROLE_TYPES,
+          mobile,
 
           min_age,
           max_age,

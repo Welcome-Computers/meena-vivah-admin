@@ -1,20 +1,8 @@
 import CopyrightSection from "@/components/home/CopyrightSection";
 import PublicLayout from "@/components/layout/PublicLayout";
-import { useGetProfilesQuery } from "@/redux/features/profile/srevices";
 import Link from "next/link";
-import { useState } from "react";
 
-const Home = () => {
-  const [page, setPage] = useState(1);
-
-  const { data, isFetching, error, } = useGetProfilesQuery({ page, limit: 10 });
-
-  const userList = data?.data || [];
-  const pagination = data?.pagination || {};
-
-  const getProfiles = (page: number) => {
-    setPage(page);
-  };
+const NotFoundPage = () => {
 
   return (
     <PublicLayout>
@@ -40,4 +28,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default NotFoundPage;

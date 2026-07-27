@@ -1,15 +1,15 @@
-import { message } from "antd";
+import { getMessageApi } from './AppMessageProvider';
 
 const DEFAULT_DURATION = 3;
 
-type MessageType =
-  | "success"
-  | "error"
-  | "warning"
-  | "info"
-  | "loading";
+export type MessageType =
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'loading';
 
-interface IMessageOptions {
+interface MessageOptions {
   content: string;
   duration?: number;
   key?: string;
@@ -17,13 +17,14 @@ interface IMessageOptions {
 
 const showMessage = (
   type: MessageType,
-  options: IMessageOptions
+  { content, duration = DEFAULT_DURATION, key }: MessageOptions
 ) => {
-  const {
-    content,
-    duration = DEFAULT_DURATION,
-    key,
-  } = options;
+  const message = getMessageApi();
+
+  if (!message) {
+    console.warn('Message API is not initialized.');
+    return;
+  }
 
   return message[type]({
     content,
@@ -33,67 +34,26 @@ const showMessage = (
 };
 
 export const appMessage = {
-  success: (
-    content: string,
-    duration?: number,
-    key?: string
-  ) =>
-    showMessage("success", {
-      content,
-      duration,
-      key,
-    }),
+  success: (content: string, duration?: number, key?: string) =>
+    showMessage('success', { content, duration, key }),
 
-  error: (
-    content: string,
-    duration?: number,
-    key?: string
-  ) =>
-    showMessage("error", {
-      content,
-      duration,
-      key,
-    }),
+  error: (content: string, duration?: number, key?: string) =>
+    showMessage('error', { content, duration, key }),
 
-  warning: (
-    content: string,
-    duration?: number,
-    key?: string
-  ) =>
-    showMessage("warning", {
-      content,
-      duration,
-      key,
-    }),
+  warning: (content: string, duration?: number, key?: string) =>
+    showMessage('warning', { content, duration, key }),
 
-  info: (
-    content: string,
-    duration?: number,
-    key?: string
-  ) =>
-    showMessage("info", {
-      content,
-      duration,
-      key,
-    }),
+  info: (content: string, duration?: number, key?: string) =>
+    showMessage('info', { content, duration, key }),
 
-  loading: (
-    content: string,
-    duration = 0,
-    key?: string
-  ) =>
-    showMessage("loading", {
-      content,
-      duration,
-      key,
-    }),
+  loading: (content: string, duration = 0, key?: string) =>
+    showMessage('loading', { content, duration, key }),
 
   destroy: (key?: string) => {
-    if (key) {
-      message.destroy(key);
-      return;
-    }
+    const message = getMessageApi();
 
-    message.destroy();
+    if (!message) return;
+
+    key ? message.destroy(key) : message.destroy();
   },
 };

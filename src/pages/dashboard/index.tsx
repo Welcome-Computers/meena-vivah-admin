@@ -2,7 +2,7 @@ import TopStatics from "@/components/dashboard/TopStatics";
 import AdminLayout from "@/components/layout/AdminLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { useAuth } from "@/hook/useAuth";
-import { useGetProfilesQuery } from "@/redux/features/profile/srevices";
+import { useGetPrivateProfilesQuery } from "@/redux/features/profile/srevices";
 import { Row } from "antd";
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ const Dashboard = () => {
 
   const [page, setPage] = useState(1);
 
-  const { data, isFetching, error, } = useGetProfilesQuery(
+  const { data, isFetching, error, } = useGetPrivateProfilesQuery(
     { page, limit: 10, role: userRole ?? undefined },
     {
       refetchOnMountOrArgChange: true,

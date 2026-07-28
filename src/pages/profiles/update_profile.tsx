@@ -1,3 +1,4 @@
+import { useAuth } from "@/hook/useAuth";
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useGetSingleProfileByIdQuery, useUpdateUserMutation } from "@/redux/features/profile/srevices";
@@ -10,16 +11,14 @@ import ProfileForm from "./_includes/ProfileForm";
 
 const UpdateProfile = () => {
   const [form] = Form.useForm();
-  const fromData = Form.useWatch(null, form)
+  // const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
 
+  const { userName, profilePick, userRole, status } = useAuth();
 
   const router = useRouter()
 
   const { id, action } = router.query;
-
-  // console.log(id);      // "43"
-  // console.log(action);  // "update"
 
   const {
     data,
@@ -55,7 +54,7 @@ const UpdateProfile = () => {
       address_details: removeEmptyObjects(rest.address_details),
     };
 
-    console.log("form data", formData);
+    // console.log("form data", formData);
 
     // return;
 
@@ -111,6 +110,8 @@ const UpdateProfile = () => {
 
       <ProfileForm
         form={form}
+        orignalData={data?.data}
+        userRole={userRole}
         formContainerRef={formContainerRef}
         handleFromSubmit={handleFromSubmit}
         isLoadingCreateUser={isLoadingCreateUser}

@@ -27,7 +27,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
   const { userName, profilePick, userRole, status } = useAuth();
 
-  console.log({ userName, profilePick, userRole, status })
+  // console.log({ userName, profilePick, userRole, status })
 
   const allowedRoles = ["admin", "profile"];
 

@@ -7,6 +7,7 @@ import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
 import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
+import { ROLE_TYPES } from "@/lib/modules/admin/admin.types";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
@@ -20,6 +21,8 @@ interface iProps {
   formContainerRef: RefObject<HTMLDivElement | null>
   callingFrom: 'create' | "update"
   isFetching?: boolean,
+  userRole: ROLE_TYPES | null,
+  orignalData: any
 }
 
 const ProfileForm = (props: iProps) => {
@@ -29,10 +32,11 @@ const ProfileForm = (props: iProps) => {
     isLoadingCreateUser,
     formContainerRef,
     isFetching,
-    callingFrom
+    callingFrom,
+    userRole,
+    orignalData
   } = props || {}
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isPreviewOpen, setisPreviewOpen] = useState<boolean>(false);
   const [dataPreview, setDataPreview] = useState({});
 
@@ -137,6 +141,8 @@ const ProfileForm = (props: iProps) => {
             <Col md={14} lg={14} xl={14}>
               <div className="form-scroll-section">
                 <PersonalDetails
+                  userRole={userRole}
+                  orignalData={orignalData}
                   occupatonOptions={occupatonOptions}
                   handleOnBlurMobile={handleOnBlurMobile}
                   isOccupationLoading={isOccupationLoading}

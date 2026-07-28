@@ -105,3 +105,7 @@ now need to create login/logout using nextAuth with refresh and access token
   "profile" user
   http://localhost:3006/profiles/update_profile?id=61&action=update
   currently i am working on above URL and here mobile should not able to update....
+
+28-July-2026
+  Testing whole process and till today i have built in this app. 
+  everything should be work as expected.

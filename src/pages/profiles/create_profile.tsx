@@ -1,3 +1,4 @@
+import { useAuth } from "@/hook/useAuth";
 import { firstComponentFocusHandler, formattedDob, removeEmptyObjects } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateUserMutation } from "@/redux/features/profile/srevices";
@@ -22,6 +23,8 @@ const CreateProfile = () => {
   const [form] = Form.useForm();
   const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
+
+  const { userName, profilePick, userRole, status } = useAuth();
 
   const [createUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useCreateUserMutation();
 
@@ -78,6 +81,8 @@ const CreateProfile = () => {
 
       <ProfileForm
         form={form}
+        orignalData={{}}
+        userRole={userRole}
         formContainerRef={formContainerRef}
         handleFromSubmit={handleFromSubmit}
         isLoadingCreateUser={isLoadingCreateUser}

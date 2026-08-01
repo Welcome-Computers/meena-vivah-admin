@@ -1,5 +1,5 @@
 import { useAuth } from "@/hook/useAuth";
-import { canAccessRoute } from "@/pages/api/auth/routePermission";
+import { canAccessRoute } from "@/lib/routePermission";
 import { Breadcrumb, BreadcrumbProps, Button, Layout } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";

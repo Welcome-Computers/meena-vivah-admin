@@ -111,12 +111,14 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         mobile: { label: "Mobile", type: "text" },
         password: { label: "Password", type: "password" },
+        deviceName: { label: "deviceName", type: "text" },
       },
       async authorize(credentials): Promise<User | null> {
         try {
           const requestBody = {
             mobile: credentials?.mobile,
             password: credentials?.password,
+            deviceName: credentials?.deviceName,
           };
           // 🔐 Call backend login API
           const response: LoginApiResponse = await fetchAPI("/auth/login/next_login", requestBody);
@@ -186,18 +188,21 @@ export const authOptions: NextAuthOptions = {
     }),
     // 🔐 Credentials-based login (mobile + otp)
 
+
     CredentialsProvider({
       id: "sign_in_profile",
       name: "Mobile",
       credentials: {
         mobile: { label: "Mobile", type: "text" },
         otp: { label: "Otp", type: "text" },
+        deviceName: { label: "deviceName", type: "text" },
       },
       async authorize(credentials): Promise<User | null> {
         try {
           const requestBody = {
             mobile: credentials?.mobile,
             otp: credentials?.otp,
+            deviceName: credentials?.deviceName,
           };
 
           const response: LoginApiResponse = await fetchAPI(
@@ -275,7 +280,7 @@ export const authOptions: NextAuthOptions = {
 
         const response = await fetchAPI("/auth/refresh-token", requestBody);
 
-        // console.log("refresh response : ", response)
+        console.log("refresh response : ", response)
 
         const { access_token } = response?.data || {};
 

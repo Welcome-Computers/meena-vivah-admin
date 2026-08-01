@@ -1,4 +1,5 @@
 import PublicLayout from "@/components/layout/PublicLayout";
+import { getDeviceId } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 
 import { UserOutlined } from "@ant-design/icons";
@@ -23,8 +24,12 @@ const GetOtpForm = memo(() => {
     setClicked(true);
 
     try {
+
+      const deviceName = getDeviceId();
+
       const result = await signIn("sign_take_otp", {
         mobile: values.mobile,
+        deviceName,
         redirect: false,
       });
 

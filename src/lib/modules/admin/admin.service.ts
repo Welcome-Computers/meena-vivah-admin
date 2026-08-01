@@ -5,11 +5,11 @@ import { userTokens } from "@/lib/schema/userTokens";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import dayjs from "dayjs";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../common/common.service";
 import { otpVerifications } from './../../schema/otpVerifications';
-import { ACCESS_TOKEN_TIME, LoginWithOtpProps, LogoutServiceProps, REFRESH_TOKEN_TIME } from "./admin.types";
+import { ACCESS_TOKEN_TIME, LoginWithOtpProps, LogoutServiceProps, REFRESH_TOKEN_TIME, ROLE_TYPES } from "./admin.types";
 import { SaveUserTokenInput, saveUserTokenSchema } from "./admin.validation";
 
 
@@ -216,6 +216,25 @@ export const logoutService = async ({
 };
 
 
+export const deleteUserTokens = async ({
+  userId,
+  userType,
+  deviceName
+}: {
+  userId: number;
+  userType: ROLE_TYPES;
+  deviceName: string;
+}) => {
+  await db
+    .delete(userTokens)
+    .where(
+      and(
+        eq(userTokens.userId, userId),
+        eq(userTokens.userType, userType),
+        eq(userTokens.deviceName, deviceName),
+      ),
+    );
+};
 
 export const saveUserToken = async (
   data: SaveUserTokenInput
@@ -437,4 +456,34 @@ export const verifyRefreshToken = (refreshToken: string) => {
       "Refresh token is invalid or expired"
     );
   }
+};
+
+
+// import bcrypt from "bcrypt";
+
+export const getTokenRecordByRefreshToken = async (
+  refreshToken: string
+) => {
+  if (!refreshToken) {
+    throw new Error("Refresh token is required");
+  }
+
+  // Hash the incoming raw refresh token
+  const refreshTokenHash = crypto
+    .createHash("sha256")
+    .update(refreshToken)
+    .digest("hex");
+
+  // Find the token record
+  const [tokenRecord] = await db
+    .select()
+    .from(userTokens)
+    .where(eq(userTokens.refreshTokenHash, refreshTokenHash))
+    .limit(1);
+
+  if (!tokenRecord) {
+    throw new Error("Invalid refresh token");
+  }
+
+  return tokenRecord;
 };

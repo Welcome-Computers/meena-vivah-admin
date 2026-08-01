@@ -72,6 +72,7 @@ const ProfileContainer = (props: iProps) => {
       {view === "grid" ? (
         <ProfileCard
           data={data}
+          loading={loading}
           onPageChange={handlePaginationChange}
           showAction={showAction}
           pagination={

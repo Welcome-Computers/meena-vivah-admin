@@ -1,4 +1,5 @@
 import PublicLayout from "@/components/layout/PublicLayout";
+import { getDeviceId } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { Button, Form, Input, Typography } from "antd";
 import { signIn } from "next-auth/react";
@@ -36,13 +37,17 @@ const OtpLoginForm = memo(() => {
     setClicked(true);
 
     try {
+
+      const deviceName = getDeviceId();
+
       const result = await signIn("sign_in_profile", {
         mobile,
         otp: values.otp,
+        deviceName,
         redirect: false,
       });
 
-      console.log("OTP Login response:", result);
+      // console.log("OTP Login response:", result);
 
       if (result?.error) {
         appMessage.error(result.error);

@@ -21,7 +21,7 @@ interface iProps {
 
 const ProfileTable = (props: iProps) => {
 
-  const { callingFrom, showAction, loading, data, pagination, onPageChange, is_pick_current_data = false } = props;
+  const { callingFrom, showAction, loading, data = [], pagination, onPageChange, is_pick_current_data = false } = props;
 
   const form = Form.useFormInstance()
 

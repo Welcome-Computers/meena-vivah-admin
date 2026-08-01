@@ -21,7 +21,8 @@ export default async function handler(
           userType: "profile",
           refreshToken: result.refreshToken || "",
           expiresAt: dayjs().add(2, "day").toDate(),
-          deviceName: req.headers["sec-ch-ua-platform"] as string,
+          // deviceName: req.headers["sec-ch-ua-platform"] as string,
+          deviceName: payload.deviceName,
           ipAddress:
             (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
             req.socket.remoteAddress ||

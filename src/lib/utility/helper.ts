@@ -191,3 +191,14 @@ export const formattedDob = (dob: any) => {
   return dob
 
 }
+
+export const getDeviceId = () => {
+  let deviceName = localStorage.getItem("device_name");
+
+  if (!deviceName) {
+    deviceName = crypto.randomUUID();
+    localStorage.setItem("device_name", deviceName);
+  }
+
+  return deviceName;
+};

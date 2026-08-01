@@ -9,7 +9,7 @@ import { useState } from "react";
 const Home = () => {
   const [page, setPage] = useState(1);
 
-  const { data, isFetching, error, } = useGetProfilesQuery({ page, limit: 10 });
+  const { data, isFetching, isLoading, error, } = useGetProfilesQuery({ page, limit: 10 });
 
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
@@ -17,6 +17,7 @@ const Home = () => {
   const getProfiles = (page: number) => {
     setPage(page);
   };
+
 
   return (
     <PublicLayout
@@ -30,10 +31,11 @@ const Home = () => {
       <div style={{ marginTop: 30 }}>
         <ProfileContainer
           title="Latest Profiles"
-          loading={isFetching}
+          loading={isLoading || isFetching}
           data={userList}
           pagination={pagination}
           getProfiles={getProfiles}
+        // defaultShow={"table"}
         />
       </div>
 

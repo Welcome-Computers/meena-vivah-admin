@@ -1,0 +1,1 @@
+ALTER TABLE `otp_verifications` ADD `user_id` bigint NOT NULL;

@@ -3,7 +3,6 @@ import type {
   NextApiResponse,
 } from "next";
 
-import { ZodError } from "zod";
 
 import {
   createBulkProfiles,
@@ -17,6 +16,7 @@ import { ROLE_TYPES } from "@/lib/modules/admin/admin.types";
 import {
   createProfileSchema,
 } from "@/lib/modules/profile/profile.validation";
+import { handleApiError } from "@/lib/utility/apiErrorHandler";
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,6 +24,8 @@ export default async function handler(
 ) {
 
   try {
+
+
 
     // 🔐 Get authenticated user
     const authHeader = req.headers.authorization;
@@ -45,9 +47,11 @@ export default async function handler(
       });
     }
 
+
+
     const decoded = verifyAccessToken(token);
 
-    // console.log("*********", token)
+    // console.log("*********", decoded)
 
     const { role, mobile }: any = decoded;
 
@@ -131,6 +135,8 @@ export default async function handler(
         req.query["preferredAge[]"];
 
       let preferredAge: | [number, number] | undefined;
+
+
 
       if (Array.isArray(preferredAgeRaw)) {
 
@@ -227,54 +233,7 @@ export default async function handler(
         "Method not allowed",
     });
 
-  } catch (error: any) {
-
-    // console.log(error);
-
-    /**
-     * Zod Error
-     */
-    if (
-      error instanceof ZodError
-    ) {
-
-      return res.status(400).json({
-        success: false,
-        errors:
-          error.flatten(),
-      });
-    }
-
-    /**
-     * Duplicate Entry
-     */
-    if (error?.cause?.code === "ER_DUP_ENTRY") {
-
-      return res.status(409).json({
-        success: false,
-        message:
-          "Mobile number already exists",
-      });
-    }
-
-    /**
-     * MySQL Error
-     */
-    if (
-      error?.cause?.sqlMessage
-    ) {
-
-      return res.status(400).json({
-        success: false,
-        message:
-          error.cause.sqlMessage,
-      });
-    }
-
-    return res.status(500).json({
-      success: false,
-      message:
-        "Internal server error",
-    });
+  } catch (error) {
+    return handleApiError(res, error);
   }
 }

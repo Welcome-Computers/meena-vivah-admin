@@ -1,5 +1,5 @@
 import { profileToLogin, saveUserToken } from "@/lib/modules/admin/admin.service";
-import { ACCESS_TOKEN_TIME } from "@/lib/modules/admin/admin.types";
+import { ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME } from "@/lib/modules/admin/admin.types";
 import dayjs from "dayjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -14,14 +14,13 @@ export default async function handler(
 
         const result = await profileToLogin(payload);
 
-        // console.log("++++", result)
+        // console.log("++++", "profile_login", result)
 
         await saveUserToken({
           userId: result.profile.id,
           userType: "profile",
           refreshToken: result.refreshToken || "",
-          expiresAt: dayjs().add(2, "day").toDate(),
-          // deviceName: req.headers["sec-ch-ua-platform"] as string,
+          expiresAt: dayjs().add(REFRESH_TOKEN_TIME, "day").toDate(),
           deviceName: payload.deviceName,
           ipAddress:
             (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||

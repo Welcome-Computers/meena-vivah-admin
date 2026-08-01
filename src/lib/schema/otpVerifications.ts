@@ -19,6 +19,10 @@ export const otpVerifications = mysqlTable(
       .autoincrement()
       .primaryKey(),
 
+    userId: bigint("user_id", {
+      mode: "number",
+    }).notNull(),
+
     mobile: varchar("mobile", {
       length: 20,
     }).notNull(),

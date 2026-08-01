@@ -3,7 +3,6 @@ import type {
   NextApiResponse,
 } from "next";
 
-import { ZodError } from "zod";
 
 import {
   createBulkProfiles,
@@ -15,6 +14,7 @@ import {
 import {
   createProfileSchema,
 } from "@/lib/modules/profile/profile.validation";
+import { handleApiError } from "@/lib/utility/apiErrorHandler";
 
 export default async function handler(
   req: NextApiRequest,
@@ -197,52 +197,6 @@ export default async function handler(
 
   } catch (error: any) {
 
-    // console.log(error);
-
-    /**
-     * Zod Error
-     */
-    if (
-      error instanceof ZodError
-    ) {
-
-      return res.status(400).json({
-        success: false,
-        errors:
-          error.flatten(),
-      });
-    }
-
-    /**
-     * Duplicate Entry
-     */
-    if (error?.cause?.code === "ER_DUP_ENTRY") {
-
-      return res.status(409).json({
-        success: false,
-        message:
-          "Mobile number already exists",
-      });
-    }
-
-    /**
-     * MySQL Error
-     */
-    if (
-      error?.cause?.sqlMessage
-    ) {
-
-      return res.status(400).json({
-        success: false,
-        message:
-          error.cause.sqlMessage,
-      });
-    }
-
-    return res.status(500).json({
-      success: false,
-      message:
-        "Internal server error",
-    });
+    return handleApiError(res, error);
   }
 }

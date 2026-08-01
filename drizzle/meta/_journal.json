@@ -15,6 +15,13 @@
       "when": 1785040052997,
       "tag": "0001_dear_kylun",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1785577968451,
+      "tag": "0002_stiff_ender_wiggin",
+      "breakpoints": true
     }
   ]
 }

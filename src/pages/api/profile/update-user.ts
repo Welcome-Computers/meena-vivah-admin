@@ -5,7 +5,7 @@ import type {
 
 import { updateProfile } from "@/lib/modules/profile/profile.service";
 import { updateProfileSchema } from "@/lib/modules/profile/profile.validation";
-import { ZodError } from "zod";
+import { handleApiError } from "@/lib/utility/apiErrorHandler";
 
 export default async function handler(
   req: NextApiRequest,
@@ -46,26 +46,6 @@ export default async function handler(
 
   } catch (error) {
 
-    if (error instanceof ZodError) {
-      // console.log(
-      //   JSON.stringify(
-      //     error.issues,
-      //     null,
-      //     2
-      //   )
-      // );
-
-      return res.status(400).json({
-        success: false,
-        errors: error.issues,
-      });
-    }
-
-    // console.log(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return handleApiError(res, error);
   }
 }

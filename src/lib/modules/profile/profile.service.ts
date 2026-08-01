@@ -207,7 +207,6 @@ export async function getProfiles(params: GetProfilesProps) {
   const conditions = [
     eq(profiles.isSuspended, false),
   ];
-
   // Profile user can only see profiles
   // associated with their mobile number
   if (role === "profile") {

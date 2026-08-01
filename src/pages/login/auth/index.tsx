@@ -1,6 +1,6 @@
 import PublicLayout from "@/components/layout/PublicLayout";
+import { getDeviceId } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
-import { useAdminLoginMutation } from "@/redux/features/login";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, FormProps, Input, Typography } from "antd";
 import { signIn } from "next-auth/react";
@@ -18,7 +18,7 @@ export interface LoginFormValues {
 
 const PasswordLoginForm = memo(() => {
   const router = useRouter();
-  const [adminLogin] = useAdminLoginMutation();
+  // const [adminLogin] = useAdminLoginMutation();
 
   // State and Hooks
   const [clicked, setClicked] = useState(false);
@@ -28,9 +28,12 @@ const PasswordLoginForm = memo(() => {
   const onFinish: FormProps<LoginFormValues>['onFinish'] = async (values: any) => {
     setClicked(true);
     try {
+      const deviceName = getDeviceId();
+
       const response: any = await signIn("sign_in", {
         mobile: values.mobile,
         password: values.password,
+        deviceName,
         redirect: false,
       });
 

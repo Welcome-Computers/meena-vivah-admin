@@ -66,7 +66,8 @@ const GotraTable = (props: iProps) => {
             onConfirm={() => handleDelete(record.id)}
           >
             <Button
-              size="medium"
+              danger
+              size="small"
               type="primary">
               Delete
             </Button>

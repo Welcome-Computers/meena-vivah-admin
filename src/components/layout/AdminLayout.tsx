@@ -1,16 +1,11 @@
 import { useAuth } from "@/hook/useAuth";
-import {
-  DashboardOutlined,
-  ProfileFilled,
-  SettingOutlined,
-  UploadOutlined,
-  UserOutlined
-} from "@ant-design/icons";
-import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
+import { canAccessRoute } from "@/pages/api/auth/routePermission";
+import { Breadcrumb, BreadcrumbProps, Button, Layout } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import PrivateSidebar from "../../config/PrivateSidebar";
 
 const { Header, Sider, Content } = Layout;
 
@@ -26,6 +21,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
   const router = useRouter();
 
   const { userName, profilePick, userRole, status } = useAuth();
+  const [checkingPermission, setCheckingPermission] = useState(true);
 
   // console.log({ userName, profilePick, userRole, status })
 
@@ -71,6 +67,44 @@ export default function AdminLayout(props: AdminLayoutProps) {
   }, [router]);
 
 
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
+      setCheckingPermission(false);
+      return;
+    }
+
+    if (!userRole) return;
+
+    const allowed = canAccessRoute(
+      router.pathname,
+      userRole
+    );
+
+    if (!allowed) {
+      router.replace("/403");
+      return;
+    }
+
+    setCheckingPermission(false);
+  }, [status, userRole, router]);
+
+
+  if (checkingPermission) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        Checking permissions...
+      </div>
+    );
+  }
 
   if (status === "loading") {
     return (
@@ -79,6 +113,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
       </div>
     );
   }
+
 
   if (status === "unauthenticated") {
     return (
@@ -117,82 +152,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
     return null;
   }
 
-  const menuItems = [
-    {
-      key: "/dashboard",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
-    },
-    {
-      key: "profiles",
-      icon: <ProfileFilled />,
-      label: "Profiles",
-      children: [
-        {
-          key: "/profiles",
-          label: "All Profiles",
-        },
-        {
-          key: "/profiles/create_profile",
-          label: "Create Profiles",
-        },
-      ],
-    },
-    {
-      key: "gotra",
-      icon: <SettingOutlined />,
-      label: "Gotra",
-      children: [
-        {
-          key: "/gotra",
-          label: "All Gotra",
-        },
-        {
-          key: "/gotra/create_gotra",
-          label: "Create Gotra",
-        },
-      ],
-    },
-    {
-      key: "master-occupation",
-      icon: <UserOutlined />,
-      label: "Occupation",
-      children: [
-        {
-          key: "/master-occupation",
-          label: "All Occupation",
-        },
-        {
-          key: "/master-occupation/create_occupation",
-          label: "Create Occupation",
-        },
 
-      ],
-    },
-    {
-      key: "uploader",
-      icon: <UploadOutlined />,
-      label: "Uploader",
-      children: [
-        {
-          key: "/uploader",
-          label: "Create",
-        },
-      ],
-    },
-    {
-      key: "audit-logs",
-      icon: <SettingOutlined />,
-      label: "Audit Histroy",
-      children: [
-        {
-          key: "/audit-logs",
-          label: "All History",
-        },
-
-      ],
-    },
-  ];
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -201,16 +161,7 @@ export default function AdminLayout(props: AdminLayoutProps) {
           Admin Panel
         </div>
 
-        <Menu
-          mode="inline"
-          selectedKeys={[router.pathname]}
-          items={menuItems}
-          onClick={(e) => {
-            if (e.key.startsWith("/")) {
-              router.push(e.key);
-            }
-          }}
-          theme="dark" />
+        <PrivateSidebar />
 
       </Sider>
 

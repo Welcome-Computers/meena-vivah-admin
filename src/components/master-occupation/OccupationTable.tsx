@@ -47,7 +47,7 @@ const OccupationTable = (props: iProps) => {
       render: (_, record) => (
         <Space>
           <Button
-            size="medium"
+            size="small"
             type="primary"
             onClick={() => handleEdit(record.id, record)}
           >
@@ -63,7 +63,8 @@ const OccupationTable = (props: iProps) => {
             onConfirm={() => handleDelete(record.id)}
           >
             <Button
-              size="medium"
+              danger
+              size="small"
               type="primary">
               Delete
             </Button>

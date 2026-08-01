@@ -1,4 +1,3 @@
-import CopyrightSection from "@/components/home/CopyrightSection";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FooterComponent } from "@/components/layout/Footer";
 import PublicLayout from "@/components/layout/PublicLayout";
@@ -27,7 +26,6 @@ const Home = () => {
           <FooterComponent />
         </>
       }>
-
       <div style={{ marginTop: 30 }}>
         <ProfileContainer
           title="Latest Profiles"
@@ -38,8 +36,6 @@ const Home = () => {
         // defaultShow={"table"}
         />
       </div>
-
-      <CopyrightSection />
     </PublicLayout>
   );
 };

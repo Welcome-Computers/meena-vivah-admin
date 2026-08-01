@@ -1,6 +1,7 @@
 import { Layout } from "antd";
 import { useLayoutEffect, useRef, useState } from "react";
 import style from "../../styles/Home.module.css";
+import CopyrightSection from "../home/CopyrightSection";
 import { NavBar } from "./NavBar";
 
 const { Content } = Layout;
@@ -42,6 +43,7 @@ export default function PublicLayout({ children, headerSection }: any) {
       >
         {children}
       </Content>
+      <CopyrightSection />
     </Layout>
   );
 }

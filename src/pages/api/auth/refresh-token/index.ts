@@ -1,4 +1,4 @@
-import { deleteUserTokens, getAdmin, getProfileCreatorByMobile, getTokenRecordByRefreshToken, saveUserToken, verifyRefreshToken } from "@/lib/modules/admin/admin.service";
+import { deleteUserTokens, getAdminByMobile, getProfileCreatorByMobile, getTokenRecordByRefreshToken, saveUserToken, verifyRefreshToken } from "@/lib/modules/admin/admin.service";
 import { ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME } from "@/lib/modules/admin/admin.types";
 import { UnauthorizedError } from "@/lib/modules/common/common.service";
 // import { serialize } from "cookie";
@@ -21,18 +21,20 @@ export default async function handler(
         // 1. Verify JWT signature + expiry
         const decoded: any = verifyRefreshToken(refreshToken);
 
+        // console.log("+++++++++++++++++", decoded);
+
+        // console.log("decoded", decoded);
         const { mobile, role } = decoded;
 
         // 2. Get user
-        let result: any;
-
+        let profileData: any;
         if (role === "profile") {
-          result = await getProfileCreatorByMobile({
+          profileData = await getProfileCreatorByMobile({
             mobile,
             role,
           });
         } else if (role === "admin" || role === "executive") {
-          result = await getAdmin(res);
+          profileData = await getAdminByMobile({ mobile, role });
         } else {
           throw new UnauthorizedError("Invalid user role");
         }
@@ -46,36 +48,34 @@ export default async function handler(
         }
 
         // 4. Get stored device
-        const storedDeviceId = tokenRecord.deviceName;
+        const storedDeviceName = tokenRecord.deviceName;
 
-        if (!storedDeviceId) {
+        // console.log("storedDeviceName", storedDeviceName);
+        if (!storedDeviceName) {
           throw new UnauthorizedError(
             "Device ID not found for this refresh token"
           );
         }
 
         // 5. Verify token belongs to same user/type
-        if (
-          tokenRecord.userId !== result.admin.id ||
-          tokenRecord.userType !== role
-        ) {
+        if (tokenRecord.userId !== profileData.admin.id || tokenRecord.userType !== role) {
           throw new UnauthorizedError("Invalid refresh token");
         }
-
+        // console.log("call remove token from DB")
         // 6. Remove old token
         await deleteUserTokens({
-          userId: result.admin.id,
+          userId: profileData.admin.id,
           userType: role,
-          deviceName: storedDeviceId,
+          deviceName: storedDeviceName,
         });
 
         // 7. Save new refresh token
         await saveUserToken({
-          userId: result.admin.id,
+          userId: profileData.admin.id,
           userType: role,
-          refreshToken: result.refreshToken,
+          refreshToken: profileData.refreshToken,
           expiresAt: dayjs().add(REFRESH_TOKEN_TIME, "day").toDate(),
-          deviceName: storedDeviceId,
+          deviceName: storedDeviceName,
           ipAddress:
             (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
             req.socket.remoteAddress ||
@@ -89,9 +89,9 @@ export default async function handler(
           success: true,
           message: "Token refreshed successfully.",
           data: {
-            user: result.admin,
-            access_token: result.accessToken,
-            refresh_token: result.refreshToken,
+            user: profileData.admin,
+            access_token: profileData.accessToken,
+            refresh_token: profileData.refreshToken,
             access_token_expires
           },
         });
@@ -107,6 +107,8 @@ export default async function handler(
       message: "Method not allowed",
     });
   } catch (error) {
+    // console.log("++++++++++++++++++ Error in refresh token handler:", error);
+
     return res.status(500).json(error);
   }
 }

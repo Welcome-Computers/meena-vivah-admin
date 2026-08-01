@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import dayjs from "dayjs";
 import { and, eq } from "drizzle-orm";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { UnauthorizedError } from "../common/common.service";
 import { otpVerifications } from './../../schema/otpVerifications';
 import { ACCESS_TOKEN_TIME, LoginWithOtpProps, LogoutServiceProps, REFRESH_TOKEN_TIME, ROLE_TYPES } from "./admin.types";
@@ -82,6 +82,37 @@ export const getProfileCreatorByMobile = async (data: any) => {
   };
 };
 
+export const getAdminByMobile = async (data: any) => {
+  const { mobile, role } = data;
+  if (!mobile) {
+    throw new Error("Mobile required");
+  }
+  // check mobile number is valid
+  const [admin] = await db
+    .select()
+    .from(admins)
+    .where(eq(admins.mobile, mobile));
+
+  if (!admin) {
+    throw new Error("Invalied Mobile Number");
+  }
+
+  // create refresh token
+  const accessToken = generateAccessToken({ ...admin, role })
+  const refreshToken = generateRefreshToken({ ...admin, role })
+
+  return {
+    accessToken,
+    refreshToken,
+    admin: {
+      id: admin.id,
+      name: admin.name,
+      mobile: admin.mobile,
+      role,
+    },
+  };
+};
+
 export const sendProfileOtp = async (data: { mobile: string }) => {
   const { mobile } = data;
 
@@ -122,6 +153,7 @@ export const sendProfileOtp = async (data: { mobile: string }) => {
 
   // Insert latest OTP
   await db.insert(otpVerifications).values({
+    userId: profile.id,
     mobile,
     otpHash,
     attempts: 0,
@@ -165,9 +197,9 @@ export const profileToLogin = async (data: any) => {
     throw new Error("Invalid OTP");
   }
 
-  const { id, mobile: vMobile } = otpVerification || {};
+  const { userId, mobile: vMobile } = otpVerification || {};
 
-  const otpVerificationData: LoginWithOtpProps = { id, mobile: vMobile, name: "Profile Creator", role: "profile" }
+  const otpVerificationData: LoginWithOtpProps = { id: userId, mobile: vMobile, name: "Profile Creator", role: "profile" }
 
   // console.log("### ", otpVerificationData);
 
@@ -180,9 +212,9 @@ export const profileToLogin = async (data: any) => {
     refreshToken,
 
     profile: {
-      id: otpVerification.id,
+      id: userId,
       name: "Profile Creator",
-      mobile: otpVerification.mobile,
+      mobile: vMobile,
       role: "profile",
     },
   };
@@ -427,11 +459,44 @@ export const verifyAccessToken = (token: string) => {
   }
 
   try {
+    // console.log("///////////////////////////////", token, JWT_SECRET_TOKEN);
+
+    const data = jwt.verify(
+      token,
+      JWT_SECRET_TOKEN
+    );
+    return data;
+  } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      throw new UnauthorizedError(
+        "Access token expired"
+      );
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      throw new UnauthorizedError(
+        "Invalid access token"
+      );
+    }
+
+    throw new UnauthorizedError(
+      "Unable to verify access token"
+    );
+  }
+};
+
+export const verifyAccessToken1 = (token: string) => {
+  if (!token) {
+    throw new UnauthorizedError("Access token is required");
+  }
+
+  try {
     const decoded = jwt.verify(
       token,
       JWT_SECRET_TOKEN
     );
     return decoded;
+
   } catch (error) {
     throw new UnauthorizedError(
       "Access token is invalid or expired"
@@ -474,12 +539,15 @@ export const getTokenRecordByRefreshToken = async (
     .update(refreshToken)
     .digest("hex");
 
+  // console.log("+++++++++++ R", refreshTokenHash);
+
   // Find the token record
   const [tokenRecord] = await db
     .select()
     .from(userTokens)
     .where(eq(userTokens.refreshTokenHash, refreshTokenHash))
     .limit(1);
+
 
   if (!tokenRecord) {
     throw new Error("Invalid refresh token");

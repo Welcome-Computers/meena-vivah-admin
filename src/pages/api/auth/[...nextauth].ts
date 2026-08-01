@@ -277,10 +277,11 @@ export const authOptions: NextAuthOptions = {
         const requestBody = {
           refreshToken: token.refresh_token,
         };
+        // console.log("refresh response : ", requestBody)
 
         const response = await fetchAPI("/auth/refresh-token", requestBody);
 
-        console.log("refresh response : ", response)
+        // console.log("refresh response : ", response)
 
         const { access_token } = response?.data || {};
 

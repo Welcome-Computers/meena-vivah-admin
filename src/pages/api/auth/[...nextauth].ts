@@ -275,9 +275,11 @@ export const authOptions: NextAuthOptions = {
 
         const response = await fetchAPI("/auth/refresh-token", requestBody);
 
+        // console.log("refresh response : ", response)
+
         const { access_token } = response?.data || {};
 
-        if (!response.ok || !access_token) {
+        if (!response.success || !access_token) {
           throw new Error("Refresh failed");
         }
 

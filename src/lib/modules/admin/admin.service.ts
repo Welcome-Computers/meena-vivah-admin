@@ -7,8 +7,9 @@ import crypto from "crypto";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "../common/common.service";
 import { otpVerifications } from './../../schema/otpVerifications';
-import { DEFAUTL_JWT_SECRET, LoginWithOtpProps, LogoutServiceProps, ROLE_TYPES } from "./admin.types";
+import { ACCESS_TOKEN_TIME, LoginWithOtpProps, LogoutServiceProps, REFRESH_TOKEN_TIME } from "./admin.types";
 import { SaveUserTokenInput, saveUserTokenSchema } from "./admin.validation";
 
 
@@ -46,6 +47,37 @@ export const getAdmin = async (data: any) => {
       name: admin.name,
       mobile: admin.mobile,
       role: admin.role,
+    },
+  };
+};
+
+export const getProfileCreatorByMobile = async (data: any) => {
+  const { mobile, role } = data;
+  if (!mobile) {
+    throw new Error("Mobile required");
+  }
+  // check mobile number is valid
+  const [profile] = await db
+    .select()
+    .from(profiles)
+    .where(eq(profiles.mobile, mobile));
+
+  if (!profile) {
+    throw new Error("Invalied Mobile Number");
+  }
+
+  // create refresh token
+  const accessToken = generateAccessToken({ ...profile, role })
+  const refreshToken = generateRefreshToken({ ...profile, role })
+
+  return {
+    accessToken,
+    refreshToken,
+    admin: {
+      id: profile.id,
+      name: profile.name,
+      mobile: profile.mobile,
+      role,
     },
   };
 };
@@ -108,7 +140,7 @@ export const sendProfileOtp = async (data: { mobile: string }) => {
   };
 };
 
-export const getProfile = async (data: any) => {
+export const profileToLogin = async (data: any) => {
   const { mobile, otp } = data;
 
   if (!mobile || !otp) {
@@ -333,6 +365,17 @@ export const getExecutiveById = async (id: number) => {
   return executive;
 };
 
+const JWT_SECRET_TOKEN = process.env.JWT_SECRET_TOKEN;
+const JWT_SECRET_REFRESH_TOKEN = process.env.JWT_SECRET_REFRESH_TOKEN;
+
+if (!JWT_SECRET_TOKEN) {
+  throw new Error("JWT_SECRET_TOKEN is not configured");
+}
+
+if (!JWT_SECRET_REFRESH_TOKEN) {
+  throw new Error("JWT_SECRET_REFRESH_TOKEN is not configured");
+}
+
 export const generateAccessToken = ({
   id,
   name,
@@ -340,48 +383,58 @@ export const generateAccessToken = ({
   role,
 }: LoginWithOtpProps) => {
   return jwt.sign(
-    {
-      id,
-      name,
-      mobile,
-      role,
-    },
-    process.env.JWT_SECRET_TOKEN || DEFAUTL_JWT_SECRET,
-    {
-      expiresIn: "15m",
-    }
-  );
+    { id, name, mobile, role },
+    JWT_SECRET_TOKEN,
+    { expiresIn: `${ACCESS_TOKEN_TIME}m`, }
+  )
 };
 
-export const generateRefreshToken = (admin: {
-  id: number;
-  name: string | null;
-  mobile: string;
-  role: ROLE_TYPES
-}) => {
+export const generateRefreshToken = ({
+  id,
+  name,
+  mobile,
+  role,
+}: LoginWithOtpProps) => {
   return jwt.sign(
-    {
-      id: admin.id,
-      name: admin.name,
-      mobile: admin.mobile,
-      role: admin.role,
-    },
-    process.env.JWT_SECRET_REFRESH_TOKEN || DEFAUTL_JWT_SECRET,
-    {
-      expiresIn: "2d",
-    }
+    { id, name, mobile, role },
+    JWT_SECRET_REFRESH_TOKEN,
+    { expiresIn: `${REFRESH_TOKEN_TIME}d`, }
   );
 };
 
 export const verifyAccessToken = (token: string) => {
+  if (!token) {
+    throw new UnauthorizedError("Access token is required");
+  }
+
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET_TOKEN!
+      JWT_SECRET_TOKEN
     );
-
     return decoded;
   } catch (error) {
-    return null;
+    throw new UnauthorizedError(
+      "Access token is invalid or expired"
+    );
+  }
+};
+
+
+
+export const verifyRefreshToken = (refreshToken: string) => {
+  if (!refreshToken) {
+    throw new UnauthorizedError("Refresh token is required");
+  }
+
+  try {
+    return jwt.verify(
+      refreshToken,
+      JWT_SECRET_REFRESH_TOKEN
+    );
+  } catch (error) {
+    throw new UnauthorizedError(
+      "Refresh token is invalid or expired"
+    );
   }
 };

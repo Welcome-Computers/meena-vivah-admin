@@ -1,6 +1,7 @@
 export const INACTIVITY_TIME = 15;
 
-export const DEFAUTL_JWT_SECRET = "7f8e2c91a4d5b8f3e6a9c2d7f1b4e8a5c9d3f7e1a6b2c8d4f9e5a1b7c3d6e8"
+export const ACCESS_TOKEN_TIME = 1; // 1 minute
+export const REFRESH_TOKEN_TIME = 2; // 2 days
 
 export type ROLE_TYPES = "admin" | "profile" | "executive";
 export interface SaveUserTokenProps {

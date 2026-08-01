@@ -109,3 +109,9 @@ now need to create login/logout using nextAuth with refresh and access token
 28-July-2026
   Testing whole process and till today i have built in this app. 
   everything should be work as expected.
+
+  * working on after session out should be refreshToken and get data. 
+  or move on login page, 
+  * working on refresh-token api to get data and set in nextJs token 
+  so continue start working 
+

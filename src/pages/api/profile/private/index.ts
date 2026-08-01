@@ -47,6 +47,8 @@ export default async function handler(
 
     const decoded = verifyAccessToken(token);
 
+    // console.log("*********", token)
+
     const { role, mobile }: any = decoded;
 
     // console.log({ role, mobile })
@@ -109,6 +111,7 @@ export default async function handler(
 
 
 
+
     /**
      * ALL PROFILES LIST
      */
@@ -163,7 +166,6 @@ export default async function handler(
             ? [excludeGotraRaw]
             : [];
 
-
       const occupation = req.query.occupation as string;
       const gender = req.query.gender as string;
       const min_age = Number(req.query.min_age);
@@ -190,6 +192,7 @@ export default async function handler(
           ...result,
         });
       } else {
+
 
         const result = await getProfiles({
           page,

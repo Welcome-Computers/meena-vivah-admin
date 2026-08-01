@@ -1,4 +1,6 @@
-import { getAdmin, saveUserToken } from "@/lib/modules/admin/admin.service";
+import { getAdmin, getProfileCreatorByMobile, saveUserToken, verifyRefreshToken } from "@/lib/modules/admin/admin.service";
+import { ACCESS_TOKEN_TIME } from "@/lib/modules/admin/admin.types";
+import { UnauthorizedError } from "@/lib/modules/common/common.service";
 // import { serialize } from "cookie";
 import dayjs from "dayjs";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -10,13 +12,54 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       try {
-        const payload = req.body;
+        const { refreshToken } = req.body;
+        const isRefreshTokenVerified = verifyRefreshToken(refreshToken)
+        // console.log({ isRefreshTokenVerified })
+        //         {
+        //   isRefreshTokenVerified: {
+        //     id: 38,
+        //     name: 'Profile Creator',
+        //     mobile: '9828784536',
+        //     role: 'profile',
+        //     iat: 1785379799,
+        //     exp: 1785552599
+        //   }
+        // }
 
-        const result = await getAdmin(payload);
+        const decoded: any = verifyRefreshToken(refreshToken);
+
+        const { mobile, role } = decoded;
+
+        let result: any;
+
+        if (role === "profile") {
+          result = await getProfileCreatorByMobile({
+            mobile,
+            role,
+          });
+        } else if (role === "admin" || role === "executive") {
+          result = await getAdmin(res);
+        } else {
+          throw new UnauthorizedError("Invalid user role");
+        }
+
+        // const { mobile, role }: any = isRefreshTokenVerified || {}
+        // let result: any = null;
+
+        // if (role === "profile") {
+        //   result = await getProfileCreatorByMobile({ mobile, role });
+        // } else if (role === "admin" || role === "executive") {
+        //   result = await getAdmin(res);
+        // } else {
+        //   return res.status(409).json({
+        //     success: false,
+        //     message: "login again!!!!",
+        //   });
+        // }
 
         await saveUserToken({
           userId: result.admin.id,
-          userType: "admin",
+          userType: role,
           refreshToken: result.refreshToken,
           expiresAt: dayjs().add(2, "day").toDate(),
           deviceName: req.headers["sec-ch-ua-platform"] as string,
@@ -27,21 +70,7 @@ export default async function handler(
           userAgent: req.headers["user-agent"] || "",
         });
 
-
-        // const refreshCookie = serialize("refreshToken", result.refreshToken, {
-        //   httpOnly: true,
-        //   secure: process.env.NODE_ENV === "production",
-        //   sameSite: "lax",
-        //   path: "/",
-        //   maxAge: 60 * 60 * 24 * 7, // 7 days
-        // });
-
-        // console.log("+++++#### ", refreshCookie)
-
-        // res.setHeader("Set-Cookie", refreshCookie);
-        const access_token_expires = dayjs()
-          .add(30, "minute")
-          .valueOf();
+        const access_token_expires = dayjs().add(ACCESS_TOKEN_TIME, "minute").valueOf();
 
         return res.status(201).json({
           success: true,

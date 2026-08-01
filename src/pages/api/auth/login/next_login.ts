@@ -1,4 +1,5 @@
 import { getAdmin, saveUserToken } from "@/lib/modules/admin/admin.service";
+import { ACCESS_TOKEN_TIME } from "@/lib/modules/admin/admin.types";
 // import { serialize } from "cookie";
 import dayjs from "dayjs";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -27,9 +28,7 @@ export default async function handler(
           userAgent: req.headers["user-agent"] || "",
         });
 
-        const access_token_expires = dayjs()
-          .add(30, "minute")
-          .valueOf();
+        const access_token_expires = dayjs().add(ACCESS_TOKEN_TIME, "minute").valueOf();
 
         return res.status(201).json({
           success: true,

@@ -25,7 +25,7 @@ export const importedProfile = mysqlTable("imported_profile", {
   mat_gm_gotra: varchar("mat_gm_gotra", { length: 50, }),
   otherinfo: text("otherinfo"),
   status: mysqlEnum("status",
-    ["draft", "reviewed", "moved", "rejected",]).notNull().default("draft"),
+    ["draft", "reviewed", "deleted", "moved", "rejected",]).notNull().default("draft"),
   remarks: text("remarks"),
 
   createdAt: timestamp("created_at").defaultNow(),

@@ -1,10 +1,8 @@
+import { Form, FormItemProps, Input } from "antd";
+import { InputProps } from "antd/es/input";
+import { ReactNode, memo } from "react";
 
-
-import { Form, FormItemProps, Input } from 'antd';
-import { InputProps } from 'antd/es/input';
-import { ReactNode, memo } from 'react';
-
-interface IProps extends Omit<InputProps, 'name'> {
+interface IProps extends Omit<InputProps, "name"> {
   name: string | string[];
   label?: string | ReactNode;
   rootClassName?: string;
@@ -14,38 +12,37 @@ interface IProps extends Omit<InputProps, 'name'> {
 }
 
 const InputField = memo((props: IProps) => {
-  const { label, name, rootClassName, maxLength, showCount = false, rules, formItemProps, dependencies, ...rest } = props;
+  const {
+    label,
+    name,
+    rootClassName,
+    maxLength,
+    showCount = false,
+    rules,
+    formItemProps,
+    dependencies,
+    ...rest
+  } = props;
 
   return (
-    <div >
-      <Form.Item noStyle shouldUpdate {...formItemProps} >
-        {({ getFieldValue }) => {
-          const value = getFieldValue(name) ?? '';
-          const count = value.length;
-          return showCount && maxLength ? (
-            <div className="d_flex al_center opacity_50 no_wrap">
-              {count} / {maxLength}
-            </div>
-          ) : null;
-        }}
-      </Form.Item>
-
-
-      <Form.Item
-        name={name}
-        dependencies={dependencies}
-        rules={rules}
-        style={{ marginBottom: '6px' }}
-        label={label}
-        {...formItemProps}
-      >
-        <Input {...rest} maxLength={maxLength} className="custom-input" />
-      </Form.Item>
-    </div>
+    <Form.Item
+      name={name}
+      dependencies={dependencies}
+      rules={rules}
+      label={label}
+      style={{ marginBottom: "6px" }}
+      {...formItemProps}
+    >
+      <Input
+        {...rest}
+        maxLength={maxLength}
+        showCount={showCount}
+        className={`custom-input ${rootClassName ?? ""}`}
+      />
+    </Form.Item>
   );
 });
 
-InputField.displayName = 'InputField';
+InputField.displayName = "InputField";
+
 export default InputField;
-
-

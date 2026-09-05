@@ -1,23 +1,34 @@
 import { GetMatchedProfilesProps } from "@/lib/modules/profile/profile.types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { queryString } from "object-query-string";
+import { baseQueryWithReauth } from "../baseQuery";
 
 export const profileApi = createApi({
   reducerPath: "profileApi",
 
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-  }),
+  baseQuery: baseQueryWithReauth,
 
   tagTypes: ["Profiles"],
 
   endpoints: (builder) => ({
-    // GET USERS
-    getUsers: builder.query({
+    // GET PROFILES
+    getProfiles: builder.query({
       query: (params: GetMatchedProfilesProps) => {
 
         return ({
           url: `/api/profile?${queryString(params)}`,
+          method: "GET",
+        })
+      },
+
+      providesTags: ["Profiles"],
+    }),
+
+    getPrivateProfiles: builder.query({
+      query: (params: GetMatchedProfilesProps) => {
+
+        return ({
+          url: `/api/profile/private?${queryString(params)}`,
           method: "GET",
         })
       },
@@ -92,10 +103,11 @@ export const profileApi = createApi({
 });
 
 export const {
+  useGetPrivateProfilesQuery,
   useGetSingleProfileByIdQuery,
   useLazyGetProfilesByMobileQuery,
-  useGetUsersQuery,
-  useLazyGetUsersQuery,
+  useGetProfilesQuery,
+  useLazyGetProfilesQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,

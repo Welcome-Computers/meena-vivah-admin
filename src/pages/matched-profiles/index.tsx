@@ -1,11 +1,8 @@
 import PublicLayout from "@/components/layout/PublicLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { ProfileFilter } from "@/components/profile/ProfileFilter";
-import {
-  GetMatchedProfilesProps,
-  GetProfilesProps,
-} from "@/lib/modules/profile/profile.types";
-import { useGetUsersQuery } from "@/redux/features/profile/srevices";
+import { GetMatchedProfilesProps, GetProfilesProps } from "@/lib/modules/profile/profile.types";
+import { useGetProfilesQuery } from "@/redux/features/profile/srevices";
 import { useSearchParams } from "next/navigation";
 import {
   useCallback,
@@ -52,7 +49,7 @@ const MatchedProfilePage = () => {
   }, [initialFilters]);
 
   const { data, isFetching } =
-    useGetUsersQuery(
+    useGetProfilesQuery(
       {
         ...filters,
         page,
@@ -77,13 +74,8 @@ const MatchedProfilePage = () => {
     (query: GetProfilesProps) => {
       setPage(1);
 
-      setFilters({
-        ...query,
-        action: "matches",
-      });
-    },
-    []
-  );
+      setFilters({ ...query, action: "matches", });
+    }, []);
 
   return (
     <PublicLayout

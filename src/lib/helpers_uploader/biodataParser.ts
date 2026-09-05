@@ -1,31 +1,32 @@
-import { ParsedProfile } from "@/redux/types";
+import { ParsedProfile } from "@/redux/features/shared/types";
 import { extractDob, extractFatherName, extractMobile, extractName } from "./regex";
 
-export const parseBiodata = (
-  text: string,
-  index: number
-): ParsedProfile => {
+export const parseBiodata = (text: string, index: number): ParsedProfile => {
 
-  // const gotras = extractGotras(text);
+  function cleanText(text: string) {
+    return text
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&amp;/gi, "&")
+      .replace(/&#39;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
-  return {
-    id: index,
-    name: extractName(text),
+  const cleanTest = cleanText(text);
 
-    dob: extractDob(text),
-
-    mobile: extractMobile(text),
-
-    fathersname: extractFatherName(text),
-
-    // self_gotra: gotras.self,
-
-    // m_gotra: gotras.mother,
-
-    // gm_gotra: gotras.grandmother,
-
+  const obj = {
+    name: extractName(cleanTest),
+    dob: extractDob(cleanTest),
+    mobile: extractMobile(cleanTest),
+    fathersname: extractFatherName(cleanTest),
     otherinfo: text,
-  };
+  }
+
+  return obj;
 };
 
 

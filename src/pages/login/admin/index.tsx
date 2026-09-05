@@ -58,7 +58,8 @@ const PasswordLoginForm = memo(() => {
             onFinish={onFinish}
             initialValues={{
               remember: true,
-              mobile: 9784139574
+              mobile: 9784139574,
+              password: "raj"
             }}
           >
             <Form.Item

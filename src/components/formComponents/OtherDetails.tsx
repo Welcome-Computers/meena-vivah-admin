@@ -1,24 +1,31 @@
 import { parseBiodata } from "@/lib/helpers_uploader/biodataParser";
+import { formatedEditableRecord } from "@/lib/utility/helper";
 import { useAppSelector } from "@/redux/hooks";
-import { Button, Form } from "antd";
-import { memo, useEffect } from "react";
+import { Button, FormInstance } from "antd";
+import { isEmpty } from "lodash";
+import { useEffect } from "react";
 import style from "../../pages/profiles/style.module.css";
-import RichTextEditor from "./ReactQuill";
+import RichTextEditorInput from "./RichTextEditorInput";
 
 interface iProps {
-  callingFrom: string;
+  callingFrom: 'update' | 'create';
+  form: FormInstance;
 }
 
-const OtherDetails = memo((props: iProps) => {
-  const { callingFrom } = props || {};
+const OtherDetails = (props: iProps) => {
+  const { callingFrom, form } = props || {};
 
-  const form = Form.useFormInstance();
+  // const form = Form.useFormInstance();
+  // const otherinfoValue = form?.getFieldValue?.("otherinfo")
+  // console.log(formData)
+  // console.log("++++++ ", otherinfoValue)
 
   const { profile_data } = useAppSelector((state: any) => (state.profile));
 
-
   useEffect(() => {
-    form.setFieldValue("old_detials", profile_data);
+    if (!isEmpty(profile_data)) {
+      form.setFieldValue("old_detials", profile_data);
+    }
   }, [form, profile_data]);
 
   const hasProfileData =
@@ -27,15 +34,16 @@ const OtherDetails = memo((props: iProps) => {
     Object.keys(profile_data).length > 0;
 
   const handleAutoFill = (fieldName: string) => {
+
     const html = form.getFieldValue(fieldName);
 
     if (!html) return;
 
     const parsedData = parseBiodata(html, 1);
 
-    console.log(parsedData);
+    const editableRecord = formatedEditableRecord(parsedData)
 
-    form.setFieldsValue(parsedData);
+    form.setFieldsValue(editableRecord);
   };
 
   return (
@@ -43,39 +51,31 @@ const OtherDetails = memo((props: iProps) => {
       <div className={style["details_wrapper"]}>
         {hasProfileData && callingFrom === "update" ?
           <div className="full_detials">
-            <Form.Item className="other_detials" name="old_detials">
-              <label>Full Details</label>
-              <RichTextEditor
-                value={form?.getFieldValue?.("old_detials") || ""}
-                onChange={(value) =>
-                  form?.setFieldValue?.("old_detials", value)
-                }
-              />
-            </Form.Item>
+            <RichTextEditorInput
+              label="Full Details"
+              name="old_detials"
+            />
             <Button
-              onClick={() => handleAutoFill("old_detials")}
-            >Auto Fill from old_detials</Button>
+              onClick={() => handleAutoFill("old_detials")}>
+              Auto Fill from old_detials
+            </Button>
           </div>
           : null}
 
-        <Form.Item className="other_detials" name="otherinfo">
-          <label>Other Information</label>
+        <RichTextEditorInput
+          label="Other Information"
+          name="otherinfo"
+        />
 
-          <RichTextEditor
-            value={form?.getFieldValue?.("otherinfo") || ""}
-            onChange={(value) =>
-              form?.setFieldValue?.("otherinfo", value)
-            }
-          />
-          <Button
-            onClick={() => handleAutoFill("otherinfo")}
-          >Auto Fill from otherinfo</Button>
-        </Form.Item>
+        <Button
+          onClick={() => handleAutoFill("otherinfo")}>
+          Auto Fill from otherinfo
+        </Button>
 
       </div>
     </div>
   );
-});
+};
 
 OtherDetails.displayName = "OtherDetails";
 export default OtherDetails;

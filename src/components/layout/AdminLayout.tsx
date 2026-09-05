@@ -1,14 +1,11 @@
-import { useAdminLogoutMutation, useGetMeQuery } from "@/redux/features/login";
-import {
-  DashboardOutlined,
-  ProfileFilled,
-  SettingOutlined,
-  UploadOutlined,
-  UserOutlined
-} from "@ant-design/icons";
-import { Breadcrumb, BreadcrumbProps, Button, Layout, Menu } from "antd";
+import { useAuth } from "@/hook/useAuth";
+import { canAccessRoute } from "@/lib/routePermission";
+import { Breadcrumb, BreadcrumbProps, Button, Layout } from "antd";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import PrivateSidebar from "../../config/PrivateSidebar";
 
 const { Header, Sider, Content } = Layout;
 
@@ -22,110 +19,94 @@ interface AdminLayoutProps {
 export default function AdminLayout(props: AdminLayoutProps) {
   const { children, title, headerRightSec, breadcrumbItems } = props || {};
   const router = useRouter();
-  const { data, isLoading, error } = useGetMeQuery({});
 
+  const { userName, profilePick, userRole, status } = useAuth();
+  const [checkingPermission, setCheckingPermission] = useState(true);
 
-  useEffect(() => {
-    if (!isLoading && error) {
-      router.push("/");
-    }
-  }, [error, isLoading, router]);
+  // console.log({ userName, profilePick, userRole, status })
 
-  const [adminLogout] = useAdminLogoutMutation();
+  const allowedRoles = ["admin", "profile"];
 
-  const menuItems = [
-    {
-      key: "/dashboard",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
-    },
-    {
-      key: "profiles",
-      icon: <ProfileFilled />,
-      label: "Profiles",
-      children: [
-        {
-          key: "/profiles",
-          label: "All Profiles",
-        },
-        {
-          key: "/profiles/create_profile",
-          label: "Create Profiles",
-        },
-      ],
-    },
-    {
-      key: "gotra",
-      icon: <SettingOutlined />,
-      label: "Gotra",
-      children: [
-        {
-          key: "/gotra",
-          label: "All Gotra",
-        },
-        {
-          key: "/gotra/create_gotra",
-          label: "Create Gotra",
-        },
-      ],
-    },
-    {
-      key: "master-occupation",
-      icon: <UserOutlined />,
-      label: "Occupation",
-      children: [
-        {
-          key: "/master-occupation",
-          label: "All Occupation",
-        },
-        {
-          key: "/master-occupation/create_occupation",
-          label: "Create Occupation",
-        },
-
-      ],
-    },
-    {
-      key: "uploader",
-      icon: <UploadOutlined />,
-      label: "Uploader",
-      children: [
-        {
-          key: "/uploader",
-          label: "Create",
-        },
-      ],
-    },
-    {
-      key: "audit-logs",
-      icon: <SettingOutlined />,
-      label: "Audit Histroy",
-      children: [
-        {
-          key: "/audit-logs",
-          label: "All History",
-        },
-
-      ],
-    },
-  ];
-
-  // Logout funtion
   const handleLogout = async () => {
     try {
-      const res = await adminLogout({}).unwrap();
+      await signOut({
+        redirect: false,
+      });
 
-      if (res.success) {
-        router.push("/");
-      }
+      sessionStorage.removeItem("admin_session");
+
+      await router.replace("/");
     } catch (error) {
-      console.log(error);
+      console.error("Logout error:", error);
     }
   };
 
+  useEffect(() => {
+    const handlePageHide = () => {
+      // Only lightweight fire-and-forget request if required
+      navigator.sendBeacon("/api/auth/logout");
+    };
+
+    window.addEventListener("pagehide", handlePageHide);
+
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, []);
+
+  useEffect(() => {
+    const session = sessionStorage.getItem("admin_session");
+
+    if (!session) {
+      signOut({
+        redirect: false,
+      }).then(() => {
+        router.replace("/");
+      });
+    }
+  }, [router]);
 
 
-  if (isLoading) {
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
+      setCheckingPermission(false);
+      return;
+    }
+
+    if (!userRole) return;
+
+    const allowed = canAccessRoute(
+      router.pathname,
+      userRole
+    );
+
+    if (!allowed) {
+      router.replace("/403");
+      return;
+    }
+
+    setCheckingPermission(false);
+  }, [status, userRole, router]);
+
+
+  if (checkingPermission) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        Checking permissions...
+      </div>
+    );
+  }
+
+  if (status === "loading") {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         Loading...
@@ -133,9 +114,45 @@ export default function AdminLayout(props: AdminLayoutProps) {
     );
   }
 
-  if (error || !data) {
+
+  if (status === "unauthenticated") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          gap: 8,
+        }}
+      >
+        <span>
+          Something went wrong. Please try logging in again.
+        </span>
+
+        <Link href="/">
+          Login
+        </Link>
+      </div>
+    );
+  }
+
+  if (
+    status === "authenticated" &&
+    userRole &&
+    !allowedRoles.includes(userRole)
+  ) {
+    return (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      Your role is not authorized to access this page.
+    </div>);
+  }
+
+  if (userRole && !allowedRoles.includes(userRole)) {
+    router.replace("/403");
     return null;
   }
+
+
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -144,23 +161,14 @@ export default function AdminLayout(props: AdminLayoutProps) {
           Admin Panel
         </div>
 
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[router.pathname]}
-          items={menuItems}
-          onClick={(e) => {
-            if (e.key.startsWith("/")) {
-              router.push(e.key);
-            }
-          }}
-        />
+        <PrivateSidebar />
+
       </Sider>
 
       <Layout>
         {/* Header */}
         <Header style={{ background: "#fff", paddingLeft: 16 }}>
-          <h3>Welcome Admin</h3>
+          <h3>Welcome Mr. {userName}</h3>
           <Button
             type="primary"
             style={{ position: "absolute", top: 16, right: 16 }}

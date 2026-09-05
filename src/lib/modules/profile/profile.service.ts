@@ -107,19 +107,16 @@ async function getBaseProfiles(
     .offset(offset);
 }
 
-async function attachProfileRelations(
+// THIS FUNCTION WANTS FULL DATA OF ROW.
+async function attachRelationsToProfiles(
   data: any[]
 ) {
-  const userIds =
-    data.map((u) => u.id);
+  const userIds = data.map((u) => u.id);
 
   if (!userIds.length)
     return [];
 
-  const [
-    allAddresses,
-    allOtherGotras,
-  ] = await Promise.all([
+  const [allAddresses, allOtherGotras] = await Promise.all([
     db
       .select()
       .from(addresses)
@@ -199,40 +196,92 @@ async function attachProfileRelations(
   );
 }
 
-export async function getProfiles(
-  params: GetProfilesProps
-) {
+export async function getProfiles(params: GetProfilesProps) {
   const {
     page = 1,
     limit = 10,
+    role,
+    mobile,
   } = params;
 
-  // console.log("profile default ", params)
+  const conditions = [
+    eq(profiles.isSuspended, false),
+  ];
+  // Profile user can only see profiles
+  // associated with their mobile number
+  if (role === "profile") {
+    if (!mobile) {
+      throw new Error(
+        "Mobile number is required for profile user"
+      );
+    }
 
-  const conditions = [eq(profiles.isSuspended, false),];
-  // filters add here...
+    conditions.push(
+      eq(profiles.mobile, mobile)
+    );
+  }
 
-  const data = await getBaseProfiles(conditions, page, limit);
+  // Add other filters here...
 
-  const finalData = await attachProfileRelations(data);
-  const [totalResult] = await db.select({ count: sql<number>`count(*)`, })
+  const data = await getBaseProfiles(
+    conditions,
+    page,
+    limit
+  );
+
+  const finalData = await attachRelationsToProfiles(data);
+
+  // Use the SAME conditions for count
+  const [totalResult] = await db
+    .select({
+      count: sql<number>`count(*)`,
+    })
     .from(profiles)
     .where(
       and(...conditions)
     );
 
-  const total =
-    Number(totalResult.count);
+  const total = Number(totalResult.count);
 
   return {
     data: finalData,
-    pagination: { total, page, limit, totalPages: Math.ceil(total / limit), },
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
   };
 }
 
-export async function getProfileMatches(
-  params: GetMatchedProfilesProps
-) {
+// export async function getProfiles1(params: GetProfilesProps) {
+
+//   const { page = 1, limit = 10, role, mobile } = params;
+
+//   const conditions = [eq(profiles.isSuspended, false),];
+//   // filters add here...
+
+
+
+//   const data = await getBaseProfiles(conditions, page, limit);
+
+//   const finalData = await attachRelationsToProfiles(data);
+//   const [totalResult] = await db.select({ count: sql<number>`count(*)`, })
+//     .from(profiles)
+//     .where(
+//       and(...conditions)
+//     );
+
+//   const total =
+//     Number(totalResult.count);
+
+//   return {
+//     data: finalData,
+//     pagination: { total, page, limit, totalPages: Math.ceil(total / limit), },
+//   };
+// }
+
+export async function getProfileMatches(params: GetMatchedProfilesProps) {
   const {
     page = 1,
     limit = 10,
@@ -241,6 +290,7 @@ export async function getProfileMatches(
     preferredAge,
     req_occupation,
     exclude_gotra,
+    role
   } = params;
 
   const conditions = [eq(profiles.isSuspended, false),];
@@ -248,28 +298,15 @@ export async function getProfileMatches(
   /**
    * OCCUPATION
    */
-  if (
-    req_occupation &&
-    req_occupation.length > 0
-  ) {
-    conditions.push(
-      inArray(
-        profiles.occupation,
-        req_occupation
-      )
-    );
+  if (req_occupation && req_occupation.length > 0) {
+    conditions.push(inArray(profiles.occupation, req_occupation));
   }
 
   /**
    * GENDER
    */
   if (looking_for) {
-    conditions.push(
-      ne(
-        profiles.gender,
-        looking_for
-      )
-    );
+    conditions.push(ne(profiles.gender, looking_for));
   }
 
   /**
@@ -333,7 +370,7 @@ export async function getProfileMatches(
 
   const data = await getBaseProfiles(conditions, page, limit);
 
-  const finalData = await attachProfileRelations(data);
+  const finalData = await attachRelationsToProfiles(data);
 
   const [totalResult] =
     await db.select({
@@ -357,8 +394,6 @@ export async function getProfileMatches(
 export async function createProfile(
   payload: CreateProfileInput
 ) {
-
-  console.log(payload)
 
   return await db.transaction(
     async (tx) => {
@@ -450,7 +485,7 @@ export async function getProfileById(
   );
 
   const [profile] =
-    await attachProfileRelations(data);
+    await attachRelationsToProfiles(data);
 
   return profile || null;
 }
@@ -566,10 +601,12 @@ export async function activeProfile(
 export async function getProfileByMobile(
   mobile: string
 ) {
+
   const data = await db
-    .select({
-      id: profiles.id,
-    })
+    // .select({
+    //   id: profiles.id,
+    // })
+    .select()
     .from(profiles)
     .where(
       and(
@@ -578,7 +615,7 @@ export async function getProfileByMobile(
       )
     );
 
-  return await attachProfileRelations(data);
+  return await attachRelationsToProfiles(data);
 }
 
 export async function createBulkProfiles(

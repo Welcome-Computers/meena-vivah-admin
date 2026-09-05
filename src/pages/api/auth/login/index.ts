@@ -1,5 +1,4 @@
 import { getAdmin } from "@/lib/modules/admin/admin.service";
-import { serialize } from "cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -12,20 +11,6 @@ export default async function handler(
         const payload = req.body;
 
         const result = await getAdmin(payload);
-
-        const accessCookie = serialize("accessToken", result.accessToken, {
-          httpOnly: true,
-          path: "/",
-          maxAge: 15 * 60,
-        });
-
-        const refreshCookie = serialize("refreshToken", result.refreshToken, {
-          httpOnly: true,
-          path: "/",
-          maxAge: 2 * 24 * 60 * 60,
-        });
-
-        res.setHeader("Set-Cookie", [accessCookie, refreshCookie]);
 
         return res.status(201).json({
           success: true,

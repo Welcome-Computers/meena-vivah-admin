@@ -41,5 +41,88 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
 
 
+---------------
+Common Rules : 
+* backend use only type
+* frontend use only interface
 
+All type of backend 
+  every modules has just like :
+  src\lib\modules\admin\admin.types.ts
 
+All constant/type of backend 
+  src\lib\modules\common
+
+All interface of frontend
+  every redux has a file for interface, just like : (for redux)
+  src\redux\features\importedProfile\type.ts
+
+All interface of used in component  
+  write at the top of every component but 
+  we can use interface of redux in component
+  keep in mind should we not directly take these. 
+  we just use like below example.
+
+  interface UserCardProps {
+    user: User;
+    showActions?: boolean;
+  }
+
+----------------
+8-july-2026
+i was working on dob not proper fill in editable form if dob is "22/08/1998" like that. 
+
+10-july-2026
+i was working on prev/next functionality 
+
+13-July-2026
+I was working on save/move draft data into active table. from drawar.
+
+15-July-2026
+now need to create login/logout using nextAuth with refresh and access token
+
+16-July-2026 
+  working on login section here currently we are login successfully. 
+  and get useSession() to data. i am working on it. 
+  
+17-July-2026 
+  I was working on the logout implementation. 
+  Currently, I am implementing the signOut function using NextAuth.
+
+20-July-2026
+  import data from "marriageapp to meena_vivah"
+
+22-july-2026
+  working on refining interface name and function name with code optimize. 
+
+24-july-2026
+  Working on the copyright section design,
+  implementing mobile number login with 6-digit OTP verification, and 
+  separating the dashboard for Admin, Executive, and Profiler roles.
+
+26-July-2026
+  working on update profile after login a 
+  "profile" user
+  http://localhost:3006/profiles/update_profile?id=61&action=update
+  currently i am working on above URL and here mobile should not able to update....
+
+28-July-2026
+  Testing whole process and till today i have built in this app. 
+  everything should be work as expected.
+
+  * working on after session out should be use refreshToken and get data. 
+  or move on login page, 
+  * working on refresh-token api to get data and set in nextJs token 
+  so continue start working 
+  * working on refresh-tokan remove first then save newly created. >> done
+
+25-August-2026
+
+  Testing with rendom mobile no. to login and check all data filled in edit mode
+  and after some change i want to save this in DB.
+
+  when AccessToken expire auto not goes in login page
+
+05-September-2026
+  AccessToken timing is working but RefreshToken Timiming is not working. 
+ 

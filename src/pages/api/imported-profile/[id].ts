@@ -1,3 +1,4 @@
+import { deleteImportedProfile, moveImportedProfileService } from "@/lib/modules/imported-profile/imported-profile.service";
 import type {
   NextApiRequest,
   NextApiResponse,
@@ -14,9 +15,10 @@ export default async function handler(
   try {
 
     const id = Number(req.query.id);
-    console.log("id", id)
-    console.log("method", req.method)
-    console.log("body", req.body)
+    const body = req.body;
+    // console.log("id", id)
+    // console.log("method", req.method)
+    // console.log("body", req.body)
 
     if (!id) {
       return res.status(400).json({
@@ -28,10 +30,38 @@ export default async function handler(
 
     // SUSPEND importedProfile
     if (req.method === "PATCH") {
+      // return res.status(200).json({
+      //   success: true,
+      //   message:
+      //     "importedProfile suspended",
+      // });
+
+    }
+
+    if (req.method === "POST") {
+      const action = req.query.action as string;
+      // console.log("++++++ USED THIS")
+
+      if (action === "singleMove") {
+        // Handle single move action
+        await moveImportedProfileService(id, body);
+
+        return res.status(200).json({
+          success: true,
+          message:
+            "importedProfile moved",
+        });
+      }
+    }
+
+    if (req.method === "DELETE") {
+
+      await deleteImportedProfile(id);
+
       return res.status(200).json({
         success: true,
         message:
-          "importedProfile suspended",
+          "importedProfile deleted",
       });
 
     }
@@ -42,22 +72,28 @@ export default async function handler(
         "Method not allowed",
     });
 
-  } catch (error) {
 
-    console.log(error);
+  } catch (error) {
+    console.error(error);
 
     if (error instanceof ZodError) {
       return res.status(400).json({
         success: false,
-        errors:
-          error.flatten(),
+        message: "Validation failed",
+        errors: error.flatten(),
+      });
+    }
+
+    if (error instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
       });
     }
 
     return res.status(500).json({
       success: false,
-      message:
-        "Internal server error",
+      message: "Internal server error",
     });
   }
 }

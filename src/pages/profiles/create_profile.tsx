@@ -1,8 +1,8 @@
-import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility";
+import { useAuth } from "@/hook/useAuth";
+import { firstComponentFocusHandler, formattedDob, removeEmptyObjects } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateUserMutation } from "@/redux/features/profile/srevices";
 import { Form } from "antd";
-import dayjs from "dayjs";
 import { useRef } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
@@ -24,21 +24,19 @@ const CreateProfile = () => {
   const fromData = Form.useWatch(null, form)
   const formContainerRef = useRef<HTMLDivElement>(null);
 
+  const { userName, profilePick, userRole, status } = useAuth();
+
   const [createUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useCreateUserMutation();
 
   const handleFromSubmit = async () => {
 
     const { need_duplicate, dob, ...rest } = form.getFieldsValue();
 
-    const formattedDob = dob
-      ? dayjs(
-        new Date(dob.year, dob.month, dob.day)
-      ).format("YYYY-MM-DD")
-      : null;
-
+    const formattedDobValue = formattedDob(dob);
+    debugger;
     const formData = {
       ...rest,
-      dob: formattedDob,
+      dob: formattedDobValue,
 
       other_gotra: removeEmptyObjects(rest.other_gotra),
       other_mobile: removeEmptyObjects(rest.other_mobile),
@@ -74,7 +72,6 @@ const CreateProfile = () => {
   };
 
 
-
   return (
     <AdminLayout
       breadcrumbItems={breadcrumbObj}
@@ -83,6 +80,8 @@ const CreateProfile = () => {
 
       <ProfileForm
         form={form}
+        orignalData={{}}
+        userRole={userRole}
         formContainerRef={formContainerRef}
         handleFromSubmit={handleFromSubmit}
         isLoadingCreateUser={isLoadingCreateUser}

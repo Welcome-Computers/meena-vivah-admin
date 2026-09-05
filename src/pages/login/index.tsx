@@ -1,30 +1,76 @@
 import PublicLayout from "@/components/layout/PublicLayout";
-import {  UserOutlined } from "@ant-design/icons";
+import { getDeviceId } from "@/lib/utility/helper";
+import { appMessage } from "@/lib/utility/message";
+
+import { UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Typography } from "antd";
-import OTP from "antd/es/input/OTP";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
 const { Title } = Typography;
 
-const PasswordLoginForm = memo(() => {
-  const [otpField,setOTPField]=useState(false)
+interface GetOtpFormValues {
+  mobile: string;
+}
+
+const GetOtpForm = memo(() => {
   const router = useRouter();
 
-  const onFinish = (values: {
-    username: string;
-    password: string;
-    remember?: boolean;
-  }) => {
-    console.log("Login Values:", values);
-    router.push("/dashboard");
-    // Call Login API here
+  const [clicked, setClicked] = useState(false);
+  const [form] = Form.useForm<GetOtpFormValues>();
+
+  const onFinish = async (values: GetOtpFormValues) => {
+    setClicked(true);
+
+    try {
+
+      const deviceName = getDeviceId();
+
+      const result = await signIn("sign_take_otp", {
+        mobile: values.mobile,
+        deviceName,
+        redirect: false,
+      });
+
+      // console.log("Get OTP response:", result);
+
+      if (result?.error) {
+        appMessage.error(result.error);
+        return;
+      }
+
+      if (result?.ok) {
+        // OTP successfully sent
+        appMessage.success("OTP sent successfully");
+
+        // Go to OTP verification page
+        router.push(
+          `/login/profile-login?mobile=${encodeURIComponent(values.mobile)}`
+        );
+      }
+    } catch (error: any) {
+      console.error("Get OTP error:", error);
+
+      appMessage.error(
+        error?.message || "Something went wrong"
+      );
+    } finally {
+      setClicked(false);
+    }
   };
+
+  useEffect(() => {
+    return () => {
+      setClicked(false);
+    };
+  }, []);
 
   return (
     <PublicLayout>
       <div className="login_page_container">
         <div className="login_form_container">
+
           <Title
             level={2}
             style={{
@@ -32,15 +78,15 @@ const PasswordLoginForm = memo(() => {
               marginBottom: 32,
             }}
           >
-            Login
+            Get OTP
           </Title>
 
           <Form
             layout="vertical"
+            form={form}
             onFinish={onFinish}
-            initialValues={{
-              remember: true,
-            }}
+            // initialValues={{ mobile: "9828784536" }}
+            initialValues={{ mobile: "9971043505" }}
           >
             <Form.Item
               label="Mobile"
@@ -50,42 +96,39 @@ const PasswordLoginForm = memo(() => {
                   required: true,
                   message: "Please enter your mobile",
                 },
+                {
+                  pattern: /^[6-9]\d{9}$/,
+                  message: "Please enter a valid mobile number",
+                },
               ]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Enter mobile"
+                placeholder="Enter mobile number"
                 size="large"
+                maxLength={10}
               />
             </Form.Item>
-
-          {otpField &&  
-           <OTP 
-            style={{marginBottom:"1rem"}}
-            // name="otp" 
-            />
-            }
 
             <Form.Item>
               <Button
                 type="primary"
-                // htmlType="submit"
-                onClick={() => {
-                  setOTPField(true)
-                }}
+                loading={clicked}
+                htmlType="submit"
                 block
                 size="large"
               >
-                {otpField ? "Log In":"Send OTP"}
+                Get OTP
               </Button>
             </Form.Item>
           </Form>
+
         </div>
       </div>
     </PublicLayout>
   );
 });
 
-PasswordLoginForm.displayName = "PasswordLoginForm";
+GetOtpForm.displayName = "GetOtpForm";
 
-export default PasswordLoginForm;
+export default GetOtpForm;

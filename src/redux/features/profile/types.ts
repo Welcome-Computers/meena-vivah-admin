@@ -1,4 +1,4 @@
-export interface IAddressDetails {
+interface IAddressDetails {
   id: number;
   user_id: number;
   address: string | null;
@@ -8,17 +8,7 @@ export interface IAddressDetails {
   pincode: number | null;
   type: string | null;
 }
-
-export interface ISiblingDetails {
-  id: number;
-  user_id: number;
-  relation: string | null;
-  name: string | null;
-  education: string | null;
-  occupation: string | null;
-}
-
-export interface IOtherGotra {
+interface IOtherGotra {
   id: number;
   user_id: number;
   other_gotra_relation:
@@ -58,56 +48,4 @@ export interface IProfile {
    */
   address_details?: IAddressDetails[];
   other_gotra?: IOtherGotra[];
-}
-
-export interface IPagination {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-export interface IProfileApiResponse {
-  success: boolean;
-  data: IProfile[];
-  pagination: IPagination;
-}
-
-
-export const paginationInit = {
-  total: 0,
-  page: 1,
-  limit: 10,
-  totalPages: 1,
-};
-
-export type GetProfilesParams = {
-  page?: number;
-  limit?: number;
-};
-
-export type IGotra = {
-  id?: number;
-  code?: string;
-  name?: string;
-};
-
-
-export type IOccupation = {
-  id?: number;
-  name?: string;
-  code?: string;
-};
-
-
-
-export interface ParsedProfile {
-  id: number;
-  name: string;
-  dob: string;
-  mobile: string;
-
-  fathersname: string;
-
-  otherinfo: string;
 }

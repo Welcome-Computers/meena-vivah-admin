@@ -2,7 +2,7 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import ProfileContainer from "@/components/profile/ProfileContainer";
-import { useGetUsersQuery } from "@/redux/features/profile/srevices";
+import { useGetPrivateProfilesQuery } from "@/redux/features/profile/srevices";
 import { Button } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -15,7 +15,7 @@ const Profiles = () => {
 
   const router = useRouter();
 
-  const { data, isFetching, error, } = useGetUsersQuery({ page, limit: 10 });
+  const { data, isFetching, error, } = useGetPrivateProfilesQuery({ page, limit: 10 });
 
   const profilsList = data?.data || [];
   const pagination = data?.pagination || {};

@@ -1,10 +1,9 @@
-import { cmToFeetInch, getAge } from "@/lib/utility";
-import { IPagination, IProfile } from "@/redux/types";
-
-import { Avatar, Button, Form, Space, Table, Tag } from "antd";
-
+import { cmToFeetInch, getAge } from "@/lib/utility/helper";
 import { setProfileData } from "@/redux/features/profile";
+import { IProfile } from "@/redux/features/profile/types";
+import { IPagination } from "@/redux/features/shared/types";
 import { useAppDispatch } from "@/redux/hooks";
+import { Avatar, Button, Form, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -22,7 +21,7 @@ interface iProps {
 
 const ProfileTable = (props: iProps) => {
 
-  const { callingFrom, showAction, loading, data, pagination, onPageChange, is_pick_current_data = false } = props;
+  const { callingFrom, showAction, loading, data = [], pagination, onPageChange, is_pick_current_data = false } = props;
 
   const form = Form.useFormInstance()
 

@@ -1,7 +1,7 @@
-import Modal from "antd/es/modal/Modal";
-import { useUpdateGotraMutation } from "@/redux/features/masterGotra";
-import { appMessage } from "@/lib/utility/message";
 import GenericForm from "@/components/common/GenericForm";
+import { appMessage } from "@/lib/utility/message";
+import { useUpdateGotraMutation } from "@/redux/features/masterGotra";
+import Modal from "antd/es/modal/Modal";
 
 export default function UpdateGotra(props: any) {
   const { isModalOpen, setIsModalOpen, form, selectedGotraId, selectedGotra } =
@@ -44,12 +44,12 @@ export default function UpdateGotra(props: any) {
         footer={null}
         title="Update Gotra"
       >
-         <GenericForm
-               handleOnSubmit={handleUpdate} 
-               form={form} 
-               name="master-gotra"
-               label="Create Gotra"
-               />
+        <GenericForm
+          handleOnSubmit={handleUpdate}
+          form={form}
+          name="master-gotra"
+          label="Create Gotra"
+        />
       </Modal>
     </>
   );

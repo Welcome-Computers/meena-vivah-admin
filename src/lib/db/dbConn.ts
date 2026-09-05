@@ -4,7 +4,7 @@ const db = mysql2.createPool({
   host: "localhost",
   user: "root",
   password: "",
-  database: "marriageapp",
+  database: "meena_vivah",
 });
 
 async function CheckDb() {

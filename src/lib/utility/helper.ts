@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const getAge = (
   dob?: string | null
 ) => {
@@ -167,3 +169,37 @@ export const cmToFeetInch = (
 export const isEnglishName = (record?: string | undefined) => {
   return /[a-zA-Z]/.test(record || "");
 };
+
+
+export const formatedEditableRecord = (record: any) => {
+  const { dob, ...rest } = record || {}
+  // const { year = null, month = 1, day = 1 } = dob || {}
+
+  const date = dayjs(dob);
+
+  const year = date.year();
+  const month = date.month() + 1; // dayjs में month 0-based होता है
+  const day = date.date();
+
+  const editableRecord = { ...rest, dob: { year, month, day } }
+
+  return editableRecord;
+}
+
+export const formattedDob = (dob: any) => {
+  // get 
+  return dob
+
+}
+
+export const getDeviceId = () => {
+  let deviceName = localStorage.getItem("device_name");
+
+  if (!deviceName) {
+    deviceName = crypto.randomUUID();
+    localStorage.setItem("device_name", deviceName);
+  }
+
+  return deviceName;
+};
+

@@ -1,21 +1,34 @@
-import { mysqlTable ,
+import {
   bigint,
-  varchar,
   boolean,
+  mysqlEnum,
+  mysqlTable,
   timestamp,
+  varchar,
 } from "drizzle-orm/mysql-core";
 
 
 export const admins = mysqlTable("admins", {
-  id: bigint("id",{mode:"number"}).primaryKey().autoincrement(),
- name: varchar("name", { length: 100 }),
-  mobile: varchar("mobile",{length:10}).notNull(),
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+
+  name: varchar("name", { length: 100 }),
+
+  mobile: varchar("mobile", { length: 10 }).notNull(),
 
   password: varchar("password", {
     length: 255,
   }).notNull(),
- role: varchar("role", { length: 50 }).default("admin"),
-isActive: boolean("is_active")
+
+  // role: varchar("role", { length: 50 }).default("admin"),
+  role: mysqlEnum("role", [
+    "admin",
+    "profile",
+    "executive",
+  ])
+    .default("admin")
+    .notNull(),
+
+  isActive: boolean("is_active")
     .default(true),
 
   createdAt: timestamp("created_at")
@@ -24,7 +37,5 @@ isActive: boolean("is_active")
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .onUpdateNow(),
-  
 
- 
 });

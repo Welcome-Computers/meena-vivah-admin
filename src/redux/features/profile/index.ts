@@ -11,14 +11,11 @@ const profileApi = createSlice({
     setBrandsLoading: (state, action: PayloadAction<any>) => {
       state.loading = action.payload;
     },
-    setBrandData: (state, action: PayloadAction<any>) => {
-      state.loading = action.payload;
-    },
     setProfileData: (state, action: PayloadAction<any>) => {
       state.profile_data = action.payload;
     },
   },
 });
 
-export const { setBrandsLoading, setBrandData, setProfileData } = profileApi.actions;
+export const { setBrandsLoading, setProfileData } = profileApi.actions;
 export default profileApi.reducer;

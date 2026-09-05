@@ -3,13 +3,13 @@ import type {
   NextApiResponse,
 } from "next";
 
-import { ZodError } from "zod";
 
 
 import {
   getProfileById,
   suspendProfile
 } from "@/lib/modules/profile/profile.service";
+import { handleApiError } from "@/lib/utility/apiErrorHandler";
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,9 +19,9 @@ export default async function handler(
   try {
 
     const id = Number(req.query.id);
-    console.log("id", id)
-    console.log("method", req.method)
-    console.log("body", req.body)
+    // console.log("id", id)
+    // console.log("method", req.method)
+    // console.log("body", req.body)
 
     if (!id) {
       return res.status(400).json({
@@ -79,21 +79,6 @@ export default async function handler(
     });
 
   } catch (error) {
-
-    console.log(error);
-
-    if (error instanceof ZodError) {
-      return res.status(400).json({
-        success: false,
-        errors:
-          error.flatten(),
-      });
-    }
-
-    return res.status(500).json({
-      success: false,
-      message:
-        "Internal server error",
-    });
+    return handleApiError(res, error);
   }
 }

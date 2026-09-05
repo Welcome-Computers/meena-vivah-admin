@@ -4,6 +4,7 @@ import type {
 } from "next";
 
 import { getProfileByMobile } from "@/lib/modules/profile/profile.service";
+import { handleApiError } from "@/lib/utility/apiErrorHandler";
 
 export default async function handler(
   req: NextApiRequest,
@@ -41,11 +42,6 @@ export default async function handler(
 
 
   } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    return handleApiError(res, error);
   }
 }

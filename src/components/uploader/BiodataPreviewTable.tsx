@@ -3,106 +3,81 @@
 import {
   CopyOutlined,
   DeleteOutlined,
+  EditFilled,
 } from "@ant-design/icons";
 
 import {
   Button,
-  Form,
-  Input,
+  Pagination,
   Space,
   Table
 } from "antd";
 
-import { ParsedProfile } from "@/redux/types";
-import { RuleObject } from "antd/es/form";
-import {
-  Dispatch,
-  SetStateAction,
-  useState
-} from "react";
-import GotraDetials from "../formComponents/GotraDetails";
-import InputField from "../InputElements/InputField";
+import { useGetGotrasQuery } from "@/redux/features/masterGotra";
+import { IPagination } from "@/redux/features/shared/types";
+import dayjs from "dayjs";
 
 interface Props {
   profiles: any[];
-  setProfiles: Dispatch<SetStateAction<ParsedProfile[]>>;
-  handleFromSubmit: (type: "draft" | "permanent") => Promise<void>
+  handleFromSubmit: (type: "draft" | "permanent") => Promise<void>;
+  setPagination: any;
+  pagination: IPagination;
+  handleEdit: (record: any, operation: boolean) => void;
+  deleteProfile: (record: any, callingFrom: "table" | "form") => void;
 }
 
 const BiodataPreviewTable = ({
   profiles,
-  setProfiles,
-  handleFromSubmit
+  handleFromSubmit,
+  setPagination,
+  pagination,
+  handleEdit,
+  deleteProfile
 }: Props) => {
 
-  // const [data, setProfiles] = useState<any[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [form] = Form.useForm();
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 50,
-    total: profiles.length, // or API total
-  });
-
-  // useEffect(() => {
-  //   setProfiles(profiles);
-  // }, [profiles]);
-
-  const updateField = (
-    id: number,
-    field: string,
-    value: string
-  ) => {
-
-    setProfiles(prev =>
-      prev.map(item =>
-        item.id === id
-          ? {
-            ...item,
-            [field]: value,
-          }
-          : item
-      )
-    );
-  };
-
-  const editableRender = (
-    field: string
-  ) => (
-    value: string,
-    record: any
-  ) => {
-
-      const editable =
-        selectedKeys.includes(
-          record.id
-        );
+  // const [expandedId, setExpandedId] = useState<number | null>(null);
 
 
-      if (!editable) {
-        return (
-          <div>
-            {value}
-          </div>
-        );
-      }
+  const { data: gotraData, isFetching, refetch } = useGetGotrasQuery({});
 
+  // console.log(profiles)
 
+  const getGotraName = (recordCode: string) => {
+    if (recordCode) {
+      return gotraData.find((item: any) => item.code === recordCode).name
+    }
+  }
+
+  const editableRender = (field: string) => (value: string, record: any) => {
+    const error = record?.errors?.find((e: any) => e.field === field)?.message;
+
+    if (field === "dob" && value) {
       return (
-        <Input
-          value={value || ""}
-          onChange={(e) =>
-            updateField(
-              record.id,
-              field,
-              e.target.value
-            )
-          }
-        />
+        <div>
+          {dayjs(value).format("YYYY-MMM-DD")}
+          {error && (
+            <div style={{ color: "red" }}>
+              {error}
+            </div>
+          )}
+        </div>
       );
 
-    };
+    } else {
+
+      return (
+        <div>
+          {value}
+          {error && (
+            <div style={{ color: "red" }}>
+              {error}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+  };
 
   const copyHtml = async (
     html: string
@@ -136,13 +111,11 @@ const BiodataPreviewTable = ({
     ]);
   };
 
-  const htmlRender = (
-    value: string
-  ) => (
+  const htmlRender = (value: string) => (
     <Space orientation="vertical" size={8}>
       <div
         style={{
-          maxHeight: 200,
+          maxHeight: 300,
           overflow: "auto"
         }}
         dangerouslySetInnerHTML={{
@@ -161,55 +134,51 @@ const BiodataPreviewTable = ({
     </Space>
   );
 
+
+
   const columns: any[] = [
     {
-      title: "ID",
+      title: "#",
+      key: "index",
       width: 60,
       fixed: "left",
-      dataIndex: "id",
-    },
-    {
-      title: "+",
-      width: 60,
-      fixed: "left",
-
-      render: () => null
+      align: "center",
+      render: (_: any, __: any, index: number) => index + 1,
     },
     {
       title: "Other Details",
       dataIndex: "otherinfo",
       fixed: "left",
-      width: 500,
+      width: 300,
       render: htmlRender,
     },
 
     {
       title: "Action",
       fixed: "right",
-      width: 180,
+      width: 150,
 
       render: (_: any, record: any) => (
         <Space>
           <Button
             danger
             icon={<DeleteOutlined />}
-            onClick={() => {
-              // deleteRow(record)
-              setProfiles(prev =>
-                prev.filter(
-                  x => String(x.id) !== String(record.id)
-                )
-              );
-
-              setSelectedKeys(prev =>
-                prev.filter(
-                  x => String(x) !== String(record.id)
-                )
-              );
-            }}
+            onClick={() => deleteProfile(record, "table")}
+          />
+          <Button
+            type="primary"
+            icon={<EditFilled />}
+            onClick={() => handleEdit(record, true)}
           />
         </Space>
       )
+    },
+
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      width: 180,
+      render: editableRender("gender"),
     },
 
     {
@@ -247,11 +216,9 @@ const BiodataPreviewTable = ({
       width: 250,
       render: (_: any, record: any) => (
         <div>
-          {editableRender("self_gotra")(record.self_gotra, record)}
-
-          {editableRender("m_gotra")(record.m_gotra, record)}
-
-          {editableRender("gm_gotra")(record.gm_gotra, record)}
+          {editableRender("self_gotra")(getGotraName(record.self_gotra), record)}
+          {editableRender("m_gotra")(getGotraName(record.m_gotra), record)}
+          {editableRender("gm_gotra")(getGotraName(record.gm_gotra), record)}
         </div>
       ),
     },
@@ -259,136 +226,15 @@ const BiodataPreviewTable = ({
 
   ];
 
-  const saveSingleRow = async (record: any) => {
-    console.log(
-      "saving single",
-      record
-    );
-    // call RTK mutation here
-    setProfiles(prev =>
-      prev.map(item =>
-        item.id === record.id
-          ? record
-          : item
-      )
-    );
-
-  };
-
-
-  const handleFormSubmit = (
-    values: any
+  const handlePaginationChange = (
+    page: number,
+    pageSize: number
   ) => {
-
-    if (!expandedId) return;
-
-    setProfiles(prev =>
-      prev.map(item =>
-        item.id === expandedId
-          ? {
-            ...item,
-            ...values,
-          }
-          : item
-      )
-    );
-
-    setExpandedId(null);
-  };
-
-  const expandedRowRender = (record: any) => {
-    return (
-      <Space
-        orientation="vertical"
-        style={{
-          width: "100%"
-        }}
-      >
-        <Form
-          layout="horizontal"
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
-          labelAlign="left"
-          form={form}
-          onFinish={handleFormSubmit}
-        >
-          <InputField
-            name="name"
-            label="Name"
-            rules={[
-              { required: true, message: "Enter first name " },
-              { max: 30, message: "Maximum 30 characters" },
-            ]}
-          />
-
-          <InputField
-            name="mobile"
-            label="Mobile"
-            placeholder="e.g. 9988771234"
-            rules={[
-              {
-                validator: (_: RuleObject, val: any) => {
-
-                  if (!val) {
-                    return Promise.resolve();
-                  }
-                  if (val.length < 10) {
-                    return Promise.reject(
-                      new Error("Enter 10 Digit Mobile Number"),
-                    );
-                  }
-                  if (!/^(\+91)?[6-9]\d{9}$/.test(val)) {
-                    return Promise.reject(new Error("Check Mobile Number"));
-                  }
-
-                  return Promise.resolve();
-                },
-              },
-              { required: "true", message: "Mobile number must be required" }
-            ]}
-          />
-
-          <InputField
-            name="fathersname"
-            label="Father Name"
-            rules={[
-              { max: 30, message: "Maximum 30 characters" },
-            ]}
-          />
-
-          <GotraDetials form={form} />
-
-          <Space>
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={() =>
-                saveSingleRow(record)
-              }
-            >
-              Save
-            </Button>
-          </Space>
-        </Form>
-
-      </Space>
-    );
-  };
-
-  const handleExpand = (
-    expanded: boolean,
-    record: any
-  ) => {
-    if (expanded) {
-      setExpandedId(record.id);
-
-      form.setFieldsValue({
-        ...record,
-      });
-    } else {
-      setExpandedId(null);
-    }
-
+    setPagination((prev: IPagination) => ({
+      ...prev,
+      page,
+      limit: pageSize,
+    }));
   };
 
   return (
@@ -397,67 +243,48 @@ const BiodataPreviewTable = ({
         rowKey="id"
         columns={columns}
         dataSource={profiles}
-        expandable={{
-          expandedRowRender,
-          expandedRowKeys: expandedId ? [expandedId] : [],
-          onExpand: handleExpand,
-        }}
+
         scroll={{
-          x: 2000,
-          y: 700,
+          x: 1600,
+          y: 800,
         }}
-        pagination={{
-          current: pagination.page,
-          pageSize: pagination.limit,
-          total: pagination.total,
-
-          showSizeChanger: true,
-
-          showTotal: (total) =>
-            `Total ${total} profiles`,
-
-          pageSizeOptions: [
-            "50",
-            "100",
-            "150",
-            "200",
-          ],
-
-          onChange: (page, pageSize) => {
-
-            setPagination(prev => ({
-              ...prev,
-              page,
-              limit: pageSize,
-            }));
-
-          },
-        }}
+        pagination={false}
       />
-
-      <Space
+      <div
         style={{
-          width: "100%",
-          justifyContent: "flex-end",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 16,
         }}
-        size={20}
       >
-        <Button
-          type="primary"
-          htmlType="button"
-          onClick={() => handleFromSubmit("draft")}
-        >
-          Save Draft
-        </Button>
-        <Button
-          danger
-          type="primary"
-          htmlType="button"
-          onClick={() => handleFromSubmit("permanent")}
-        >
-          Save Permanent
-        </Button>
-      </Space>
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleFromSubmit("draft")}
+          >
+            Save Draft
+          </Button>
+
+          <Button
+            danger
+            type="primary"
+            onClick={() => handleFromSubmit("permanent")}
+          >
+            Save Permanent
+          </Button>
+        </Space>
+
+        <Pagination
+          current={pagination.page}
+          pageSize={pagination.limit}
+          total={pagination.total}
+          showSizeChanger
+          pageSizeOptions={["10", "20", "50", "100"]}
+          showTotal={(total) => `Total ${total} profiles`}
+          onChange={handlePaginationChange}
+        />
+      </div>
     </div>
   );
 

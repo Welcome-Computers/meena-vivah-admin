@@ -10,7 +10,10 @@ import OtheGotraDetails from "./OtherGotraDetails";
 
 const GotraDetials = memo((props: any) => {
 
-  const { label, name, showCount = false, rules, isGotraLoading, ...rest } = props;
+  const { label, name,
+    showOtherGotra = true,
+    showTitle = true,
+    showCount = false, rules, isGotraLoading, ...rest } = props;
 
   const form = Form.useFormInstance();
 
@@ -91,17 +94,9 @@ const GotraDetials = memo((props: any) => {
   ];
 
 
-  const { self_gotra,
-    m_gotra,
-    gm_gotra,
-    mat_gm_gotra } = fromData || {}
+  const { self_gotra, m_gotra, gm_gotra, mat_gm_gotra } = fromData || {}
 
-  const otherGotraDependencies = [
-    "self_gotra",
-    "self_gotra",
-    "gm_gotra",
-    "mat_gm_gotra",
-  ]
+  const otherGotraDependencies = ["self_gotra", "self_gotra", "gm_gotra", "mat_gm_gotra"]
 
   const { data, isFetching, refetch } = useGetGotrasQuery({});
   const [createGotra] = useCreateGotraMutation();
@@ -148,12 +143,9 @@ const GotraDetials = memo((props: any) => {
 
   return (
     <div className={style["form-container"]}>
-      <p
+      {showTitle && <p
         style={{ fontSize: "14px", margin: "10px 0 5px 0" }}
-        className={style["form-title"]}
-      >
-        Gotra
-      </p>
+        className={style["form-title"]}>Gotra</p>}
 
       {/*  gotra details fields */}
       <div>
@@ -178,15 +170,14 @@ const GotraDetials = memo((props: any) => {
       </div>
 
       {/* other gotra details and  button  */}
-      <OtheGotraDetails
-        handleCreateGotra={handleCreateGotra}
-        gottraOptions={gottraOptions}
-        dependencies={otherGotraDependencies}
-        isGotraLoading={isGotraLoading}
-        handleInputValue={handleInputValue}
-      />
-
-
+      {showOtherGotra &&
+        <OtheGotraDetails
+          handleCreateGotra={handleCreateGotra}
+          gottraOptions={gottraOptions}
+          dependencies={otherGotraDependencies}
+          isGotraLoading={isGotraLoading}
+          handleInputValue={handleInputValue}
+        />}
     </div>
   );
 });

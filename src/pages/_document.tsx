@@ -1,4 +1,6 @@
-import { Html, Head, Main, NextScript } from "next/document";
+// _document.tsx
+
+import { Head, Html, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (

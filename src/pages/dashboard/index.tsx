@@ -31,6 +31,11 @@ const Dashboard = () => {
     setPage(page);
   };
 
+  // useEffect(() => {
+  //   if (error?.status === 401) {
+  //     router.push("/login");
+  //   }
+  // }, [error]);
 
 
   return (

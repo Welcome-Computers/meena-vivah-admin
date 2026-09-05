@@ -72,7 +72,6 @@ const CreateProfile = () => {
   };
 
 
-
   return (
     <AdminLayout
       breadcrumbItems={breadcrumbObj}

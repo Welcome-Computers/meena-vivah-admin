@@ -25,8 +25,6 @@ export default async function handler(
 
   try {
 
-
-
     // 🔐 Get authenticated user
     const authHeader = req.headers.authorization;
 
@@ -112,8 +110,6 @@ export default async function handler(
 
       return res.status(201).json({ success: true, data: result });
     }
-
-
 
 
     /**

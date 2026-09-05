@@ -5,13 +5,18 @@ import { useGetSingleProfileByIdQuery, useUpdateUserMutation } from "@/redux/fea
 import { Form } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
 const UpdateProfile = () => {
   const [form] = Form.useForm();
   // const fromData = Form.useWatch(null, form)
+  const otherinfo = Form.useWatch("otherinfo", form);
+
+  // console.log("OtherDetails otherinfo:", otherinfo);
+  const [isFormInitializing, setIsFormInitializing] = useState(false);
+
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   const { userName, profilePick, userRole, status } = useAuth();
@@ -35,7 +40,6 @@ const UpdateProfile = () => {
   const [updateUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useUpdateUserMutation();
 
   const handleFromSubmit = useCallback(async () => {
-
     const { dob, ...rest } = form.getFieldsValue();
 
     const formattedDob = dob
@@ -55,7 +59,6 @@ const UpdateProfile = () => {
     };
 
     // console.log("form data", formData);
-
     // return;
 
     try {
@@ -83,26 +86,43 @@ const UpdateProfile = () => {
         "Something went wrong"
       );
     }
-  }, [id]);
+  }, [id, action, form, updateUserAction, router]);
 
 
   useEffect(() => {
 
+    if (isFetching) {
+      setIsFormInitializing(true);
+      return;
+    }
+
     if (data?.data) {
       const { dob, ...rest } = data?.data || {}
 
-      const dobObject = {
-        day: dayjs(dob).date(),
-        month: dayjs(dob).month(), // 0-based (Jan=0, Apr=3)
-        year: dayjs(dob).year(),
-      };
+      const dobDate = dob ? dayjs(dob) : null;
 
-      const updateData = { ...rest, dob: dobObject }
+      const dobObject = dobDate?.isValid()
+        ? {
+          day: dobDate.date(),
+          month: dobDate.month(),
+          year: dobDate.year(),
+        }
+        : undefined;
 
-      form.setFieldsValue(updateData)
+      const updateData = { ...rest, dob: dobObject, otherinfo_zxy: rest?.otherinfo }
+
+      // console.log("API DATA:", data.data);
+      // console.log("OTHERINFO FROM API:", data.data.otherinfo);
+      // console.log("UPDATE DATA:", updateData);
+
+      form.setFieldsValue(updateData);
+      setIsFormInitializing(false)
+
     }
 
-  }, [data, form])
+  }, [data, form, isFetching]);
+
+  const isFormLoading = isFetching || isFormInitializing;
 
   return (
     <AdminLayout>
@@ -116,7 +136,7 @@ const UpdateProfile = () => {
         handleFromSubmit={handleFromSubmit}
         isLoadingCreateUser={isLoadingCreateUser}
         callingFrom={'update'}
-        isFetching={isFetching}
+        isFetching={isFormLoading}
       />
 
     </AdminLayout>

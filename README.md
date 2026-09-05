@@ -110,9 +110,19 @@ now need to create login/logout using nextAuth with refresh and access token
   Testing whole process and till today i have built in this app. 
   everything should be work as expected.
 
-  * working on after session out should be refreshToken and get data. 
+  * working on after session out should be use refreshToken and get data. 
   or move on login page, 
   * working on refresh-token api to get data and set in nextJs token 
   so continue start working 
   * working on refresh-tokan remove first then save newly created. >> done
 
+25-August-2026
+
+  Testing with rendom mobile no. to login and check all data filled in edit mode
+  and after some change i want to save this in DB.
+
+  when AccessToken expire auto not goes in login page
+
+05-September-2026
+  AccessToken timing is working but RefreshToken Timiming is not working. 
+ 

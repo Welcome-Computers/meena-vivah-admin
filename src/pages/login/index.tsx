@@ -85,7 +85,8 @@ const GetOtpForm = memo(() => {
             layout="vertical"
             form={form}
             onFinish={onFinish}
-            initialValues={{ mobile: "9828784536" }}
+            // initialValues={{ mobile: "9828784536" }}
+            initialValues={{ mobile: "9971043505" }}
           >
             <Form.Item
               label="Mobile"

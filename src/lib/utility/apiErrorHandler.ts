@@ -6,17 +6,20 @@ export const handleApiError = (
   res: NextApiResponse,
   error: any
 ) => {
-  console.error("API Error:", error);
 
   /**
    * Unauthorized / Authentication Error
    */
   if (error instanceof UnauthorizedError) {
+    console.log(`Auth: ${error.message}`);
+
     return res.status(error.statusCode).json({
       success: false,
       message: error.message,
     });
   }
+
+  console.error("+++ API Error +++ :", error);
 
   /**
    * Zod Validation Error

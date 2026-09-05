@@ -1,0 +1,18 @@
+.richtext-editor-vertical {
+  width: 100%;
+}
+
+.richtext-editor-label {
+  margin-bottom: 8px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  height: var(--ant-form-label-height);
+  color: var(--ant-form-label-color);
+  font-size: var(--ant-form-label-font-size);
+}
+
+.richtext-editor-label label {
+  font-weight: 500;
+}

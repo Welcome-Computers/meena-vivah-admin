@@ -13,6 +13,17 @@ import { ACCESS_TOKEN_TIME, LoginWithOtpProps, LogoutServiceProps, REFRESH_TOKEN
 import { SaveUserTokenInput, saveUserTokenSchema } from "./admin.validation";
 
 
+const JWT_SECRET_TOKEN = process.env.JWT_SECRET_TOKEN;
+const JWT_SECRET_REFRESH_TOKEN = process.env.JWT_SECRET_REFRESH_TOKEN;
+
+if (!JWT_SECRET_TOKEN) {
+  throw new Error("JWT_SECRET_TOKEN is not configured");
+}
+
+if (!JWT_SECRET_REFRESH_TOKEN) {
+  throw new Error("JWT_SECRET_REFRESH_TOKEN is not configured");
+}
+
 export const getAdmin = async (data: any) => {
   const { mobile, password } = data;
   if (!mobile || !password) {
@@ -247,7 +258,6 @@ export const logoutService = async ({
   };
 };
 
-
 export const deleteUserTokens = async ({
   userId,
   userType,
@@ -295,7 +305,6 @@ export const saveUserToken = async (
     expiresAt: validated.expiresAt,
   });
 };
-
 
 export const refreshAccessToken = async ({
   refreshToken,
@@ -391,7 +400,6 @@ export const refreshAccessToken = async ({
   };
 };
 
-
 export const getAdminById = async (id: number) => {
   const admin = await db.query.admins.findFirst({
     where: eq(admins.id, id),
@@ -416,17 +424,6 @@ export const getExecutiveById = async (id: number) => {
   return executive;
 };
 
-const JWT_SECRET_TOKEN = process.env.JWT_SECRET_TOKEN;
-const JWT_SECRET_REFRESH_TOKEN = process.env.JWT_SECRET_REFRESH_TOKEN;
-
-if (!JWT_SECRET_TOKEN) {
-  throw new Error("JWT_SECRET_TOKEN is not configured");
-}
-
-if (!JWT_SECRET_REFRESH_TOKEN) {
-  throw new Error("JWT_SECRET_REFRESH_TOKEN is not configured");
-}
-
 export const generateAccessToken = ({
   id,
   name,
@@ -449,7 +446,7 @@ export const generateRefreshToken = ({
   return jwt.sign(
     { id, name, mobile, role },
     JWT_SECRET_REFRESH_TOKEN,
-    { expiresIn: `${REFRESH_TOKEN_TIME}d`, }
+    { expiresIn: `${REFRESH_TOKEN_TIME}m`, }
   );
 };
 
@@ -504,8 +501,6 @@ export const verifyAccessToken1 = (token: string) => {
   }
 };
 
-
-
 export const verifyRefreshToken = (refreshToken: string) => {
   if (!refreshToken) {
     throw new UnauthorizedError("Refresh token is required");
@@ -522,9 +517,6 @@ export const verifyRefreshToken = (refreshToken: string) => {
     );
   }
 };
-
-
-// import bcrypt from "bcrypt";
 
 export const getTokenRecordByRefreshToken = async (
   refreshToken: string

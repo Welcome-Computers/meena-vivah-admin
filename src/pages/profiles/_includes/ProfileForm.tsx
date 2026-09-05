@@ -116,99 +116,102 @@ const ProfileForm = (props: iProps) => {
     <div ref={formContainerRef}>
       {isFetching ?
         <ProfileFormSkeleton />
-        :
-        <Form
-          layout="horizontal"
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
-          labelAlign="left"
-          form={form}
-          onKeyDown={handleEnterNavigation}
-          onFinish={handleFromSubmit}
-          initialValues={{
-            is_married: 0,
-            gender: "boy",
-            other_gotra: [{}],
-            address_details: [{ type: "parmanent" }],
-          }}
-        >
-          <Row gutter={40}>
-            <Col md={10} lg={10} xl={10}>
-              <div className="editor-sticky">
-                <OtherDetails callingFrom={callingFrom} />
-              </div>
-            </Col>
-            <Col md={14} lg={14} xl={14}>
-              <div className="form-scroll-section">
-                <PersonalDetails
-                  userRole={userRole}
-                  orignalData={orignalData}
-                  occupatonOptions={occupatonOptions}
-                  handleOnBlurMobile={handleOnBlurMobile}
-                  isOccupationLoading={isOccupationLoading}
-                  handleCreateOccupation={handleCreateOccupation}
-                  searchByMobileData={searchByMobileData}
-                  isLoadingByMobile={isLoadingByMobile}
-                  callingFrom={callingFrom}
-                  form={form} />
-                <GotraDetials form={form} />
-                <FamilyDetails
-                  occupatonOptions={occupatonOptions}
-                  isOccupationLoading={isOccupationLoading}
-                  handleCreateOccupation={handleCreateOccupation}
-                  form={form} />
-                <AddressDetails form={form} />
-                <MobileDetails form={form} />
-              </div>
-            </Col>
-          </Row>
-
-          {/* AT LAST IN RIGHT BOTTOM */}
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 10,
-            marginTop: "20px"
-          }}
+        : <>
+          <Form
+            layout="horizontal"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
+            labelAlign="left"
+            form={form}
+            onKeyDown={handleEnterNavigation}
+            onFinish={handleFromSubmit}
+            initialValues={{
+              is_married: 0,
+              gender: "boy",
+              other_gotra: [{}],
+              address_details: [{ type: "parmanent" }],
+            }}
           >
-            <Button
-              tabIndex={-1}
-              type="primary"
-              onClick={handlePreviewButton}>
-              Preview
-            </Button>
+            <Row gutter={40}>
+              <Col md={10} lg={10} xl={10}>
+                <div className="editor-sticky">
+                  <OtherDetails
+                    form={form}
+                    callingFrom={callingFrom} />
+                </div>
+              </Col>
+              <Col md={14} lg={14} xl={14}>
+                <div className="form-scroll-section">
+                  <PersonalDetails
+                    userRole={userRole}
+                    orignalData={orignalData}
+                    occupatonOptions={occupatonOptions}
+                    handleOnBlurMobile={handleOnBlurMobile}
+                    isOccupationLoading={isOccupationLoading}
+                    handleCreateOccupation={handleCreateOccupation}
+                    searchByMobileData={searchByMobileData}
+                    isLoadingByMobile={isLoadingByMobile}
+                    callingFrom={callingFrom}
+                    form={form} />
+                  <GotraDetials form={form} />
+                  <FamilyDetails
+                    occupatonOptions={occupatonOptions}
+                    isOccupationLoading={isOccupationLoading}
+                    handleCreateOccupation={handleCreateOccupation}
+                    form={form} />
+                  <AddressDetails form={form} />
+                  <MobileDetails form={form} />
+                </div>
+              </Col>
+            </Row>
 
-            <Space orientation="horizontal" size={4}>
-              {callingFrom === "create" ?
-                <Form.Item
-                  style={{ margin: "0 35px 0 0" }}
-                  name="need_duplicate"
-                  label=""
-                  initialValue={true}
-                  valuePropName="checked"
-                >
-                  <div>
-                    <Switch
-                      checkedChildren="NeedDuplicate"
-                      unCheckedChildren="!NeedDuplicate"
-                    />
-                  </div>
-                </Form.Item> : null}
-
+            {/* AT LAST IN RIGHT BOTTOM */}
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 10,
+              marginTop: "20px"
+            }}
+            >
               <Button
-                loading={isLoadingCreateUser}
-                iconPlacement="end"
+                tabIndex={-1}
                 type="primary"
-                htmlType="submit">
-                Confrom
+                onClick={handlePreviewButton}>
+                Preview
               </Button>
 
-            </Space>
+              <Space orientation="horizontal" size={4}>
+                {callingFrom === "create" ?
+                  <Form.Item
+                    style={{ margin: "0 35px 0 0" }}
+                    name="need_duplicate"
+                    label=""
+                    initialValue={true}
+                    valuePropName="checked"
+                  >
+                    <div>
+                      <Switch
+                        checkedChildren="NeedDuplicate"
+                        unCheckedChildren="!NeedDuplicate"
+                      />
+                    </div>
+                  </Form.Item> : null}
 
-          </div>
+                <Button
+                  loading={isLoadingCreateUser}
+                  iconPlacement="end"
+                  type="primary"
+                  htmlType="submit">
+                  Confrom
+                </Button>
 
-        </Form>
+              </Space>
+
+            </div>
+
+          </Form>
+        </>
       }
 
       <ModalPreviewProfile

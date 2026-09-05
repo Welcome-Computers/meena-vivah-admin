@@ -2,7 +2,7 @@ import { Form, Radio } from "antd";
 import { memo } from "react";
 
 const CheckBoxField = memo((props: any) => {
-  const { name, label, form, options, rules, disabled, isLableShow = false } = props;
+  const { name = "checkbox", label, form, options, rules, disabled, isLableShow = false } = props;
 
   return (
     <Form.Item style={{ padding: "0", margin: 0 }}

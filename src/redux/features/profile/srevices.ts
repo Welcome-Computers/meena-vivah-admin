@@ -1,15 +1,12 @@
 import { GetMatchedProfilesProps } from "@/lib/modules/profile/profile.types";
-import { prepareAuthHeaders } from "@/lib/utility/prepareHeaders";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { queryString } from "object-query-string";
+import { baseQueryWithReauth } from "../baseQuery";
 
 export const profileApi = createApi({
   reducerPath: "profileApi",
 
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    prepareHeaders: prepareAuthHeaders,
-  }),
+  baseQuery: baseQueryWithReauth,
 
   tagTypes: ["Profiles"],
 

@@ -66,6 +66,7 @@ const HeightField = memo(
         style={{
           marginBottom: 5,
         }}
+        name={name}
       >
 
         <div

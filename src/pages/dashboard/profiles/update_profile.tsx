@@ -52,7 +52,7 @@ const UpdateProfile = () => {
       id,
       ...rest,
       dob: formattedDob,
-
+      status: "approved",
       other_gotra: removeEmptyObjects(rest.other_gotra),
       other_mobile: removeEmptyObjects(rest.other_mobile),
       address_details: removeEmptyObjects(rest.address_details),

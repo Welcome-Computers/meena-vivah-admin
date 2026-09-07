@@ -71,7 +71,9 @@ a {
 
   color: #fff;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
 }
+
 
 .login_form_container,
 .login_form_container label,
@@ -79,6 +81,14 @@ a {
 .login_form_container h2,
 .login_form_container p {
   color: #fff;
+}
+
+.login_form_container .ant-btn-link {
+  color: #fd9696;
+}
+
+.login_form_container .ant-btn-link:hover {
+  color: #883030;
 }
 
 .login_form_container .ant-input-outlined,

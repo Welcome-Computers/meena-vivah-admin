@@ -29,6 +29,11 @@ export const antdTheme: ThemeConfig = {
     colorWarning: "#F59E0B",
     colorError: "#EF4444",
     colorInfo: "#2563EB",
+
+    // Link Color
+    colorLink: "#2563EB",
+    colorLinkHover: "#1D4ED8",
+    colorLinkActive: "#1E40AF",
   },
 
   components: {
@@ -74,5 +79,6 @@ export const antdTheme: ThemeConfig = {
       itemSelectedColor: "#2563EB",
       inkBarColor: "#2563EB",
     },
+
   },
 };

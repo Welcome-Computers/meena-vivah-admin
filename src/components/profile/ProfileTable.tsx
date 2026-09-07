@@ -1,9 +1,11 @@
+import { STATUS_TYPES } from "@/lib/modules/admin/admin.types";
+import { statusOptions } from "@/lib/utility/constant";
 import { cmToFeetInch, getAge } from "@/lib/utility/helper";
 import { setProfileData } from "@/redux/features/profile";
 import { IProfile } from "@/redux/features/profile/types";
 import { IPagination } from "@/redux/features/shared/types";
 import { useAppDispatch } from "@/redux/hooks";
-import { Avatar, Button, Form, Space, Table, Tag } from "antd";
+import { Avatar, Button, Checkbox, Form, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -14,14 +16,18 @@ interface iProps {
   showAction?: boolean;
   data: IProfile[];
   pagination?: IPagination;
-  onPageChange?: any;
+  handleGetProfiles?: ({ page, pageSize, status }: {
+    page?: number;
+    pageSize?: number | undefined;
+    status?: STATUS_TYPES[] | undefined;
+  }) => void;
   is_pick_current_data?: boolean;
   callingFrom?: string;
 }
 
 const ProfileTable = (props: iProps) => {
 
-  const { callingFrom, showAction, loading, data = [], pagination, onPageChange, is_pick_current_data = false } = props;
+  const { callingFrom, showAction, loading, data = [], pagination, handleGetProfiles, is_pick_current_data = false } = props;
 
   const form = Form.useFormInstance()
 
@@ -90,6 +96,52 @@ const ProfileTable = (props: iProps) => {
     render: (value) => {
       return getAge(value)
     }
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    width: 120,
+
+    filterMultiple: true,
+
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Checkbox.Group
+          options={statusOptions}
+          value={selectedKeys as STATUS_TYPES[]}
+          onChange={(values) => {
+            setSelectedKeys(values);
+          }}
+        />
+
+        <Space style={{ marginTop: 8 }}>
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              confirm();
+            }}
+          >
+            OK
+          </Button>
+
+          <Button
+            size="small"
+            onClick={() => {
+              clearFilters?.();
+              confirm();
+            }}>
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
   },
 
   {
@@ -281,6 +333,15 @@ const ProfileTable = (props: iProps) => {
       loading={loading}
       dataSource={data}
       columns={columns}
+      onChange={(pagination, filters) => {
+        const status = filters.status as STATUS_TYPES[];
+
+        handleGetProfiles?.({
+          page: pagination.current,
+          pageSize: pagination.pageSize,
+          status,
+        });
+      }}
       pagination={
         pagination
           ? {
@@ -290,7 +351,12 @@ const ProfileTable = (props: iProps) => {
             showSizeChanger: true,
             showTotal: (total) => `Total ${total} profiles`,
             pageSizeOptions: ["10", "20", "50", "100"],
-            onChange: onPageChange,
+            onChange: (pageNo, pageSize) => {
+              handleGetProfiles?.({
+                page: pageNo,
+                pageSize,
+              });
+            },
           }
           : false
       }

@@ -42,23 +42,6 @@ export default async function handler(
       });
     }
 
-    // UPDATE PROFILE
-    // if (req.method === "PUT") {
-
-    //   const validatedData = updateProfileSchema.parse({ ...req.body, id });
-
-    //   const result =
-    //     await updateProfile(
-    //       id,
-    //       validatedData
-    //     );
-
-    //   return res.status(200).json({
-    //     success: true,
-    //     data: result,
-    //   });
-    // }
-
     // SUSPEND PROFILE
     if (req.method === "PATCH") {
 

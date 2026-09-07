@@ -446,7 +446,7 @@ export const generateRefreshToken = ({
   return jwt.sign(
     { id, name, mobile, role },
     JWT_SECRET_REFRESH_TOKEN,
-    { expiresIn: `${REFRESH_TOKEN_TIME}m`, }
+    { expiresIn: `${REFRESH_TOKEN_TIME}d`, }
   );
 };
 

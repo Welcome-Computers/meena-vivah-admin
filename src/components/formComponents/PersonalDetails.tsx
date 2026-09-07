@@ -47,15 +47,21 @@ const PersonalDetails = memo((props: iProps) => {
 
   const initializedRef = useRef(false);
 
-  console.log("#####", orignalData)
+  // console.log("#####", orignalData)
 
   useEffect(() => {
     // Don't show modal during initial form population
+
+
     if (!initializedRef.current) {
       if (mobile === originalMobile) {
         initializedRef.current = true;
       }
 
+      return;
+    }
+
+    if (!mobile || !originalMobile) {
       return;
     }
 

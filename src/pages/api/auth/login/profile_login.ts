@@ -10,6 +10,7 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       try {
+        console.log("Profile Login")
         const payload = req.body;
 
         const result = await profileToLogin(payload);

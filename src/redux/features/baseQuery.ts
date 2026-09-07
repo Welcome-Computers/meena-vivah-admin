@@ -1,11 +1,26 @@
-import { prepareAuthHeaders } from "@/lib/utility/prepareHeaders";
-import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  BaseQueryFn,
+  FetchArgs,
+  fetchBaseQuery,
+  FetchBaseQueryError,
+} from "@reduxjs/toolkit/query";
+import { getSession } from "next-auth/react";
 
-const baseQuery = fetchBaseQuery({
+const rawBaseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
-  credentials: "include",
-  prepareHeaders: prepareAuthHeaders
+
+  prepareHeaders: async (headers) => {
+    const session = await getSession();
+
+    if (session?.access_token) {
+      headers.set(
+        "Authorization",
+        `Bearer ${session.access_token}`
+      );
+    }
+
+    return headers;
+  },
 });
 
 export const baseQueryWithReauth: BaseQueryFn<
@@ -13,39 +28,35 @@ export const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  // 1️⃣ Call original API
-  let result = await baseQuery(
+  let result = await rawBaseQuery(
     args,
     api,
     extraOptions
   );
 
-  // 2️⃣ Check for 401
+  // API returned 401
   if (result.error?.status === 401) {
-    console.log("Access token expired. Trying refresh...");
+    console.log("Access token expired. Asking NextAuth to refresh...");
 
-    // 3️⃣ Try refresh token
-    const refreshResult = await baseQuery(
-      {
-        url: "/api/auth/refresh",
-        method: "POST",
-      },
-      api,
-      extraOptions
-    );
+    // This triggers NextAuth's jwt/session callbacks.
+    const session = await getSession();
 
-    // 4️⃣ Refresh successful
-    if (refreshResult.data) {
+    // Refresh succeeded
+    if (
+      session &&
+      !session.error &&
+      session.access_token
+    ) {
       console.log("Token refreshed successfully");
 
-      // 5️⃣ Retry original API
-      result = await baseQuery(
+      // Retry original request.
+      result = await rawBaseQuery(
         args,
         api,
         extraOptions
       );
     } else {
-      // 6️⃣ Refresh failed
+      // Refresh failed
       console.log("Refresh token expired/invalid");
 
       if (typeof window !== "undefined") {
@@ -56,62 +67,3 @@ export const baseQueryWithReauth: BaseQueryFn<
 
   return result;
 };
-
-export const baseQueryWithReauth1 = async (
-  args: any,
-  api: any,
-  extraOption: any,
-) => {
-  let result = await baseQuery(args, api, extraOption);
-
-  if (result.error && result.error.status === 401) {
-    const refreshResult = await baseQuery(
-      {
-        url: "/api/auth/refresh",
-        method: "POST",
-      },
-      api,
-      extraOption,
-    );
-
-    // if (refreshResult.data) {
-    //   result = await baseQuery(args, api, extraOption);
-    // }
-
-    if (refreshResult.data) {
-      // Refresh successful
-      // Retry original request
-      console.log("++++", "Refresh successful")
-      result = await baseQuery(args, api, extraOption);
-    } else {
-      // Refresh token also expired/invalid
-      console.log("++++", "Refresh token also expired/invalid")
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
-    }
-
-  }
-
-  return result;
-};
-
-
-// export const baseQueryWithAuth: BaseQueryFn<
-//   string | FetchArgs,
-//   unknown,
-//   FetchBaseQueryError
-// > = async (args, api, extraOptions) => {
-//   const result = await baseQuery(
-//     args,
-//     api,
-//     extraOptions
-//   );
-
-//   if (result.error?.status === 401) {
-//     // authentication failed
-//     console.log("first 111111111111111")
-//   }
-
-//   return result;
-// };

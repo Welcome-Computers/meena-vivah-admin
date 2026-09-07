@@ -66,7 +66,7 @@ const ProfileForm = (props: iProps) => {
 
 
       } catch (error) {
-        console.error(error);
+        console.error("++ PROFILE ++", error);
       }
     },
     [trigger]

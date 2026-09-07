@@ -11,6 +11,7 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       try {
+        console.log("Admin Login")
         const payload = req.body;
 
         const result = await getAdmin(payload);

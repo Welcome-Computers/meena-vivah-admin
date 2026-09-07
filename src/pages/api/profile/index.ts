@@ -11,6 +11,7 @@ import {
   getProfiles,
 } from "@/lib/modules/profile/profile.service";
 
+import { STATUS_TYPES, VALID_STATUS } from "@/lib/modules/admin/admin.types";
 import {
   createProfileSchema,
 } from "@/lib/modules/profile/profile.validation";
@@ -22,7 +23,6 @@ export default async function handler(
 ) {
 
   try {
-
 
     /**
      * CREATE PROFILE
@@ -80,21 +80,29 @@ export default async function handler(
       return res.status(201).json({ success: true, data: result });
     }
 
-
-
     /**
      * ALL PROFILES LIST
-     */
+    */
 
     if (req.method === "GET") {
 
       const action = req.query.action as string;
 
       const page = Number(req.query.page || 1);
-
       const limit = Number(req.query.limit || 10);
 
+      const status: STATUS_TYPES[] = req.query.status
+        ? String(req.query.status)
+          .split(",")
+          .filter((value): value is STATUS_TYPES =>
+            VALID_STATUS.includes(value as STATUS_TYPES)
+          )
+        : ["approved"];
+
       const looking_for = req.query.looking_for as string;
+
+      console.log("+++++++", status)
+
 
       const preferredAgeRaw =
         req.query.preferredAge ??
@@ -156,6 +164,7 @@ export default async function handler(
             preferredAge,
             req_occupation,
             exclude_gotra,
+            status
           });
 
         return res.status(200).json({
@@ -177,6 +186,7 @@ export default async function handler(
           m_gotra,
           gm_gotra,
           mat_gm_gotra,
+          status
         });
 
 

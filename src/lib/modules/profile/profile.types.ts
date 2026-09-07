@@ -1,4 +1,4 @@
-import { ROLE_TYPES } from "../admin/admin.types";
+import { ROLE_TYPES, STATUS_TYPES } from "../admin/admin.types";
 
 export type GetProfilesProps = {
   action?: "matches" | "list" | undefined,
@@ -21,7 +21,7 @@ export type GetProfilesProps = {
   gm_gotra?: string;
   mat_gm_gotra?: string;
 
-  draft?: "draft" | "approved" | "rejected" | "suspended";
+  status?: STATUS_TYPES[];
 
 };
 
@@ -29,8 +29,9 @@ export type GetProfilesProps = {
 export type GetMatchedProfilesProps = {
   page?: number;
   limit?: number;
-  action?: string;
+  action?: "matches";
   role?: ROLE_TYPES;
+  status?: STATUS_TYPES[];
   looking_for?: string;
   preferredAge?: [number, number];
   req_occupation?: string[];

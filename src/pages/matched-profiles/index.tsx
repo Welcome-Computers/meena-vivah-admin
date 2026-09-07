@@ -48,17 +48,16 @@ const MatchedProfilePage = () => {
     setPage(1);
   }, [initialFilters]);
 
-  const { data, isFetching } =
-    useGetProfilesQuery(
-      {
-        ...filters,
-        page,
-        limit: 10,
-      },
-      {
-        refetchOnMountOrArgChange: true,
-      }
-    );
+  const { data, isFetching } = useGetProfilesQuery(
+    {
+      ...filters,
+      page,
+      limit: 10,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   const userList = data?.data || [];
   const pagination = data?.pagination || {};

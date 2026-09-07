@@ -202,6 +202,7 @@ export async function getProfiles(params: GetProfilesProps) {
     limit = 10,
     role,
     mobile,
+    status,
   } = params;
 
   const conditions = [
@@ -221,8 +222,13 @@ export async function getProfiles(params: GetProfilesProps) {
     );
   }
 
-  // Add other filters here...
+  if (status?.length) {
+    conditions.push(
+      inArray(profiles.status, status)
+    );
+  }
 
+  // Add other filters here...
   const data = await getBaseProfiles(
     conditions,
     page,
@@ -254,33 +260,6 @@ export async function getProfiles(params: GetProfilesProps) {
   };
 }
 
-// export async function getProfiles1(params: GetProfilesProps) {
-
-//   const { page = 1, limit = 10, role, mobile } = params;
-
-//   const conditions = [eq(profiles.isSuspended, false),];
-//   // filters add here...
-
-
-
-//   const data = await getBaseProfiles(conditions, page, limit);
-
-//   const finalData = await attachRelationsToProfiles(data);
-//   const [totalResult] = await db.select({ count: sql<number>`count(*)`, })
-//     .from(profiles)
-//     .where(
-//       and(...conditions)
-//     );
-
-//   const total =
-//     Number(totalResult.count);
-
-//   return {
-//     data: finalData,
-//     pagination: { total, page, limit, totalPages: Math.ceil(total / limit), },
-//   };
-// }
-
 export async function getProfileMatches(params: GetMatchedProfilesProps) {
   const {
     page = 1,
@@ -290,28 +269,31 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
     preferredAge,
     req_occupation,
     exclude_gotra,
-    role
+    role,
+    status
   } = params;
 
   const conditions = [eq(profiles.isSuspended, false),];
 
-  /**
-   * OCCUPATION
-   */
+
+  /** STATUS **/
+  if (status?.length) {
+    conditions.push(
+      inArray(profiles.status, status)
+    );
+  }
+
+  /** OCCUPATION **/
   if (req_occupation && req_occupation.length > 0) {
     conditions.push(inArray(profiles.occupation, req_occupation));
   }
 
-  /**
-   * GENDER
-   */
+  /**  GENDER   **/
   if (looking_for) {
     conditions.push(ne(profiles.gender, looking_for));
   }
 
-  /**
-   * EXCLUDE GOTRA
-   */
+  /**  EXCLUDE GOTRA  **/
   if (
     exclude_gotra &&
     exclude_gotra.length > 0
@@ -345,9 +327,7 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
     );
   }
 
-  /**
-   * AGE
-   */
+  /**  AGE  **/
   if (
     preferredAge &&
     preferredAge.length === 2
@@ -367,6 +347,8 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
     conditions.push(gte(profiles.dob, minDob));
     conditions.push(lte(profiles.dob, maxDob));
   }
+
+
 
   const data = await getBaseProfiles(conditions, page, limit);
 

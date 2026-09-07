@@ -1,3 +1,4 @@
+import { STATUS_TYPES } from "@/lib/modules/admin/admin.types";
 import { getAge, isEnglishName } from "@/lib/utility/helper";
 import { IProfile } from "@/redux/features/profile/types";
 import { IPagination } from "@/redux/features/shared/types";
@@ -9,14 +10,18 @@ import style from "./ProfileCard.module.css";
 interface iProps {
   data: IProfile[],
   pagination: IPagination,
-  onPageChange: any;
+  handleGetProfiles: ({ page, pageSize, status }: {
+    page: number;
+    pageSize?: number | undefined;
+    status?: STATUS_TYPES[] | undefined;
+  }) => void
   showAction?: boolean;
   loading?: boolean;
 }
 
 export const ProfileCard = (props: iProps) => {
 
-  const { data = [], pagination, onPageChange, showAction, loading = false } = props || {}
+  const { data = [], pagination, handleGetProfiles, showAction, loading = false } = props || {}
   const router = useRouter();
 
   return (
@@ -96,7 +101,9 @@ export const ProfileCard = (props: iProps) => {
             showSizeChanger
             pageSizeOptions={["10", "20", "50", "100"]}
             showTotal={(total) => `Total ${total} profiles`}
-            onChange={onPageChange}
+            onChange={(pageNo) => {
+              handleGetProfiles({ page: pageNo })
+            }}
           />
         </div>
       </Spin>

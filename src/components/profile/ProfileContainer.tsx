@@ -1,6 +1,7 @@
+import { STATUS_TYPES } from "@/lib/modules/admin/admin.types";
 import { IProfile } from "@/redux/features/profile/types";
 import { IPagination, } from "@/redux/features/shared/types";
-import { AppstoreOutlined, TableOutlined, } from "@ant-design/icons";
+import { AppstoreOutlined, TableOutlined } from "@ant-design/icons";
 import { Button, Space } from "antd";
 import { useState } from "react";
 import { ProfileCard } from "./ProfileCard";
@@ -13,7 +14,7 @@ interface iProps {
   defaultShow?: "grid" | "table";
   title?: string;
   showToggle?: boolean;
-  getProfiles?: (page: number, limit?: number) => void
+  getProfiles?: (page: number, limit?: number, status?: STATUS_TYPES[]) => void
   headerRightSec?: any;
   showAction?: boolean;
 }
@@ -32,11 +33,13 @@ const ProfileContainer = (props: iProps) => {
 
   const [view, setView] = useState<"grid" | "table">(defaultShow);
 
-  const handlePaginationChange = (
-    page: number,
-    pageSize?: number
+  const handleGetProfiles = (
+    { page = 1, pageSize, status }
+      : { page?: number, pageSize?: number, status?: STATUS_TYPES[] }
   ) => {
-    getProfiles?.(page, pageSize);
+    debugger;
+    console.log({ page, pageSize, status })
+    getProfiles?.(page, pageSize, status);
   };
 
   return (
@@ -73,21 +76,17 @@ const ProfileContainer = (props: iProps) => {
         <ProfileCard
           data={data}
           loading={loading}
-          onPageChange={handlePaginationChange}
+          handleGetProfiles={handleGetProfiles}
           showAction={showAction}
-          pagination={
-            pagination
-          }
+          pagination={pagination}
         />
       ) : (
         <ProfileTable
           loading={loading}
           data={data}
           showAction={showAction}
-          onPageChange={handlePaginationChange}
-          pagination={
-            pagination
-          }
+          handleGetProfiles={handleGetProfiles}
+          pagination={pagination}
         />
       )}
     </div>

@@ -41,12 +41,12 @@ const PrivateSidebar = () => {
       roles: ["admin", "executive", "profile"],
       children: [
         {
-          key: "/profiles",
+          key: "/dashboard/profiles",
           label: "All Profiles",
           roles: ["admin", "executive", "profile"],
         },
         {
-          key: "/profiles/create_profile",
+          key: "/dashboard/profiles/create_profile",
           label: "Create Profiles",
           roles: ["admin", "executive", "profile"],
         },
@@ -60,12 +60,12 @@ const PrivateSidebar = () => {
       roles: ["admin", "executive"],
       children: [
         {
-          key: "/gotra",
+          key: "/dashboard/gotra",
           label: "All Gotra",
           roles: ["admin", "executive"],
         },
         {
-          key: "/gotra/create_gotra",
+          key: "/dashboard/gotra/create_gotra",
           label: "Create Gotra",
           roles: ["admin", "executive"],
         },
@@ -79,12 +79,12 @@ const PrivateSidebar = () => {
       roles: ["admin", "executive"],
       children: [
         {
-          key: "/master-occupation",
+          key: "/dashboard/master-occupation",
           label: "All Occupation",
           roles: ["admin", "executive"],
         },
         {
-          key: "/master-occupation/create_occupation",
+          key: "/dashboard/master-occupation/create_occupation",
           label: "Create Occupation",
           roles: ["admin", "executive"],
         },
@@ -98,7 +98,7 @@ const PrivateSidebar = () => {
       roles: ["admin", "executive"],
       children: [
         {
-          key: "/uploader",
+          key: "/dashboard/uploader",
           label: "Create",
           roles: ["admin", "executive"],
         },
@@ -112,7 +112,7 @@ const PrivateSidebar = () => {
       roles: ["admin"],
       children: [
         {
-          key: "/audit-logs",
+          key: "/dashboard/audit-logs",
           label: "All History",
           roles: ["admin"],
         },

@@ -4,6 +4,15 @@ export const ACCESS_TOKEN_TIME = 1; // 1 minute
 export const REFRESH_TOKEN_TIME = 2; // 2 days
 
 export type ROLE_TYPES = "admin" | "profile" | "executive";
+export type STATUS_TYPES = "draft" | "approved" | "rejected" | "suspended";
+
+export const VALID_STATUS: STATUS_TYPES[] = [
+  "draft",
+  "approved",
+  "rejected",
+  "suspended",
+];
+
 export interface SaveUserTokenProps {
   userId: number;
   userType: ROLE_TYPES;

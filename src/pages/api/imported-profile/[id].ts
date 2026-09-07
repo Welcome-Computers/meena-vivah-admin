@@ -74,7 +74,7 @@ export default async function handler(
 
 
   } catch (error) {
-    console.error(error);
+    console.error("++ IMPORTED PROFILE ++", error);
 
     if (error instanceof ZodError) {
       return res.status(400).json({

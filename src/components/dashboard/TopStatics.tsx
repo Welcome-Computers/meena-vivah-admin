@@ -14,7 +14,7 @@ import {
 
 
 interface iProps {
-  stats: {
+  status: {
     totalMembers: number,
     boys: number,
     girls: number,
@@ -22,7 +22,7 @@ interface iProps {
   }
 }
 const TopStatics = (props: iProps) => {
-  const { stats } = props || {}
+  const { status } = props || {}
 
   return (
     <>
@@ -31,7 +31,7 @@ const TopStatics = (props: iProps) => {
           <Space>
             <ProfileOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>{stats.totalMembers}</h3>
+              <h3>{status.totalMembers}</h3>
               <p>Total Members</p>
             </div>
           </Space>
@@ -43,7 +43,7 @@ const TopStatics = (props: iProps) => {
           <Space>
             <ManOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>{stats.boys}</h3>
+              <h3>{status.boys}</h3>
               <p>Boys</p>
             </div>
           </Space>
@@ -55,7 +55,7 @@ const TopStatics = (props: iProps) => {
           <Space>
             <WomanOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>{stats.girls}</h3>
+              <h3>{status.girls}</h3>
               <p>Girls</p>
             </div>
           </Space>
@@ -67,7 +67,7 @@ const TopStatics = (props: iProps) => {
           <Space>
             <HeartOutlined style={{ fontSize: 40, opacity: .2 }} />
             <div>
-              <h3>{stats.matched}</h3>
+              <h3>{status.matched}</h3>
               <p>Matched</p>
             </div>
           </Space>

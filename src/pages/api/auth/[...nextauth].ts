@@ -177,6 +177,8 @@ export const authOptions: NextAuthOptions = {
             throw new Error(`is_delete_user:${response?.message}`);
           }
 
+          // console.log("++++++++++ :: ", response)
+
           return response;
 
         } catch (error: any) {
@@ -251,33 +253,25 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }) {
       // First time login: set token info from user
 
-      // console.log(":: USER callbacks ::", user)
-
       if (user) {
         const updatedToken = setTokens(token, user);
         const { access_token, refresh_token, access_token_expires, ...restUser } = user || {};
         updatedToken.user = restUser;
+
+        // console.log("first time : ", updatedToken)
         return updatedToken;
       }
 
       // Subsequent request: check for expired token
       const isTokenExpired = Date.now() > (token.access_token_expires ?? 0);
 
-      if (!isTokenExpired) return token;
+      if (!isTokenExpired || !token.refresh_token) return token;
 
       // ⏳ Access token expired — try to refresh
       try {
         console.log('++++++++++ USED REFRESH TOKEN +++++++++++++');
 
-        // const response = await fetch(`${API_ENDPOINT}/auth/refresh-token`, {
-        //   method: "POST",
-        //   credentials: "include",
-        // });
-
-        const requestBody = {
-          refreshToken: token.refresh_token,
-        };
-        // console.log("refresh response : ", requestBody)
+        const requestBody = { refreshToken: token.refresh_token };
 
         const response = await fetchAPI("/auth/refresh-token", requestBody);
 

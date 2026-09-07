@@ -79,7 +79,7 @@ const BiodataEdiableDrawer = ({
         }
       }
     } catch (err: any) {
-      console.error(err);
+      console.error("++ ERRORS ++", err);
 
       const fieldErrors = err?.data?.errors?.fieldErrors;
 
@@ -126,7 +126,9 @@ const BiodataEdiableDrawer = ({
           <Row gutter={20}>
             <Col span={12}>
               <Form.Item hidden name="id"><Input /></Form.Item>
-              <OtherDetails callingFrom={'update'} />
+              <OtherDetails
+                form={form}
+                callingFrom={'update'} />
             </Col>
             <Col span={12}>
               <div style={{ height: "50px", width: "100%" }}></div>

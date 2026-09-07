@@ -20,12 +20,14 @@ export default function AdminLayout(props: AdminLayoutProps) {
   const { children, title, headerRightSec, breadcrumbItems } = props || {};
   const router = useRouter();
 
-  const { userName, profilePick, userRole, status } = useAuth();
+  const { userName, profilePick, sessionError, userRole, status } = useAuth();
   const [checkingPermission, setCheckingPermission] = useState(true);
 
   // console.log({ userName, profilePick, userRole, status })
 
   const allowedRoles = ["admin", "profile"];
+
+  // console.log({ userName, profilePick, sessionError, userRole, status })
 
   const handleLogout = async () => {
     try {
@@ -70,13 +72,23 @@ export default function AdminLayout(props: AdminLayoutProps) {
   useEffect(() => {
     if (status === "loading") return;
 
-    if (status === "unauthenticated") {
-      setCheckingPermission(false);
+    // Session is invalid / refresh token expired
+    if ((status === "authenticated" && sessionError === "RefreshTokenError")) {
+      router.replace("/login");
       return;
     }
 
+    // Not logged in
+    if (status === "unauthenticated") {
+      setCheckingPermission(false);
+      router.replace("/login");
+      return;
+    }
+
+    // Still don't have role information
     if (!userRole) return;
 
+    // Check current route permission
     const allowed = canAccessRoute(
       router.pathname,
       userRole
@@ -87,8 +99,14 @@ export default function AdminLayout(props: AdminLayoutProps) {
       return;
     }
 
+    // Everything is okay
     setCheckingPermission(false);
-  }, [status, userRole, router]);
+  }, [
+    status,
+    userRole,
+    sessionError,
+    router,
+  ]);
 
 
   if (checkingPermission) {

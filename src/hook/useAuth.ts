@@ -39,6 +39,8 @@ export const useAuth = () => {
         return (session?.user?.role as ROLE_TYPES) ?? null;
     }, [isAuthenticated, session]);
 
+    const sessionError = session?.error ?? null;
+
     return {
         user: session?.user || null,
         accessToken,
@@ -47,5 +49,6 @@ export const useAuth = () => {
         userName,
         profilePick,
         userRole,
+        sessionError
     };
 };

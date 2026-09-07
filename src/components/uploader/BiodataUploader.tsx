@@ -28,7 +28,7 @@ export default function BiodataUploader({
       onParsed(updatedProfile);
       e.target.value = "";
     } catch (error) {
-      console.error(error);
+      console.error("++ BIODATA ERROR ++", error);
     }
   };
 

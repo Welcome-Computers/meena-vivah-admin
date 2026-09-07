@@ -7,7 +7,7 @@ import { Row } from "antd";
 import { useState } from "react";
 
 const Dashboard = () => {
-  const stats = {
+  const status = {
     totalMembers: 120,
     boys: 70,
     girls: 50,
@@ -41,9 +41,9 @@ const Dashboard = () => {
   return (
     <AdminLayout title="Dashboard Overview">
       <div>
-        {/* ================= STATS ================= */}
+        {/* ================= STATUS ================= */}
         <Row gutter={16}>
-          <TopStatics stats={stats} />
+          <TopStatics status={status} />
         </Row>
 
         {userRole === "admin" ?

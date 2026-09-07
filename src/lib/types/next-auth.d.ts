@@ -31,8 +31,8 @@ declare module "next-auth" {
     // after succefull login we will put this from next-auth;
     access_token?: string;
     refresh_token?: string;
-    // expires_in?: number;
     access_token_expires?: number;
+    error?: string | null;
   }
 
   interface Session {
@@ -40,7 +40,7 @@ declare module "next-auth" {
     access_token?: string;
     refresh_token?: string;
     access_token_expires?: number;
-
+    error?: string | null;
   }
 }
 

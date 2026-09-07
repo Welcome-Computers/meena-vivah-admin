@@ -12,6 +12,7 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       try {
+        console.log("Refresh Token")
         const { refreshToken } = req.body;
 
         if (!refreshToken) {
@@ -21,7 +22,7 @@ export default async function handler(
         // 1. Verify JWT signature + expiry
         const decoded: any = verifyRefreshToken(refreshToken);
 
-        // console.log("+++++++++++++++++", decoded);
+        // console.log("++++++REFRESH TOKEN++++++", decoded);
 
         // console.log("decoded", decoded);
         const { mobile, role } = decoded;
@@ -108,7 +109,6 @@ export default async function handler(
     });
   } catch (error) {
     // console.log("++++++++++++++++++ Error in refresh token handler:", error);
-
     return res.status(500).json(error);
   }
 }

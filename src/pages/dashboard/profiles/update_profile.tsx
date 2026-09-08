@@ -1,3 +1,4 @@
+import AdminLayout from "@/components/layout/AdminLayout";
 import { useAuth } from "@/hook/useAuth";
 import { firstComponentFocusHandler, removeEmptyObjects } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
@@ -6,7 +7,6 @@ import { Form } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
 const UpdateProfile = () => {

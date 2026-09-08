@@ -1,10 +1,10 @@
+import AdminLayout from "@/components/layout/AdminLayout";
 import { useAuth } from "@/hook/useAuth";
 import { firstComponentFocusHandler, formattedDob, removeEmptyObjects } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateUserMutation } from "@/redux/features/profile/srevices";
 import { Form } from "antd";
 import { useRef } from "react";
-import AdminLayout from "../../components/layout/AdminLayout";
 import ProfileForm from "./_includes/ProfileForm";
 
 const breadcrumbObj = [

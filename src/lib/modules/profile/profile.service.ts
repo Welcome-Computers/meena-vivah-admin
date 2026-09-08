@@ -273,8 +273,8 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
     status
   } = params;
 
+  console.log(role)
   const conditions = [eq(profiles.isSuspended, false),];
-
 
   /** STATUS **/
   if (status?.length) {

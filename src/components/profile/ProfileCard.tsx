@@ -9,7 +9,7 @@ import style from "./ProfileCard.module.css";
 
 interface iProps {
   data: IProfile[],
-  pagination: IPagination,
+  pagination?: IPagination,
   handleGetProfiles: ({ page, pageSize, status }: {
     page: number;
     pageSize?: number | undefined;
@@ -87,25 +87,26 @@ export const ProfileCard = (props: iProps) => {
 
         </div>
         {/* GRID PAGINATION */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "end",
-            marginTop: 16,
-          }}
-        >
-          <Pagination
-            current={pagination.page}
-            pageSize={pagination.limit}
-            total={pagination.total}
-            showSizeChanger
-            pageSizeOptions={["10", "20", "50", "100"]}
-            showTotal={(total) => `Total ${total} profiles`}
-            onChange={(pageNo) => {
-              handleGetProfiles({ page: pageNo })
+        {pagination ?
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginTop: 16,
             }}
-          />
-        </div>
+          >
+            <Pagination
+              current={pagination.page}
+              pageSize={pagination.limit}
+              total={pagination.total}
+              showSizeChanger
+              pageSizeOptions={["10", "20", "50", "100"]}
+              showTotal={(total) => `Total ${total} profiles`}
+              onChange={(pageNo) => {
+                handleGetProfiles({ page: pageNo })
+              }}
+            />
+          </div> : null}
       </Spin>
     </div>
   );

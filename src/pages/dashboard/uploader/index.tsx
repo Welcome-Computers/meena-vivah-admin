@@ -3,6 +3,7 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import BiodataEdiableDrawer from "@/components/uploader/BiodataEdiableDrawer";
 import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
+import { useAvailableHeight } from "@/hook/useAvailableHeight";
 import { formatedEditableRecord } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateBulkImportedProfilesMutation, useDeleteImportedProfileMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
@@ -27,6 +28,13 @@ const Imports = () => {
     totalPages: 0,
   });
   const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const contentHeight = useAvailableHeight(containerRef, {
+    subtractRefs: [headerRef],
+  });
+
   const [drawerWidth, setDrawerWidth] = useState<number>(900);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editNavigation, setEditNavigation] = useState<{
@@ -38,6 +46,7 @@ const Imports = () => {
     previous: null,
     next: null,
   });
+
 
   const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
@@ -256,11 +265,13 @@ const Imports = () => {
     }
   }, [containerRef]);
 
+  console.log(contentHeight)
+
+
   return (
     <AdminLayout
       breadcrumbItems={[{ title: "Dashboard", }, { title: "All Imports" }]}
-
-      headerRightSec={<div>
+      headerRightSec={<div ref={headerRef}>
         <Space orientation="horizontal">
           <Button type="primary" onClick={fetchDraftsProfilesHandler}>Get Draft Data</Button>
           <Button danger onClick={() => setProfiles([])}>Clear</Button>
@@ -271,16 +282,23 @@ const Imports = () => {
       }
     >
       <div ref={containerRef}>
-        <BiodataPreviewTable
-          profiles={profiles}
-          handleFromSubmit={handleFromSubmit}
-          setPagination={setPagination}
-          pagination={pagination}
-          handleEdit={handleEdit}
-          deleteProfile={deleteProfile}
-        />
-      </div>
+        <div
+          style={{
+            // height: contentHeight,
+            overflow: "auto",
+          }}
+          ref={contentRef}>
 
+          <BiodataPreviewTable
+            profiles={profiles}
+            handleFromSubmit={handleFromSubmit}
+            setPagination={setPagination}
+            pagination={pagination}
+            handleEdit={handleEdit}
+            deleteProfile={deleteProfile}
+          />
+        </div>
+      </div>
       <BiodataEdiableDrawer
         form={form}
         handleEdit={handleEdit}

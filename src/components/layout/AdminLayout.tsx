@@ -174,7 +174,11 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider breakpoint="lg" collapsedWidth="0">
+      <Sider breakpoint="lg" collapsedWidth="0"
+        style={{
+          height: "100vh",
+          overflow: "auto",
+        }}>
         <div style={{ color: "white", padding: 16, fontSize: 18 }}>
           Admin Panel
         </div>
@@ -183,7 +187,11 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
       </Sider>
 
-      <Layout>
+      <Layout
+        style={{
+          height: "100vh",
+          overflow: "hidden",
+        }}>
         {/* Header */}
         <Header style={{ background: "#fff", paddingLeft: 16 }}>
           <h3>Welcome Mr. {userName}</h3>
@@ -201,7 +209,13 @@ export default function AdminLayout(props: AdminLayoutProps) {
         </Header>
 
         {/* Content */}
-        <Content style={{ margin: "0px 0px 0px 0px " }}>
+        <Content
+          style={{
+            margin: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+            minHeight: 0,
+          }}>
           <div className="admin_header">
             <div>
               {breadcrumbItems?.length ? (

@@ -10,7 +10,7 @@ import ProfileTable from "./ProfileTable";
 interface iProps {
   loading: boolean;
   data: IProfile[];
-  pagination: IPagination;
+  pagination?: IPagination;
   defaultShow?: "grid" | "table";
   title?: string;
   showToggle?: boolean;
@@ -37,9 +37,12 @@ const ProfileContainer = (props: iProps) => {
     { page = 1, pageSize, status }
       : { page?: number, pageSize?: number, status?: STATUS_TYPES[] }
   ) => {
-    debugger;
-    console.log({ page, pageSize, status })
-    getProfiles?.(page, pageSize, status);
+
+    if (typeof getProfiles === "function") {
+      console.log({ page, pageSize, status });
+
+      getProfiles(page, pageSize, status);
+    }
   };
 
   return (

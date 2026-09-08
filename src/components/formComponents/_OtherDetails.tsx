@@ -1,10 +1,10 @@
 import { parseBiodata } from "@/lib/helpers_uploader/biodataParser";
 import { formatedEditableRecord } from "@/lib/utility/helper";
 import { useAppSelector } from "@/redux/hooks";
+import style from "@/styles/profileStyle.module.css";
 import { Button, Form, FormInstance } from "antd";
 import { isEmpty } from "lodash";
 import { memo, useCallback, useEffect } from "react";
-import style from "../../pages/profiles/style.module.css";
 import RichTextEditor from "./ReactQuill";
 
 interface IProps {

@@ -1,8 +1,8 @@
 import { ROLE_TYPES } from "@/lib/modules/admin/admin.types";
+import style from "@/styles/profileStyle.module.css";
 import { App } from "antd";
 import Form, { FormInstance, RuleObject } from "antd/es/form";
 import { FocusEvent, memo, useEffect, useRef } from "react";
-import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import DobField from "../InputElements/DobField";
 import HeightField from "../InputElements/HeightField";

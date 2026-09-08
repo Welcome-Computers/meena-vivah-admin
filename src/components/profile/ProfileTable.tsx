@@ -111,22 +111,30 @@ const ProfileTable = (props: iProps) => {
       confirm,
       clearFilters,
     }) => (
-      <div style={{ padding: 8 }}>
-        <Checkbox.Group
-          options={statusOptions}
-          value={selectedKeys as STATUS_TYPES[]}
-          onChange={(values) => {
-            setSelectedKeys(values);
-          }}
-        />
+      <div style={{ padding: 8, width: 200 }}>
+        <div style={{ marginBottom: 12 }}>
+          <Checkbox.Group
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+            }}
+            options={statusOptions}
+            value={selectedKeys as STATUS_TYPES[]}
+            onChange={(values) => {
+              setSelectedKeys(values);
+            }}
+          />
+        </div>
 
-        <Space style={{ marginTop: 8 }}>
+        <Space style={{
+          width: "100%",
+          justifyContent: "flex-end",
+        }}>
           <Button
             type="primary"
             size="small"
-            onClick={() => {
-              confirm();
-            }}
+            onClick={() => confirm()}
           >
             OK
           </Button>
@@ -136,11 +144,12 @@ const ProfileTable = (props: iProps) => {
             onClick={() => {
               clearFilters?.();
               confirm();
-            }}>
+            }}
+          >
             Reset
           </Button>
         </Space>
-      </div>
+      </div >
     ),
   },
 
@@ -325,6 +334,19 @@ const ProfileTable = (props: iProps) => {
 
   ];
 
+  const handleTableChange = (
+    tablePagination: any,
+    filters: Record<string, any>
+  ) => {
+    const status = filters.status as STATUS_TYPES[];
+
+    handleGetProfiles?.({
+      page: tablePagination.current,
+      pageSize: tablePagination.pageSize,
+      status,
+    });
+  };
+
   return (
     <Table
       rowKey="id"
@@ -333,15 +355,16 @@ const ProfileTable = (props: iProps) => {
       loading={loading}
       dataSource={data}
       columns={columns}
-      onChange={(pagination, filters) => {
-        const status = filters.status as STATUS_TYPES[];
+      onChange={handleTableChange}
+      // onChange={(pagination, filters) => {
+      //   const status = filters.status as STATUS_TYPES[];
 
-        handleGetProfiles?.({
-          page: pagination.current,
-          pageSize: pagination.pageSize,
-          status,
-        });
-      }}
+      //   handleGetProfiles?.({
+      //     page: pagination.current,
+      //     pageSize: pagination.pageSize,
+      //     status,
+      //   });
+      // }}
       pagination={
         pagination
           ? {
@@ -351,12 +374,12 @@ const ProfileTable = (props: iProps) => {
             showSizeChanger: true,
             showTotal: (total) => `Total ${total} profiles`,
             pageSizeOptions: ["10", "20", "50", "100"],
-            onChange: (pageNo, pageSize) => {
-              handleGetProfiles?.({
-                page: pageNo,
-                pageSize,
-              });
-            },
+            // onChange: (pageNo, pageSize) => {
+            //   handleGetProfiles?.({
+            //     page: pageNo,
+            //     pageSize,
+            //   });
+            // },
           }
           : false
       }

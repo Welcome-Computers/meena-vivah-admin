@@ -1,6 +1,6 @@
+import style from "@/styles/profileStyle.module.css";
 import { Form } from "antd";
 import { memo } from "react";
-import style from "../../pages/profiles/style.module.css";
 import CheckBoxField from "../InputElements/CheckBoxField";
 import InputField from "../InputElements/InputField";
 import FormListComponent from "./FormListComponent";

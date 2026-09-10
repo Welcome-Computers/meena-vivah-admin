@@ -2,17 +2,18 @@
 
 import { combineReducers } from "@reduxjs/toolkit";
 
-import profile from "./features/profile";
-
 import { auditLogsApi } from "./features/auditLogs";
 import { importedProfileApi } from "./features/importedProfile/srevices";
+import layoutSetting from "./features/layoutSetting";
 import { AuthApi } from "./features/login";
 import { masterGotraApi } from "./features/masterGotra";
 import { masterOccupationApi } from "./features/masterOccupation";
+import profile from "./features/profile";
 import { profileApi } from "./features/profile/srevices";
 
 export const rootReducer = combineReducers({
   profile,
+  layoutSetting,
   [auditLogsApi.reducerPath]: auditLogsApi.reducer,
   [profileApi.reducerPath]: profileApi.reducer,
   [masterGotraApi.reducerPath]: masterGotraApi.reducer,

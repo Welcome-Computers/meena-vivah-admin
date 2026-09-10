@@ -23,11 +23,15 @@ interface iProps {
   }) => void;
   is_pick_current_data?: boolean;
   callingFrom?: string;
+  contentHeight?: number;
 }
 
 const ProfileTable = (props: iProps) => {
 
-  const { callingFrom, showAction, loading, data = [], pagination, handleGetProfiles, is_pick_current_data = false } = props;
+  const { callingFrom, showAction, loading, data = [], pagination, handleGetProfiles,
+    is_pick_current_data = false,
+    contentHeight = 200,
+  } = props;
 
   const form = Form.useFormInstance()
 
@@ -347,6 +351,11 @@ const ProfileTable = (props: iProps) => {
     });
   };
 
+  const scrollProps = {
+    x: 1200,
+    y: Math.max(contentHeight - 130, 200),
+  };
+
   return (
     <Table
       rowKey="id"
@@ -383,7 +392,7 @@ const ProfileTable = (props: iProps) => {
           }
           : false
       }
-      scroll={{ x: 1200 }}
+      scroll={scrollProps}
       expandable={{
         expandedRowRender: (
           record

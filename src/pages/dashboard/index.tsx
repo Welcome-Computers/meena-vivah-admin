@@ -49,14 +49,14 @@ const Dashboard = () => {
     <AdminLayout title="Dashboard Overview">
       <div>
         {/* ================= STATUS ================= */}
-        <Row gutter={16}>
+        <Row gutter={[16, 16]}>
           <TopStatics status={status} />
         </Row>
 
         {userRole === "admin" ?
           <>
             {/* ================= TABLE 1 ================= */}
-            <div style={{ marginTop: 30, }}>
+            <div>
               <ProfileContainer
                 defaultShow="table"
                 loading={isFetching}
@@ -72,7 +72,7 @@ const Dashboard = () => {
         {userRole === "profile" ?
           <>
             {/* ================= TABLE 1 ================= */}
-            <div style={{ marginTop: 30, }}>
+            <div>
               <ProfileContainer
                 defaultShow="table"
                 loading={isFetching}

@@ -9,6 +9,7 @@ import { appMessage } from "@/lib/utility/message";
 import { useCreateBulkImportedProfilesMutation, useDeleteImportedProfileMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
 import { EditableProfile } from "@/redux/features/importedProfile/types";
 import { IPagination } from "@/redux/features/shared/types";
+import { useAppSelector } from "@/redux/hooks";
 
 import { Button, Form, Modal, Space } from "antd";
 import dayjs from "dayjs";
@@ -19,6 +20,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 const Imports = () => {
 
   const [form] = Form.useForm();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [profiles, setProfiles] = useState<EditableProfile[]>([]);
   const [pagination, setPagination] = useState<IPagination>({
@@ -26,13 +28,6 @@ const Imports = () => {
     limit: 10,
     total: 0,
     totalPages: 0,
-  });
-  const containerRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const contentHeight = useAvailableHeight(containerRef, {
-    subtractRefs: [headerRef],
   });
 
   const [drawerWidth, setDrawerWidth] = useState<number>(900);
@@ -47,6 +42,18 @@ const Imports = () => {
     next: null,
   });
 
+  const { layout_height } = useAppSelector(
+    (state: any) => state.layoutSetting
+  );
+
+  const contentHeight = useAvailableHeight({
+    baseHeight: layout_height,
+    debugName: "UPLOADER"
+  });
+
+  // const { availableHeight, contentTop } = useLayoutHeight();
+
+  console.log({ contentHeight });
 
   const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
@@ -265,52 +272,61 @@ const Imports = () => {
     }
   }, [containerRef]);
 
-  console.log(contentHeight)
-
+  // console.log(contentHeight)
 
   return (
     <AdminLayout
-      breadcrumbItems={[{ title: "Dashboard", }, { title: "All Imports" }]}
-      headerRightSec={<div ref={headerRef}>
-        <Space orientation="horizontal">
-          <Button type="primary" onClick={fetchDraftsProfilesHandler}>Get Draft Data</Button>
-          <Button danger onClick={() => setProfiles([])}>Clear</Button>
+      breadcrumbItems={[
+        { title: "Dashboard" },
+        { title: "All Imports" },
+      ]}
+
+      headerRightSec={
+        <Space
+          orientation="horizontal">
+          <Button
+            type="primary"
+            onClick={fetchDraftsProfilesHandler}
+          >
+            Get Draft Data
+          </Button>
+
+          <Button
+            danger
+            onClick={() => setProfiles([])}
+          >
+            Clear
+          </Button>
+
           <h3>Telegram Biodata Import</h3>
-          <BiodataUploader onParsed={setProfiles} />
-        </Space >
-      </div>
+
+          <BiodataUploader
+            onParsed={setProfiles}
+          />
+        </Space>
       }
     >
-      <div ref={containerRef}>
-        <div
-          style={{
-            // height: contentHeight,
-            overflow: "auto",
-          }}
-          ref={contentRef}>
-
-          <BiodataPreviewTable
-            profiles={profiles}
-            handleFromSubmit={handleFromSubmit}
-            setPagination={setPagination}
-            pagination={pagination}
-            handleEdit={handleEdit}
-            deleteProfile={deleteProfile}
-          />
-        </div>
+      <div style={{ height: layout_height }}>
+        <BiodataPreviewTable
+          profiles={profiles}
+          handleFromSubmit={handleFromSubmit}
+          setPagination={setPagination}
+          pagination={pagination}
+          handleEdit={handleEdit}
+          deleteProfile={deleteProfile}
+        />
       </div>
+
       <BiodataEdiableDrawer
         form={form}
         handleEdit={handleEdit}
         drawerOpen={drawerOpen}
-        // setProfiles={setProfiles}
         drawerWidth={drawerWidth}
         editNavigation={editNavigation}
         deleteProfile={deleteProfile}
         isLoadingDeleteProfile={isLoadingDelete}
       />
-
-    </AdminLayout >
+    </AdminLayout>
   );
 };
 

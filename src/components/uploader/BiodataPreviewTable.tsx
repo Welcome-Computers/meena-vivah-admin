@@ -238,7 +238,7 @@ const BiodataPreviewTable = ({
   };
 
   return (
-    <div className="inner_layout_type3">
+    <div className="inner_layout_type">
       <Table
         rowKey="id"
         columns={columns}

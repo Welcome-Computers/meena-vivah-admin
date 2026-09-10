@@ -1,9 +1,11 @@
+import { useAvailableHeight } from "@/hook/useAvailableHeight";
 import { STATUS_TYPES } from "@/lib/modules/admin/admin.types";
 import { IProfile } from "@/redux/features/profile/types";
 import { IPagination, } from "@/redux/features/shared/types";
+import { useAppSelector } from "@/redux/hooks";
 import { AppstoreOutlined, TableOutlined } from "@ant-design/icons";
 import { Button, Space } from "antd";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ProfileCard } from "./ProfileCard";
 import ProfileTable from "./ProfileTable";
 
@@ -45,34 +47,45 @@ const ProfileContainer = (props: iProps) => {
     }
   };
 
-  return (
-    <div>
-      {/* VIEW TOGGLE BUTTONS */}
-      <div
-        style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+  const { layout_height } = useAppSelector(
+    (state: any) => state.layoutSetting
+  );
 
-        <div className="table_header">
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const contentHeight = useAvailableHeight({
+    subtractRefs: [headerRef],
+    baseHeight: layout_height,
+    debugName: "UPLOADER"
+  });
+
+  return (
+    <div style={{ padding: "16px" }}>
+      {/* VIEW TOGGLE BUTTONS */}
+
+      {showToggle ?
+        <div
+          ref={headerRef}
+          className="table_header">
           <h3>{title} </h3>
 
-          {showToggle ?
-            <Space>
-              <Button
-                type={view === "grid" ? "primary" : "default"}
-                icon={<AppstoreOutlined />}
-                onClick={() => setView("grid")}>
-                {/* Grid */}
-              </Button>
+          <Space>
+            <Button
+              type={view === "grid" ? "primary" : "default"}
+              icon={<AppstoreOutlined />}
+              onClick={() => setView("grid")}>
+              {/* Grid */}
+            </Button>
 
-              <Button
-                type={view === "table" ? "primary" : "default"}
-                icon={<TableOutlined />}
-                onClick={() => setView("table")}>
-                {/* Table */}
-              </Button>
-            </Space>
-            : null}
+            <Button
+              type={view === "table" ? "primary" : "default"}
+              icon={<TableOutlined />}
+              onClick={() => setView("table")}>
+              {/* Table */}
+            </Button>
+          </Space>
         </div>
-      </div>
+        : null}
 
       {/* CONDITIONAL RENDER */}
       {view === "grid" ? (
@@ -86,6 +99,7 @@ const ProfileContainer = (props: iProps) => {
       ) : (
         <ProfileTable
           loading={loading}
+          contentHeight={contentHeight}
           data={data}
           showAction={showAction}
           handleGetProfiles={handleGetProfiles}

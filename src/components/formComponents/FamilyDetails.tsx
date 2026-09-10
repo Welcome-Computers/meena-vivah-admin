@@ -1,6 +1,6 @@
+import style from "@/styles/profileStyle.module.css";
 import { Form } from "antd";
 import { memo } from "react";
-import style from "../../pages/profiles/style.module.css";
 import InputField from "../InputElements/InputField";
 
 const FamilyDetails = memo((props: any) => {

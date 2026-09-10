@@ -12,7 +12,7 @@ import {
 } from "@/lib/modules/profile/profile.service";
 
 import { verifyAccessToken } from "@/lib/modules/admin/admin.service";
-import { ROLE_TYPES } from "@/lib/modules/admin/admin.types";
+import { ROLE_TYPES, STATUS_TYPES, VALID_STATUS } from "@/lib/modules/admin/admin.types";
 import {
   createProfileSchema,
 } from "@/lib/modules/profile/profile.validation";
@@ -177,6 +177,20 @@ export default async function handler(
       const gm_gotra = req.query.gm_gotra as string;
       const mat_gm_gotra = req.query.mat_gm_gotra as string;
 
+
+      const rawStatus = req.query["status[]"];
+
+      const status = (
+        Array.isArray(rawStatus)
+          ? rawStatus
+          : rawStatus
+            ? [rawStatus]
+            : []
+      ).filter(
+        (value): value is STATUS_TYPES =>
+          VALID_STATUS.includes(value as STATUS_TYPES)
+      );
+
       if (action === "matches") {
         // FOR PUBLIC ROUTE AFTHER MAIN SEARECH 
         const result =
@@ -187,6 +201,7 @@ export default async function handler(
             preferredAge,
             req_occupation,
             exclude_gotra,
+            status
           });
 
         return res.status(200).json({
@@ -211,6 +226,7 @@ export default async function handler(
           m_gotra,
           gm_gotra,
           mat_gm_gotra,
+          status
         });
 
 

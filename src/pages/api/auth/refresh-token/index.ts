@@ -12,7 +12,9 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       try {
-        console.log("Refresh Token")
+
+        console.log("+++ Refresh Token +++")
+
         const { refreshToken } = req.body;
 
         if (!refreshToken) {

@@ -238,7 +238,7 @@ const BiodataPreviewTable = ({
   };
 
   return (
-    <div>
+    <div className="inner_layout_type">
       <Table
         rowKey="id"
         columns={columns}
@@ -251,6 +251,7 @@ const BiodataPreviewTable = ({
         pagination={false}
       />
       <div
+        className="inner_layout_footer"
         style={{
           display: "flex",
           justifyContent: "space-between",

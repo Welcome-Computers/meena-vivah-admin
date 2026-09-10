@@ -1,8 +1,8 @@
 import { appMessage } from "@/lib/utility/message";
 import { useCreateGotraMutation, useGetGotrasQuery } from "@/redux/features/masterGotra";
+import style from "@/styles/profileStyle.module.css";
 import { Form } from "antd";
 import { memo, useState } from "react";
-import style from "../../pages/profiles/style.module.css";
 import { SelectOption } from "../InputElements/SearchableSelectField";
 import { GotraField } from "./Gotra/GotraField";
 import OtheGotraDetails from "./OtherGotraDetails";

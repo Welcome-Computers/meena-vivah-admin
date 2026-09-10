@@ -28,6 +28,9 @@
       "@redux/*": [
         "./src/redux/*"
       ],
+      "@styles/*": [
+        "./src/styles/*"
+      ],
     },
     "ignoreDeprecations": "6.0"
   },

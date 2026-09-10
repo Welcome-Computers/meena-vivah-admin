@@ -16,9 +16,16 @@ const Dashboard = () => {
   const { userRole } = useAuth();
 
   const [page, setPage] = useState(1);
+  const LIMIT = 10
+
+  const params = {
+    page,
+    ...(userRole === "admin" ? { limit: LIMIT } : {}),
+    role: userRole ?? undefined,
+  }
 
   const { data, isFetching, error, } = useGetPrivateProfilesQuery(
-    { page, limit: 10, role: userRole ?? undefined },
+    params,
     {
       refetchOnMountOrArgChange: true,
       skip: !userRole
@@ -42,47 +49,36 @@ const Dashboard = () => {
     <AdminLayout title="Dashboard Overview">
       <div>
         {/* ================= STATUS ================= */}
-        <Row gutter={16}>
+        <Row gutter={[16, 16]}>
           <TopStatics status={status} />
         </Row>
 
         {userRole === "admin" ?
           <>
             {/* ================= TABLE 1 ================= */}
-            <div style={{ marginTop: 30, }}>
+            <div>
               <ProfileContainer
                 defaultShow="table"
                 loading={isFetching}
-                title={'Last 15 Days New Registrations'}
+                title={'Newly Registrations'}
                 data={userList || []}
-                pagination={pagination}
+                // pagination={pagination}
                 showAction={true}
                 getProfiles={getProfiles} />
             </div>
 
-            {/* ================= TABLE 2 ================= */}
-            <div style={{ marginTop: 30, }}>
-              <ProfileContainer
-                title={'Last 15 Days Updates'}
-                loading={isFetching}
-                defaultShow="table"
-                data={userList || []}
-                pagination={pagination}
-                showAction={true}
-                getProfiles={getProfiles} />
-            </div>
           </> : null}
 
         {userRole === "profile" ?
           <>
             {/* ================= TABLE 1 ================= */}
-            <div style={{ marginTop: 30, }}>
+            <div>
               <ProfileContainer
                 defaultShow="table"
                 loading={isFetching}
-                title={'Last 15 Days New Registrations'}
+                title={'Your Posted Profiles'}
                 data={userList || []}
-                pagination={pagination}
+                // pagination={pagination}
                 showAction={true}
                 getProfiles={getProfiles} />
             </div>

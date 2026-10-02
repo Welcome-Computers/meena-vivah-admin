@@ -13,7 +13,7 @@ async function CheckDb() {
     console.log("db connencted");
     connection.release();
   } catch (error) {
-    console.log(error);
+    console.log(":: DB_ERRRO :::: ", error);
   }
 }
 

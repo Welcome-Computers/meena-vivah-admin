@@ -273,8 +273,8 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
     status
   } = params;
 
+  console.log(':: ROLE ::: ', role)
   const conditions = [eq(profiles.isSuspended, false),];
-
 
   /** STATUS **/
   if (status?.length) {
@@ -376,6 +376,8 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
 export async function createProfile(
   payload: CreateProfileInput
 ) {
+
+  console.log(':: PAYLOAD :::', payload)
 
   return await db.transaction(
     async (tx) => {
@@ -560,6 +562,14 @@ export async function suspendProfile(
     .where(
       eq(profiles.id, id)
     );
+
+  return true;
+}
+
+export async function deleteProfile(id: number) {
+  await db
+    .delete(profiles)
+    .where(eq(profiles.id, id));
 
   return true;
 }

@@ -3,11 +3,13 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import BiodataEdiableDrawer from "@/components/uploader/BiodataEdiableDrawer";
 import BiodataPreviewTable from "@/components/uploader/BiodataPreviewTable";
 import BiodataUploader from "@/components/uploader/BiodataUploader";
+import { useAvailableHeight } from "@/hook/useAvailableHeight";
 import { formatedEditableRecord } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
 import { useCreateBulkImportedProfilesMutation, useDeleteImportedProfileMutation, useLazyGetImportedProfilesQuery, useMoveBulkImportedProfilesMutation, useUpdateBulkImportedProfilesMutation } from "@/redux/features/importedProfile/srevices";
 import { EditableProfile } from "@/redux/features/importedProfile/types";
 import { IPagination } from "@/redux/features/shared/types";
+import { useAppSelector } from "@/redux/hooks";
 
 import { Button, Form, Modal, Space } from "antd";
 import dayjs from "dayjs";
@@ -18,6 +20,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 const Imports = () => {
 
   const [form] = Form.useForm();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [profiles, setProfiles] = useState<EditableProfile[]>([]);
   const [pagination, setPagination] = useState<IPagination>({
@@ -26,7 +29,7 @@ const Imports = () => {
     total: 0,
     totalPages: 0,
   });
-  const containerRef = useRef<HTMLDivElement>(null);
+
   const [drawerWidth, setDrawerWidth] = useState<number>(900);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editNavigation, setEditNavigation] = useState<{
@@ -38,6 +41,19 @@ const Imports = () => {
     previous: null,
     next: null,
   });
+
+  const { layout_height } = useAppSelector(
+    (state: any) => state.layoutSetting
+  );
+
+  const contentHeight = useAvailableHeight({
+    baseHeight: layout_height,
+    debugName: "UPLOADER"
+  });
+
+  // const { availableHeight, contentTop } = useLayoutHeight();
+
+  console.log({ contentHeight });
 
   const [fetchProfiles, { data, isLoading }] = useLazyGetImportedProfilesQuery();
   const [createImportedProfilesAction, { isLoading: isLoadingCreateUser }] = useCreateBulkImportedProfilesMutation();
@@ -256,21 +272,41 @@ const Imports = () => {
     }
   }, [containerRef]);
 
+  // console.log(contentHeight)
+
   return (
     <AdminLayout
-      breadcrumbItems={[{ title: "Dashboard", }, { title: "All Imports" }]}
+      breadcrumbItems={[
+        { title: "Dashboard" },
+        { title: "All Imports" },
+      ]}
 
-      headerRightSec={<div>
-        <Space orientation="horizontal">
-          <Button type="primary" onClick={fetchDraftsProfilesHandler}>Get Draft Data</Button>
-          <Button danger onClick={() => setProfiles([])}>Clear</Button>
+      headerRightSec={
+        <Space
+          orientation="horizontal">
+          <Button
+            type="primary"
+            onClick={fetchDraftsProfilesHandler}
+          >
+            Get Draft Data
+          </Button>
+
+          <Button
+            danger
+            onClick={() => setProfiles([])}
+          >
+            Clear
+          </Button>
+
           <h3>Telegram Biodata Import</h3>
-          <BiodataUploader onParsed={setProfiles} />
-        </Space >
-      </div>
+
+          <BiodataUploader
+            onParsed={setProfiles}
+          />
+        </Space>
       }
     >
-      <div ref={containerRef}>
+      <div style={{ height: layout_height }}>
         <BiodataPreviewTable
           profiles={profiles}
           handleFromSubmit={handleFromSubmit}
@@ -285,14 +321,12 @@ const Imports = () => {
         form={form}
         handleEdit={handleEdit}
         drawerOpen={drawerOpen}
-        // setProfiles={setProfiles}
         drawerWidth={drawerWidth}
         editNavigation={editNavigation}
         deleteProfile={deleteProfile}
         isLoadingDeleteProfile={isLoadingDelete}
       />
-
-    </AdminLayout >
+    </AdminLayout>
   );
 };
 

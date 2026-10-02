@@ -7,13 +7,16 @@ import OtherDetails from "@/components/formComponents/OtherDetails";
 import PersonalDetails from "@/components/formComponents/PersonalDetails";
 import { SelectOption } from "@/components/InputElements/SearchableSelectField";
 import ProfileFormSkeleton from "@/components/Skeleton/ProfileFormSkeleton";
+import { useAvailableHeight } from "@/hook/useAvailableHeight";
 import { ROLE_TYPES } from "@/lib/modules/admin/admin.types";
 import { firstComponentFocusHandler, handleEnterNavigation } from "@/lib/utility/helper";
 import { appMessage } from "@/lib/utility/message";
+import { validateDob } from "@/lib/validation/dobValidation";
 import { useCreateOccupationMutation, useGetOccupationsQuery } from "@/redux/features/masterOccupation";
 import { useLazyGetProfilesByMobileQuery } from "@/redux/features/profile/srevices";
+import { useAppSelector } from "@/redux/hooks";
 import { Button, Col, Form, FormInstance, Row, Space, Switch } from "antd";
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 interface iProps {
   form: FormInstance,
   handleFromSubmit: any,
@@ -112,8 +115,60 @@ const ProfileForm = (props: iProps) => {
     setisPreviewOpen(false);
   };
 
+  const handleFormValuesChange = (changedValues: any, allValues: any) => {
+    const { dob, name, mobile } = allValues;
+    if (name || mobile) {
+
+      const result = validateDob(dob, {
+        minimumAge: 18,
+      });
+
+      // Clear existing DOB errors
+      form.setFields([
+        {
+          name: ["dob", "year"],
+          errors: [],
+        },
+        {
+          name: ["dob", "month"],
+          errors: [],
+        },
+        {
+          name: ["dob", "day"],
+          errors: [],
+        },
+      ]);
+
+      // Set validation errors
+      if (result.errors.length > 0) {
+        form.setFields(
+          result.errors.map((error: any) => ({
+            name: ["dob", error.field],
+            errors: [error.message],
+          }))
+        );
+      }
+
+    }
+  };
+
+
+  const breadRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const { layout_height } = useAppSelector((state: any) => state.layoutSetting);
+
+  const availableHeight = useAvailableHeight({
+    subtractRefs: [headerRef, breadRef],
+    baseHeight: layout_height,
+    debugName: "PROFILE_CREATE_PAGE",
+  });
+
+
+  // console.log({ availableHeight, layout_height })
+
   return (
-    <div ref={formContainerRef}>
+    <div ref={formContainerRef} className="h_inherit">
       {isFetching ?
         <ProfileFormSkeleton />
         : <>
@@ -125,6 +180,8 @@ const ProfileForm = (props: iProps) => {
             form={form}
             onKeyDown={handleEnterNavigation}
             onFinish={handleFromSubmit}
+            onValuesChange={handleFormValuesChange}
+            className="h_inherit"
             initialValues={{
               is_married: 0,
               gender: "boy",
@@ -132,82 +189,102 @@ const ProfileForm = (props: iProps) => {
               address_details: [{ type: "parmanent" }],
             }}
           >
-            <Row gutter={40}>
-              <Col md={10} lg={10} xl={10}>
-                <div className="editor-sticky">
-                  <OtherDetails
-                    form={form}
-                    callingFrom={callingFrom} />
-                </div>
-              </Col>
-              <Col md={14} lg={14} xl={14}>
-                <div className="form-scroll-section">
-                  <PersonalDetails
-                    userRole={userRole}
-                    orignalData={orignalData}
-                    occupatonOptions={occupatonOptions}
-                    handleOnBlurMobile={handleOnBlurMobile}
-                    isOccupationLoading={isOccupationLoading}
-                    handleCreateOccupation={handleCreateOccupation}
-                    searchByMobileData={searchByMobileData}
-                    isLoadingByMobile={isLoadingByMobile}
-                    callingFrom={callingFrom}
-                    form={form} />
-                  <GotraDetials form={form} />
-                  <FamilyDetails
-                    occupatonOptions={occupatonOptions}
-                    isOccupationLoading={isOccupationLoading}
-                    handleCreateOccupation={handleCreateOccupation}
-                    form={form} />
-                  <AddressDetails form={form} />
-                  <MobileDetails form={form} />
-                </div>
-              </Col>
-            </Row>
-
-            {/* AT LAST IN RIGHT BOTTOM */}
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 10,
-              marginTop: "20px"
-            }}
-            >
-              <Button
-                tabIndex={-1}
-                type="primary"
-                onClick={handlePreviewButton}>
-                Preview
-              </Button>
-
-              <Space orientation="horizontal" size={4}>
-                {callingFrom === "create" ?
-                  <Form.Item
-                    style={{ margin: "0 35px 0 0" }}
-                    name="need_duplicate"
-                    label=""
-                    initialValue={true}
-                    valuePropName="checked"
-                  >
-                    <div>
-                      <Switch
-                        checkedChildren="NeedDuplicate"
-                        unCheckedChildren="!NeedDuplicate"
-                      />
+            <div
+              style={{ padding: "16px" }}
+              className="flex_1 h_inherit d_flex flex_column  form-wrapper">
+              <Row className="flex_1" gutter={40}>
+                <Col md={10} lg={10} xl={10}>
+                  <div className="editor-sticky">
+                    <OtherDetails
+                      form={form}
+                      callingFrom={callingFrom} />
+                  </div>
+                </Col>
+                <Col md={14} lg={14} xl={14} className="">
+                  <div
+                    style={{ height: `${availableHeight - 32}px`, overflow: "auto" }}
+                    className="form-column">
+                    <div className="form-scroll-section">
+                      <PersonalDetails
+                        userRole={userRole}
+                        orignalData={orignalData}
+                        occupatonOptions={occupatonOptions}
+                        handleOnBlurMobile={handleOnBlurMobile}
+                        isOccupationLoading={isOccupationLoading}
+                        handleCreateOccupation={handleCreateOccupation}
+                        searchByMobileData={searchByMobileData}
+                        isLoadingByMobile={isLoadingByMobile}
+                        callingFrom={callingFrom}
+                        form={form} />
+                      <GotraDetials form={form} />
+                      <FamilyDetails
+                        occupatonOptions={occupatonOptions}
+                        isOccupationLoading={isOccupationLoading}
+                        handleCreateOccupation={handleCreateOccupation}
+                        form={form} />
+                      <AddressDetails form={form} />
+                      <MobileDetails form={form} />
                     </div>
-                  </Form.Item> : null}
+                  </div>
+                </Col>
+              </Row>
 
-                <Button
-                  loading={isLoadingCreateUser}
-                  iconPlacement="end"
-                  type="primary"
-                  htmlType="submit">
-                  Confrom
-                </Button>
 
-              </Space>
+              {/* AT LAST IN RIGHT BOTTOM */}
+              <div
+                ref={breadRef}
+                className="form-footer" style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 10,
+                  marginTop: "20px"
+                }}
+              >
+                <Space>
+                  <Button
+                    tabIndex={-1}
+                    type="primary"
+                    onClick={handlePreviewButton}>
+                    Preview
+                  </Button>
+                </Space>
 
+                <Space orientation="horizontal" size={4}>
+                  <Button
+                    type="primary"
+                    danger
+                    htmlType="reset">
+                    Clear
+                  </Button>
+
+                  {callingFrom === "create" ?
+                    <Form.Item
+                      style={{ margin: "0 35px" }}
+                      name="need_duplicate"
+                      label=""
+                      initialValue={true}
+                      valuePropName="checked"
+                    >
+                      <div>
+                        <Switch
+                          checkedChildren="NeedDuplicate"
+                          unCheckedChildren="!NeedDuplicate"
+                        />
+                      </div>
+                    </Form.Item> : null}
+
+                  <Button
+                    loading={isLoadingCreateUser}
+                    iconPlacement="end"
+                    type="primary"
+                    htmlType="submit">
+                    Confrom
+                  </Button>
+
+                </Space>
+
+              </div>
             </div>
 
           </Form>

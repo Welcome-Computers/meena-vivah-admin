@@ -5,10 +5,10 @@ import {
   getOccupationById,
   updateOccupation,
 } from "@/lib/modules/master-occupation/master-occupation.service";
-import Occupation from "@/pages/master-occupation";
+// import Occupation from "@/pages/master-occupation";
+// import { message } from "antd";
 import { db } from "@/lib/db";
 import { profiles } from "@/lib/schema";
-import { message } from "antd";
 import { eq } from "drizzle-orm";
 
 export default async function handler(

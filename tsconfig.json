@@ -25,8 +25,14 @@
       "@lib/*": [
         "./src/lib/*"
       ],
+      "@components/*": [
+        "src/components/*"
+      ],
       "@redux/*": [
         "./src/redux/*"
+      ],
+      "@styles/*": [
+        "./src/styles/*"
       ],
     },
     "ignoreDeprecations": "6.0"

@@ -16,7 +16,7 @@ export const createImportedProfileSchema =
     mat_gm_gotra: z.string().optional(),
     otherinfo: z.string().optional(),
     remarks: z.string().optional(),
-    status: z.enum(["draft", "reviewed", "deleted", "moved", "rejected",]).optional(),
+    status: z.enum(['draft', 'moved', 'approved', 'rejected', 'suspended', 'married']).optional(),
   });
 
 export const updateImportedProfileSchema = createImportedProfileSchema

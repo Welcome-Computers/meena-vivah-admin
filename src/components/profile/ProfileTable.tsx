@@ -1,14 +1,18 @@
 import { STATUS_TYPES } from "@/lib/modules/admin/admin.types";
 import { statusOptions } from "@/lib/utility/constant";
-import { cmToFeetInch, getAge } from "@/lib/utility/helper";
+import { cmToFeetInch, displayDob, getAge } from "@/lib/utility/helper";
+import { appMessage } from "@/lib/utility/message";
 import { setProfileData } from "@/redux/features/profile";
+import { useDeleteUserMutation } from "@/redux/features/profile/srevices";
 import { IProfile } from "@/redux/features/profile/types";
 import { IPagination } from "@/redux/features/shared/types";
 import { useAppDispatch } from "@/redux/hooks";
-import { Avatar, Button, Checkbox, Form, Space, Table, Tag } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Avatar, Button, Checkbox, Form, Modal, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 import ProfileData from "./ProfileData";
 
 interface iProps {
@@ -23,16 +27,49 @@ interface iProps {
   }) => void;
   is_pick_current_data?: boolean;
   callingFrom?: string;
+  contentHeight?: number;
 }
 
 const ProfileTable = (props: iProps) => {
 
-  const { callingFrom, showAction, loading, data = [], pagination, handleGetProfiles, is_pick_current_data = false } = props;
+  const { callingFrom, showAction, loading, data = [], pagination, handleGetProfiles,
+    is_pick_current_data = false,
+    contentHeight = 200,
+  } = props;
+
+  const [deleteUserAction, { isLoading: isLoadingDeleteUser }] = useDeleteUserMutation();
 
   const form = Form.useFormInstance()
 
   const router = useRouter();
   const dispatch = useAppDispatch() as any;
+
+
+
+  const deleteProfile = useCallback((recordId: any) => {
+
+    Modal.confirm({
+      centered: true,
+      title: "Delete biodata?",
+      content: "Are you sure you want to remove this record?",
+      okText: "Delete",
+      okType: "danger",
+      async onOk() {
+        try {
+          const res = await deleteUserAction(recordId).unwrap();
+          if (res.success) {
+            appMessage.success(res.message || "Profile deleted successfully");
+          } else {
+            appMessage.error(res.message || "Profile not deleted successfully");
+          }
+        } catch (error: any) {
+          appMessage.error(error?.message || error?.data?.message || "Failed to delete profile");
+        }
+      },
+    });
+  },
+    [appMessage]
+  );
 
   const columns: ColumnsType<IProfile> = [{
     title: "#", key: "index",
@@ -41,13 +78,12 @@ const ProfileTable = (props: iProps) => {
       if (!pagination) {
         return index + 1;
       }
-
       return (pagination.page - 1) * pagination.limit + index + 1;
     },
   },
 
   {
-    title: "Name", dataIndex: "name", key: "name", width: 180, fixed: "left", render: (value, record) => {
+    title: "Name", dataIndex: "name", key: "name", width: 220, fixed: "left", render: (value, record) => {
       const imageSrc =
         record.gender === "boy"
           ? "/images/groom.jpg"
@@ -79,7 +115,7 @@ const ProfileTable = (props: iProps) => {
               orientation="horizontal"
               size={0}>
               <Tag color={"black"}>
-                {getAge(record.dob)}
+                {getAge({ dob: record.dob })}
               </Tag>
             </Space>
           </Space>
@@ -94,7 +130,7 @@ const ProfileTable = (props: iProps) => {
     key: "dob",
     width: 120,
     render: (value) => {
-      return getAge(value)
+      return displayDob(value)
     }
   },
   {
@@ -111,22 +147,30 @@ const ProfileTable = (props: iProps) => {
       confirm,
       clearFilters,
     }) => (
-      <div style={{ padding: 8 }}>
-        <Checkbox.Group
-          options={statusOptions}
-          value={selectedKeys as STATUS_TYPES[]}
-          onChange={(values) => {
-            setSelectedKeys(values);
-          }}
-        />
+      <div style={{ padding: 8, width: 200 }}>
+        <div style={{ marginBottom: 12 }}>
+          <Checkbox.Group
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+            }}
+            options={statusOptions}
+            value={selectedKeys as STATUS_TYPES[]}
+            onChange={(values) => {
+              setSelectedKeys(values);
+            }}
+          />
+        </div>
 
-        <Space style={{ marginTop: 8 }}>
+        <Space style={{
+          width: "100%",
+          justifyContent: "flex-end",
+        }}>
           <Button
             type="primary"
             size="small"
-            onClick={() => {
-              confirm();
-            }}
+            onClick={() => confirm()}
           >
             OK
           </Button>
@@ -136,11 +180,12 @@ const ProfileTable = (props: iProps) => {
             onClick={() => {
               clearFilters?.();
               confirm();
-            }}>
+            }}
+          >
             Reset
           </Button>
         </Space>
-      </div>
+      </div >
     ),
   },
 
@@ -148,7 +193,7 @@ const ProfileTable = (props: iProps) => {
     title: "Height",
     dataIndex: "height",
     key: "height",
-    width: 180,
+    width: 80,
     render: (value) => {
       const { feet, inches } = cmToFeetInch(value);
 
@@ -179,14 +224,14 @@ const ProfileTable = (props: iProps) => {
     width: 250,
     render: (_, record) => (
       <Space wrap>
-        <Tag>
-          {`Self: ${record.self_gotra_name}`}
+        <Tag color={"red"}>
+          <span style={{ color: "black" }}>Self: </span>{record.self_gotra_name}
         </Tag>
-        <Tag>
-          {`Mother: ${record.m_gotra_name}`}
+        <Tag color={"red"}>
+          <span style={{ color: "black" }}>Mother: </span>{record.m_gotra_name}
         </Tag>
-        <Tag>
-          {`G.Mother: ${record.gm_gotra_name}`}
+        <Tag color={"red"}>
+          <span style={{ color: "black" }}>G.Mother: </span>{record.gm_gotra_name}
         </Tag>
       </Space>
     ),
@@ -293,37 +338,62 @@ const ProfileTable = (props: iProps) => {
       {
         title: "Action",
         key: "action",
-        width: 100,
+        width: 160,
         fixed: "right" as const,
         render: (_: any, record: any) => (
           <Space>
             <Button
-              type="link"
+              type="primary"
+              shape="circle"
               onClick={() => {
-
                 if (is_pick_current_data) {
-
                   const values = form?.getFieldsValue?.() || {};
-
                   const details = callingFrom === "create" ? values?.otherinfo : values?.old_detials;
-
                   dispatch(setProfileData(details));
                 }
-
                 router.push(
-                  `/profiles/update_profile?id=${record.id}&action=update`
+                  `/dashboard/profiles/update_profile?id=${record.id}&action=update`
                 );
               }}
             >
-              Edit
+              <EditOutlined />
             </Button>
-          </Space >
+            <Button
+              type="primary"
+              danger
+              shape="circle"
+              onClick={() => deleteProfile(record.id)}>
+              <DeleteOutlined />
+            </Button>
+          </Space>
         ),
       },
     ]
     : [])
 
   ];
+
+
+
+  const handleTableChange = (
+    tablePagination: any,
+    filters: Record<string, any>
+  ) => {
+    const status = filters.status as STATUS_TYPES[];
+
+    handleGetProfiles?.({
+      page: tablePagination.current,
+      pageSize: tablePagination.pageSize,
+      status,
+    });
+  };
+
+  const scrollProps = {
+    x: 1200,
+    y: Math.max(contentHeight - 130, 200),
+  };
+
+  // console.log(pagination)
 
   return (
     <Table
@@ -333,15 +403,16 @@ const ProfileTable = (props: iProps) => {
       loading={loading}
       dataSource={data}
       columns={columns}
-      onChange={(pagination, filters) => {
-        const status = filters.status as STATUS_TYPES[];
+      onChange={handleTableChange}
+      // onChange={(pagination, filters) => {
+      //   const status = filters.status as STATUS_TYPES[];
 
-        handleGetProfiles?.({
-          page: pagination.current,
-          pageSize: pagination.pageSize,
-          status,
-        });
-      }}
+      //   handleGetProfiles?.({
+      //     page: pagination.current,
+      //     pageSize: pagination.pageSize,
+      //     status,
+      //   });
+      // }}
       pagination={
         pagination
           ? {
@@ -360,7 +431,7 @@ const ProfileTable = (props: iProps) => {
           }
           : false
       }
-      scroll={{ x: 1200 }}
+      scroll={scrollProps}
       expandable={{
         expandedRowRender: (
           record

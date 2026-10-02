@@ -1,6 +1,6 @@
+import { UnauthorizedError } from "@/lib/errors/http.errors";
 import { deleteUserTokens, getAdminByMobile, getProfileCreatorByMobile, getTokenRecordByRefreshToken, saveUserToken, verifyRefreshToken } from "@/lib/modules/admin/admin.service";
 import { ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME } from "@/lib/modules/admin/admin.types";
-import { UnauthorizedError } from "@/lib/modules/common/common.service";
 // import { serialize } from "cookie";
 import dayjs from "dayjs";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -12,8 +12,11 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       try {
-        console.log("Refresh Token")
+
+        console.log("+++ Refresh Token +++")
+
         const { refreshToken } = req.body;
+        // console.log("refreshToken ::: ", refreshToken)
 
         if (!refreshToken) {
           throw new UnauthorizedError("Refresh token is required");
@@ -97,6 +100,7 @@ export default async function handler(
           },
         });
       } catch (error: any) {
+        // console.log("+++++ ", error)
         return res.status(error.statusCode || 401).json({
           success: false,
           message: error.message,

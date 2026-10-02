@@ -47,7 +47,7 @@ const OtheGotraDetails = memo((props: any) => {
     <FormListComponent
       form={form}
       formListName="other_gotra"
-      style={{ marginBottom: 16 }}
+      // style={{ marginBottom: 16 }}
       isDisabled={isDisabled}>
       {(value: any) => (
         <>

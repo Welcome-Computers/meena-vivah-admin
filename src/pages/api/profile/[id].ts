@@ -5,7 +5,9 @@ import type {
 
 
 
+import { requireAdmin } from "@/lib/modules/admin/admin.service";
 import {
+  deleteProfile,
   getProfileById,
   suspendProfile
 } from "@/lib/modules/profile/profile.service";
@@ -44,6 +46,7 @@ export default async function handler(
 
     // SUSPEND PROFILE
     if (req.method === "PATCH") {
+      requireAdmin(req);
 
       await suspendProfile(id);
 
@@ -55,6 +58,18 @@ export default async function handler(
 
     }
 
+    // DELETE PROFILE
+    if (req.method === "DELETE") {
+      requireAdmin(req);
+
+      await deleteProfile(id);
+
+      return res.status(200).json({
+        success: true,
+        message: "Profile deleted successfully",
+      });
+    }
+
     return res.status(405).json({
       success: false,
       message:
@@ -62,6 +77,7 @@ export default async function handler(
     });
 
   } catch (error) {
+    console.error("Error in profile/[id] API:", error);
     return handleApiError(res, error);
   }
 }

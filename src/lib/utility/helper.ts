@@ -1,26 +1,24 @@
 import dayjs from "dayjs";
 
-export const getAge = (
-  dob?: string | null
-) => {
+// "1998-09-27T00:00:00.000Z"
+// to 
+// 33 years 1 m
+export const getAge = (dob?: string | null): string => {
   if (!dob) return "-";
 
   const birthDate = new Date(dob);
   const today = new Date();
 
-  let years =
-    today.getFullYear() -
-    birthDate.getFullYear();
+  // Validate the date
+  if (Number.isNaN(birthDate.getTime())) return "-";
 
-  let months =
-    today.getMonth() -
-    birthDate.getMonth();
+  // Ignore future dates
+  if (birthDate > today) return "-";
 
-  // Birthday month/date not reached yet
-  if (
-    today.getDate() <
-    birthDate.getDate()
-  ) {
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+
+  if (today.getDate() < birthDate.getDate()) {
     months--;
   }
 
@@ -29,11 +27,55 @@ export const getAge = (
     months += 12;
   }
 
-  return months > 0
-    ? `${years}.${months}`
-    : `${years}`;
+  if (months === 0) {
+    return `${years} ${years === 1 ? "year" : "years"}`;
+  }
+
+  return `${years} ${years === 1 ? "year" : "years"} ${months} ${months === 1 ? "month" : "months"
+    }`;
 };
 
+type AgePreferenceParams = {
+  dob?: string | null;
+  gender?: string | null;
+};
+
+export const getAgePreference = ({
+  dob,
+  gender,
+}: AgePreferenceParams): [number, number] => {
+  const DEFAULT_AGE: [number, number] = [18, 25];
+
+  if (!dob) return DEFAULT_AGE;
+
+  const birthDate = new Date(dob);
+  const today = new Date();
+
+  if (
+    Number.isNaN(birthDate.getTime()) ||
+    birthDate > today
+  ) {
+    return DEFAULT_AGE;
+  }
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  const hasBirthdayPassed =
+    today.getMonth() > birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() &&
+      today.getDate() >= birthDate.getDate());
+
+  if (!hasBirthdayPassed) {
+    age--;
+  }
+
+  // Preserve your existing preference rule.
+  if (gender === "boy") {
+    return [Math.max(18, age - 4), Math.max(18, age)];
+  }
+
+  return [Math.max(18, age), Math.max(18, age + 4)];
+};
 
 export const removeEmptyObjects = (arr: any[] = []) => {
   if (!Array.isArray(arr)) return [];
@@ -187,10 +229,25 @@ export const formatedEditableRecord = (record: any) => {
 }
 
 export const formattedDob = (dob: any) => {
-  // get 
-  return dob
+  const { day, month, year } = dob || {};
 
-}
+  if (!day || !month || !year) {
+    return null;
+  }
+
+  return dayjs(
+    new Date(year, month - 1, day)
+  );
+};
+
+// "1998-09-27T00:00:00.000Z"
+// to
+// 27 Sep, 1998
+export const displayDob = (dob?: string | null) => {
+  if (!dob) return "-";
+
+  return dayjs(dob).format("DD MMM, YYYY");
+};
 
 export const getDeviceId = () => {
   let deviceName = localStorage.getItem("device_name");

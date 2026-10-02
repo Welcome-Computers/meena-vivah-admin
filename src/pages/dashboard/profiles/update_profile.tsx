@@ -37,7 +37,8 @@ const UpdateProfile = () => {
     skip: !id
   });
 
-  const [updateUserAction, { isLoading: isLoadingCreateUser, isSuccess, isError, error }] = useUpdateUserMutation();
+  const [updateUserAction, { isLoading: isLoadingCreateUser }] = useUpdateUserMutation();
+
 
   const handleFromSubmit = useCallback(async () => {
     const { dob, ...rest } = form.getFieldsValue();

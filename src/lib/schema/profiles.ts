@@ -31,5 +31,14 @@ export const profiles = mysqlTable("profile", {
   otherinfo: text("otherinfo"),
   isSuspended: boolean("is_suspended").default(false),
   createdAt: timestamp("created_at").defaultNow(),
-  status: mysqlEnum('status', ['draft', 'approved', 'rejected', 'suspended']).notNull().default('draft'),
+  status: mysqlEnum('status', ['draft', 'moved', 'approved', 'rejected', 'suspended', 'married']).notNull().default('draft'),
 });
+
+
+// | Status      | Meaning                                                         |
+// | ----------- | --------------------------------------------------------------- |
+// | `draft`     | Profile is being created/edited and is not ready for publishing |
+// | `approved`  | Admin has reviewed and approved the profile                     |
+// | `rejected`  | Admin reviewed it but decided it should not be published        |
+// | `suspended` | Previously approved profile is temporarily hidden/disabled      |
+// | `married`   | Person has got married, so the profile is no longer available for matchmaking |

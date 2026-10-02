@@ -185,11 +185,26 @@ a {
   width: 100%;
 }
 
+/* 
 .form-scroll-section {
   height: calc(100vh - 250px);
   overflow-y: auto;
 
   padding-right: 10px;
+} */
+
+.form-column {
+  /* height: calc(100vh - 250px); */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.form-scroll-section {
+  flex: 1;
+  min-height: 0;
+  padding-right: 10px;
+  overflow-y: auto;
 }
 
 .editor-sticky {
@@ -239,4 +254,11 @@ a {
 .full_detials .ql-container,
 .other_detials .ql-container {
   flex: 1;
+}
+
+.gotra_table {
+  .ant-col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
 }

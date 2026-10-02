@@ -91,9 +91,7 @@ export async function checkDb() {
 
   } catch (error) {
 
-    console.log(
-      "❌ MySQL connection failed"
-    );
+    console.log("❌ MySQL connection failed");
 
     console.log(error);
   }

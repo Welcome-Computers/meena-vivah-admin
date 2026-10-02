@@ -24,10 +24,18 @@ export const importedProfile = mysqlTable("imported_profile", {
   gm_gotra: varchar("gm_gotra", { length: 50, }),
   mat_gm_gotra: varchar("mat_gm_gotra", { length: 50, }),
   otherinfo: text("otherinfo"),
-  status: mysqlEnum("status",
-    ["draft", "reviewed", "deleted", "moved", "rejected",]).notNull().default("draft"),
+  status: mysqlEnum("status", ['draft', 'moved', 'approved', 'rejected', 'suspended', 'married']).notNull().default("draft"),
   remarks: text("remarks"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+
+// / | Status      | Meaning                                                         |
+// | ----------- | --------------------------------------------------------------- |
+// | `draft`     | Profile is being created/edited and is not ready for publishing |
+// | `approved`  | Admin has reviewed and approved the profile                     |
+// | `rejected`  | Admin reviewed it but decided it should not be published        |
+// | `suspended` | Previously approved profile is temporarily hidden/disabled      |
+// | `married`   | Person has got married, so the profile is no longer available for matchmaking |

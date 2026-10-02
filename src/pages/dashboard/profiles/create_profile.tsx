@@ -8,20 +8,17 @@ import { useRef } from "react";
 import ProfileForm from "./_includes/ProfileForm";
 
 const breadcrumbObj = [
-  {
-    title: "Dashboard",
-  },
-  {
-    title: "All Profile",
-  },
-  {
-    title: "Create Profile",
-  },
+  { title: "Dashboard" },
+  { title: "All Profile" },
+  { title: "Create Profile" }
 ]
 
-const CreateProfile = () => {
+const CreateProfileCmp = () => {
   const [form] = Form.useForm();
-  const fromData = Form.useWatch(null, form)
+  const formData = Form.useWatch(null, form)
+
+  // console.table(formData);
+
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   const { userName, profilePick, userRole, status } = useAuth();
@@ -32,12 +29,10 @@ const CreateProfile = () => {
 
     const { need_duplicate, dob, ...rest } = form.getFieldsValue();
 
-    const formattedDobValue = formattedDob(dob);
-    debugger;
     const formData = {
       ...rest,
-      dob: formattedDobValue,
-
+      dob: formattedDob(dob),
+      status: 'approved',
       other_gotra: removeEmptyObjects(rest.other_gotra),
       other_mobile: removeEmptyObjects(rest.other_mobile),
       address_details: removeEmptyObjects(rest.address_details),
@@ -52,7 +47,7 @@ const CreateProfile = () => {
         appMessage.success("Profile created successfully");
 
         if (need_duplicate) {
-          form.resetFields();
+          // form.resetFields();
           firstComponentFocusHandler(formContainerRef);
         }
 
@@ -62,7 +57,6 @@ const CreateProfile = () => {
         );
       }
     } catch (error: any) {
-
       appMessage.error(
         error?.data?.message ||
         error?.response?.data?.message ||
@@ -72,10 +66,10 @@ const CreateProfile = () => {
   };
 
 
+
   return (
     <AdminLayout
-      breadcrumbItems={breadcrumbObj}
-    >
+      breadcrumbItems={breadcrumbObj}>
       {/* Main form components */}
 
       <ProfileForm
@@ -92,4 +86,4 @@ const CreateProfile = () => {
   );
 };
 
-export default CreateProfile;
+export default CreateProfileCmp;

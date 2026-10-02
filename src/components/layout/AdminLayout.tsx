@@ -1,13 +1,13 @@
 import { useAuth } from "@/hook/useAuth";
 import { useAvailableHeight } from "@/hook/useAvailableHeight";
 import { canAccessRoute } from "@/lib/routePermission";
-import { useAppDispatch } from "@/redux/hooks";
 import { Breadcrumb, BreadcrumbProps, Button, Layout } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import PrivateSidebar from "../../config/PrivateSidebar";
+import { ProfileFilter } from "../profile/ProfileFilter";
 
 const { Header, Sider, Content } = Layout;
 
@@ -19,9 +19,16 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout(props: AdminLayoutProps) {
-  const { children, title, headerRightSec, breadcrumbItems } = props || {};
+
+  const {
+    children,
+    title,
+    headerRightSec,
+    breadcrumbItems,
+  } = props || {};
+
   const router = useRouter();
-  const dispatch = useAppDispatch() as any;
+
 
   const { userName, profilePick, sessionError, userRole, status } = useAuth();
   const [checkingPermission, setCheckingPermission] = useState(true);
@@ -196,10 +203,29 @@ export default function AdminLayout(props: AdminLayoutProps) {
           height: "100vh",
           overflow: "auto",
         }}>
-        <div style={{ color: "white", padding: 16, fontSize: 18 }}>
-          Admin Panel
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: "column",
+          height: "100%"
+        }}>
+          <div>
+            <div
+              style={{
+                color: "white",
+                padding: 16,
+                fontSize: 18,
+              }}>
+              {title || "Admin Panel"}
+            </div>
+            <PrivateSidebar />
+          </div>
+
+          <ProfileFilter
+            callingFrom="adminLayout"
+          />
         </div>
-        <PrivateSidebar />
+
       </Sider>
 
       <Layout >

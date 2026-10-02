@@ -2,10 +2,12 @@ import { setLayoutHeight } from "@/redux/features/layoutSetting";
 import { useAppDispatch } from "@/redux/hooks";
 import {
   RefObject,
+  useEffect,
   useLayoutEffect,
   useState,
 } from "react";
 
+const ENABLE_HEIGHT_DEBUG = false;
 interface UseAvailableHeightOptions {
   baseHeight?: number;
   subtractRefs?: RefObject<HTMLElement | null>[];
@@ -21,6 +23,7 @@ export const useAvailableHeight = ({
   minHeight = 0,
   debugName = "unknown",
 }: UseAvailableHeightOptions = {}) => {
+
   const [height, setHeight] = useState(0);
   const dispatch = useAppDispatch() as any;
 
@@ -31,11 +34,22 @@ export const useAvailableHeight = ({
       let availableHeight =
         baseHeight ?? window.innerHeight;
 
+      // subtractRefs.forEach((ref) => {
+      //   if (!ref.current) return;
+      //   availableHeight -= ref.current.getBoundingClientRect().height;
+      // });
+
       subtractRefs.forEach((ref) => {
         if (!ref.current) return;
 
-        availableHeight -=
-          ref.current.getBoundingClientRect().height;
+        const element = ref.current;
+        const rect = element.getBoundingClientRect();
+        const styles = window.getComputedStyle(element);
+
+        const marginTop = parseFloat(styles.marginTop) || 0;
+        const marginBottom = parseFloat(styles.marginBottom) || 0;
+
+        availableHeight -= rect.height + marginTop + marginBottom;
       });
 
       availableHeight -= extraHeight;
@@ -45,7 +59,7 @@ export const useAvailableHeight = ({
         minHeight
       );
 
-      if (process.env.NODE_ENV === "development") {
+      if (ENABLE_HEIGHT_DEBUG && process.env.NODE_ENV === "development") {
         console.groupCollapsed(
           `%c[useAvailableHeight] ${debugName}`,
           "color: #11be99; font-weight: bold;"
@@ -109,9 +123,11 @@ export const useAvailableHeight = ({
     subtractRefs,
   ]);
 
-  if (debugName === "ADMIN_LAYOUT") {
-    dispatch(setLayoutHeight(height))
-  }
+  useEffect(() => {
+    if (debugName === "ADMIN_LAYOUT" && height !== undefined) {
+      dispatch(setLayoutHeight(Math.floor(height)));
+    }
+  }, [height, debugName, dispatch]);
 
-  return height;
+  return Math.floor(height);
 };

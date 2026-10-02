@@ -118,6 +118,8 @@ export default async function handler(
 
     if (req.method === "GET") {
 
+
+
       const action = req.query.action as string;
 
       const page = Number(req.query.page || 1);
@@ -209,7 +211,6 @@ export default async function handler(
           ...result,
         });
       } else {
-
 
         const result = await getProfiles({
           page,

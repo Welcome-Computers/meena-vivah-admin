@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { ForbiddenError, UnauthorizedError } from "@/lib/errors/http.errors";
 import { admins } from "@/lib/schema/admin";
 import { profiles } from "@/lib/schema/profiles";
 import { userTokens } from "@/lib/schema/userTokens";
@@ -7,9 +8,9 @@ import crypto from "crypto";
 import dayjs from "dayjs";
 import { and, eq } from "drizzle-orm";
 import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
-import { UnauthorizedError } from "../common/common.service";
+import { NextApiRequest } from "next";
 import { otpVerifications } from './../../schema/otpVerifications';
-import { ACCESS_TOKEN_TIME, LoginWithOtpProps, LogoutServiceProps, REFRESH_TOKEN_TIME, ROLE_TYPES } from "./admin.types";
+import { ACCESS_TOKEN_TIME, LoginWithOtpProps, LogoutServiceProps, REFRESH_TOKEN_TIME, ROLE_TYPES, UserPayload } from "./admin.types";
 import { SaveUserTokenInput, saveUserTokenSchema } from "./admin.validation";
 
 
@@ -289,6 +290,17 @@ export const saveUserToken = async (
     .update(validated.refreshToken)
     .digest("hex");
 
+  // Remove old token for this user
+  await db
+    .delete(userTokens)
+    .where(
+      and(
+        eq(userTokens.userId, validated.userId),
+        eq(userTokens.userType, validated.userType)
+      )
+    );
+
+  // Insert new token
   await db.insert(userTokens).values({
     userId: validated.userId,
     userType: validated.userType,
@@ -306,7 +318,7 @@ export const saveUserToken = async (
   });
 };
 
-export const refreshAccessToken = async ({
+export const refreshAccessToken1 = async ({
   refreshToken,
 }: {
   refreshToken: string;
@@ -450,19 +462,26 @@ export const generateRefreshToken = ({
   );
 };
 
-export const verifyAccessToken = (token: string) => {
+export const verifyAccessToken = (
+  token: string
+): UserPayload => {
   if (!token) {
     throw new UnauthorizedError("Access token is required");
   }
 
   try {
-    // console.log("///////////////////////////////", token, JWT_SECRET_TOKEN);
-
     const data = jwt.verify(
       token,
       JWT_SECRET_TOKEN
     );
-    return data;
+
+    if (typeof data === "string") {
+      throw new UnauthorizedError(
+        "Invalid access token"
+      );
+    }
+
+    return data as UserPayload;
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       throw new UnauthorizedError(
@@ -476,30 +495,34 @@ export const verifyAccessToken = (token: string) => {
       );
     }
 
+    if (error instanceof UnauthorizedError) {
+      throw error;
+    }
+
     throw new UnauthorizedError(
       "Unable to verify access token"
     );
   }
 };
 
-export const verifyAccessToken1 = (token: string) => {
-  if (!token) {
-    throw new UnauthorizedError("Access token is required");
-  }
+// export const verifyAccessToken1 = (token: string) => {
+//   if (!token) {
+//     throw new UnauthorizedError("Access token is required");
+//   }
 
-  try {
-    const decoded = jwt.verify(
-      token,
-      JWT_SECRET_TOKEN
-    );
-    return decoded;
+//   try {
+//     const decoded = jwt.verify(
+//       token,
+//       JWT_SECRET_TOKEN
+//     );
+//     return decoded;
 
-  } catch (error) {
-    throw new UnauthorizedError(
-      "Access token is invalid or expired"
-    );
-  }
-};
+//   } catch (error) {
+//     throw new UnauthorizedError(
+//       "Access token is invalid or expired"
+//     );
+//   }
+// };
 
 export const verifyRefreshToken = (refreshToken: string) => {
   if (!refreshToken) {
@@ -513,7 +536,7 @@ export const verifyRefreshToken = (refreshToken: string) => {
     );
   } catch (error) {
     throw new UnauthorizedError(
-      "Refresh token is invalid or expired"
+      "Refresh token is invalid or expired 132"
     );
   }
 };
@@ -533,6 +556,7 @@ export const getTokenRecordByRefreshToken = async (
 
   // console.log("+++++++++++ R", refreshTokenHash);
 
+
   // Find the token record
   const [tokenRecord] = await db
     .select()
@@ -541,9 +565,38 @@ export const getTokenRecordByRefreshToken = async (
     .limit(1);
 
 
+  // console.log({ tokenRecord, refreshTokenHash })
+
+
   if (!tokenRecord) {
     throw new Error("Invalid refresh token");
   }
 
   return tokenRecord;
 };
+
+
+
+export function requireAdmin(
+  req: NextApiRequest
+): UserPayload {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new UnauthorizedError(
+      "Access token is required"
+    );
+  }
+
+  const token = authHeader.substring(7);
+
+  const payload = verifyAccessToken(token);
+
+  if (payload.role !== "admin" && payload.role !== "profile") {
+    throw new ForbiddenError(
+      "Admin access required"
+    );
+  }
+
+  return payload;
+}

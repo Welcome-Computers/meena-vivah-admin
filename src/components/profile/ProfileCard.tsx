@@ -51,7 +51,7 @@ export const ProfileCard = (props: iProps) => {
 
                   <p className={style.profession}>{record?.occupation_name}</p>
                   <p>
-                    <strong>Age:</strong> {getAge(record?.dob)}
+                    <strong>Age:</strong> {getAge({ dob: record?.dob })}
                   </p>
                   <p>
                     <strong>Height:</strong> {record?.height}
@@ -73,7 +73,7 @@ export const ProfileCard = (props: iProps) => {
                     type="link"
                     onClick={() => {
                       router.push(
-                        `/profiles/update_profile?id=${record?.id}&action=update`
+                        `/dashboard/profiles/update_profile?id=${record?.id}&action=update`
                       );
                     }}
                   >

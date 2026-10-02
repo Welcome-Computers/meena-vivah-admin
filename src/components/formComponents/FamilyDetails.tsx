@@ -22,7 +22,7 @@ const FamilyDetails = memo((props: any) => {
 
       <InputField
         name="fathersoccupation"
-        label="Mother Occupation"
+        label="Father Occupation"
         disabled={!fatherName}
         rules={[
           { max: 100, message: "Maximum 30 characters" },

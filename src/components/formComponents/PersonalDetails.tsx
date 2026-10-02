@@ -10,7 +10,6 @@ import InputField from "../InputElements/InputField";
 import SearchableSelectField, { SelectOption } from "../InputElements/SearchableSelectField";
 import ProfileTable from "../profile/ProfileTable";
 
-
 interface iProps {
   searchByMobileData: any,
   isLoadingByMobile: boolean,
@@ -95,6 +94,8 @@ const PersonalDetails = memo((props: iProps) => {
     form,
     modal,
   ]);
+
+
 
   return (
     <div className={style["form-container"]}>
@@ -190,11 +191,13 @@ const PersonalDetails = memo((props: iProps) => {
       />
 
       <DobField
+        form={form}
         name="dob"
         label="Date of Birth"
       />
 
       <HeightField
+        form={form}
         name="height"
         label="Height"
       />

@@ -1,6 +1,6 @@
+import { ForbiddenError, UnauthorizedError } from "@lib/errors/http.errors";
 import type { NextApiResponse } from "next";
 import { ZodError } from "zod";
-import { UnauthorizedError } from "../modules/common/common.service";
 
 export const handleApiError = (
   res: NextApiResponse,
@@ -12,6 +12,18 @@ export const handleApiError = (
    */
   if (error instanceof UnauthorizedError) {
     console.log(`Auth: ${error.message}`);
+
+    return res.status(error.statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  /**
+   * Forbidden / Authorization Error
+  */
+  if (error instanceof ForbiddenError) {
+    console.log(`Forbidden: ${error.message}`);
 
     return res.status(error.statusCode).json({
       success: false,

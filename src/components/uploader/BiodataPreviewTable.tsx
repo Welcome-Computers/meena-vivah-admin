@@ -257,6 +257,7 @@ const BiodataPreviewTable = ({
           justifyContent: "space-between",
           alignItems: "center",
           marginTop: 16,
+          padding: "0 16px"
         }}
       >
         <Space>

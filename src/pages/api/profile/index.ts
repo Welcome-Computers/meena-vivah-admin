@@ -101,7 +101,7 @@ export default async function handler(
 
       const looking_for = req.query.looking_for as string;
 
-      console.log("+++++++", status)
+      // console.log("+++++++", status)
 
 
       const preferredAgeRaw =

@@ -26,8 +26,6 @@ export const profileApi = createApi({
 
     getPrivateProfiles: builder.query({
       query: (params: GetMatchedProfilesProps) => {
-        console.log(params)
-
         return ({
           url: `/api/profile/private?${queryString(params)}`,
           method: "GET",

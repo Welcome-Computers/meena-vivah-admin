@@ -51,7 +51,7 @@ export const ProfileCard = (props: iProps) => {
 
                   <p className={style.profession}>{record?.occupation_name}</p>
                   <p>
-                    <strong>Age:</strong> {getAge({ dob: record?.dob })}
+                    <strong>Age:</strong> {getAge(record?.dob)}
                   </p>
                   <p>
                     <strong>Height:</strong> {record?.height}

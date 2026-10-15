@@ -144,7 +144,6 @@ export default async function handler(
             ? [excludeGotraRaw]
             : [];
 
-
       const occupation = req.query.occupation as string;
       const gender = req.query.gender as string;
       const min_age = Number(req.query.min_age);
@@ -156,6 +155,7 @@ export default async function handler(
 
       if (action === "matches") {
         // FOR PUBLIC ROUTE AFTHER MAIN SEARECH 
+        console.log("public 000")
         const result =
           await getProfileMatches({
             page,

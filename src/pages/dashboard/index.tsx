@@ -7,7 +7,6 @@ import { getAgePreference } from "@/lib/utility/helper";
 import { setProfileFilterValues } from "@/redux/features/profile";
 import { useGetPrivateProfilesQuery, useGetProfilesQuery } from "@/redux/features/profile/srevices";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { Row } from "antd";
 import { useEffect, useRef, useState } from "react";
 
 const Dashboard = () => {
@@ -101,9 +100,10 @@ const Dashboard = () => {
       title="Dashboard">
       <div>
         {/* ================= STATUS ================= */}
-        <Row gutter={[16, 16]}>
+        <div style={{ padding: "16px 16px 0px 16px " }}>
           <TopStatics status={status} />
-        </Row>
+        </div>
+
 
         {userRole === "admin" ?
           <>

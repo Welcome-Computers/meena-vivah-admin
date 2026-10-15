@@ -47,7 +47,7 @@ const CreateProfileCmp = () => {
         appMessage.success("Profile created successfully");
 
         if (need_duplicate) {
-          // form.resetFields();
+          form.resetFields();
           firstComponentFocusHandler(formContainerRef);
         }
 

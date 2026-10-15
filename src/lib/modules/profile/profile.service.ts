@@ -348,12 +348,29 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
     conditions.push(lte(profiles.dob, maxDob));
   }
 
-
-
   const data = await getBaseProfiles(conditions, page, limit);
+
+  // console.log(data)
 
   const finalData = await attachRelationsToProfiles(data);
 
+  // 
+  const countQuery = db
+    .select({
+      count: sql<number>`count(*)`,
+    })
+    .from(profiles)
+    .where(and(...conditions));
+
+  // Console generated MySQL query
+  const { sql: query, params: queryParams } = countQuery.toSQL();
+
+  console.log("::: COUNT QUERY :::", query);
+  console.log("::: QUERY PARAMS :::", queryParams);
+  console.log("::: CONDITIONS :::", conditions);
+  // 
+
+  // Execute query
   const [totalResult] =
     await db.select({
       count: sql<number>`count(*)`,
@@ -363,8 +380,9 @@ export async function getProfileMatches(params: GetMatchedProfilesProps) {
         and(...conditions)
       );
 
-  const total =
-    Number(totalResult.count);
+
+
+  const total = Number(totalResult.count);
 
   return {
     data: finalData,

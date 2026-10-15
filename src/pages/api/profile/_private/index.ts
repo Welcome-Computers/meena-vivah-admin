@@ -195,6 +195,7 @@ export default async function handler(
 
       if (action === "matches") {
         // FOR PUBLIC ROUTE AFTHER MAIN SEARECH 
+        console.log("private 123")
         const result =
           await getProfileMatches({
             page,

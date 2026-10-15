@@ -46,7 +46,7 @@ a {
 }
 
 .login_page_container {
-  background-image: url("/images/loginBackground.png");
+  background-image: url("/images/loginBackground.webp");
   width: 100%;
   height: inherit;
   background-size: cover;

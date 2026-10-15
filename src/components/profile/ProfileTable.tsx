@@ -44,10 +44,7 @@ const ProfileTable = (props: iProps) => {
   const router = useRouter();
   const dispatch = useAppDispatch() as any;
 
-
-
   const deleteProfile = useCallback((recordId: any) => {
-
     Modal.confirm({
       centered: true,
       title: "Delete biodata?",
@@ -82,6 +79,7 @@ const ProfileTable = (props: iProps) => {
     },
   },
 
+  // Name & age
   {
     title: "Name", dataIndex: "name", key: "name", width: 220, fixed: "left", render: (value, record) => {
       const imageSrc =
@@ -115,7 +113,7 @@ const ProfileTable = (props: iProps) => {
               orientation="horizontal"
               size={0}>
               <Tag color={"black"}>
-                {getAge({ dob: record.dob })}
+                {getAge(record.dob)}
               </Tag>
             </Space>
           </Space>

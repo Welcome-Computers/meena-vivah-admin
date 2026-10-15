@@ -1,9 +1,10 @@
 .profileFilterContainer {
-  border-radius: 10px;
-  border: 1px solid #FCE8D1;
-  background-color: #fff;
-  padding: 1rem;
-  max-width: 220px;
+  border-radius: 0px;
+  border: 0px solid #FCE8D1;
+  background-color: #b9b9b9;
+  padding: 14px;
+  max-width: 226px;
+  opacity: .85
 }
 
 

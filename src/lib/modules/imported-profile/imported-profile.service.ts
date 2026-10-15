@@ -222,7 +222,7 @@ export async function deleteImportedProfile(id: number) {
   await db
     .update(importedProfile)
     .set({
-      status: "deleted", // or "delete" if that's your enum value
+      status: "suspended", // or "delete" if that's your enum value
     })
     .where(eq(importedProfile.id, id));
 

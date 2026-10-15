@@ -48,7 +48,7 @@ export const createProfileSchema =
     mat_gm_gotra: z.string().nullable().optional(),
     preferences: z.string().nullable().optional(),
     otherinfo: z.string().nullable().optional(),
-    status: z.enum(["draft", "approved", "rejected", "suspended"]).optional(),
+    status: z.enum(['draft', 'moved', 'approved', 'rejected', 'suspended', 'married']).optional(),
 
     /**
      * MOBILE DETAILS

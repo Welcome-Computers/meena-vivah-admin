@@ -2,9 +2,11 @@
 import AdminLayout from "@/components/layout/AdminLayout";
 
 import ProfileContainer from "@/components/profile/ProfileContainer";
+import { useAuth } from "@/hook/useAuth";
 import { STATUS_TYPES } from "@/lib/modules/admin/admin.types";
 import { useGetPrivateProfilesQuery } from "@/redux/features/profile/srevices";
-import { Button } from "antd";
+import { useAppSelector } from "@/redux/hooks";
+import { Button, Space } from "antd";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -14,11 +16,39 @@ const Profiles = () => {
 
   const [status, setStatus] = useState<STATUS_TYPES[]>([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(50);
+
+  const { layout_height } = useAppSelector((state: any) => state.layoutSetting);
+
+  // const headerRef = useRef<HTMLDivElement>(null);
+  // const contentHeight = useAvailableHeight({
+  //   subtractRefs: [headerRef],
+  //   baseHeight: 500,
+  //   debugName: "PROFILE PAGE"
+  // });
+
+
+
+  const { userRole } = useAuth();
+
+  // const LIMIT = 10
+
+  const params = {
+    page,
+    limit,
+    role: userRole ?? undefined,
+    status,
+  }
+
+  const { data, isFetching, error, } = useGetPrivateProfilesQuery(
+    params,
+    {
+      refetchOnMountOrArgChange: true,
+      skip: !userRole
+    });
+
 
   const router = useRouter();
-
-  const { data, isFetching, error, } = useGetPrivateProfilesQuery({ status, page, limit });
 
   const profilsList = data?.data || [];
   const pagination = data?.pagination || {};
@@ -27,9 +57,12 @@ const Profiles = () => {
     page: number,
     pageSize?: number,
     status?: STATUS_TYPES[]) => {
+
     setPage(page);
     if (status) {
       setStatus(status)
+    } else {
+      setStatus([])
     }
     if (pageSize) {
       setLimit(pageSize)
@@ -47,9 +80,16 @@ const Profiles = () => {
         },
       ]}
 
-      headerRightSec={<div><Button type="primary" onClick={() => router.push('/profiles/create_profile')}>Add New</Button></div>}
+      headerRightSec={
+        <Space
+          orientation="horizontal">
+          <Button type="primary" onClick={() => router.push('/profiles/create_profile')}>Add New</Button>
+        </Space>
+      }
     >
-      <div>
+      <div
+        style={{ height: layout_height }}
+      >
         <ProfileContainer
           defaultShow="table"
           showToggle={false}

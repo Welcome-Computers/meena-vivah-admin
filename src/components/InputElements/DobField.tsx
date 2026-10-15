@@ -1,34 +1,46 @@
-import { DatePickerProps, Form, Select } from "antd";
-import { RuleObject } from "antd/es/form";
-import { useWatch } from "antd/es/form/Form";
+import { Form, Select } from "antd";
+import { FormInstance, useWatch } from "antd/es/form/Form";
 import dayjs from "dayjs";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
-
-
-// THER IS A BUG IN THIS COMPINET WHEN WE SELECT MONTH JAN THERE COULD ERRRO COME
-interface DobProps extends DatePickerProps {
+interface DobProps {
   name: string;
   label?: string;
+  form: FormInstance;
 }
 
-const DobField = (props: DobProps) => {
-  const { name, label, ...rest } = props;
-
+const DobField = ({ name, label, form }: DobProps) => {
   const yearRef = useRef<any>(null);
   const monthRef = useRef<any>(null);
   const dayRef = useRef<any>(null);
 
-  // validtion for day Length according to month and year
-  const selectedMonth = useWatch([name, "month"]);
-  const selectedYear = useWatch([name, "year"]);
-  const dayLength = new Date(selectedYear, selectedMonth, 0).getDate();
+  const [yearSearch, setYearSearch] = useState("");
+  const [monthSearch, setMonthSearch] = useState("");
+  const [daySearch, setDaySearch] = useState("");
 
-  const dayOptions = Array.from({ length: dayLength }, (_, index) => ({
-    label: index + 1,
-    value: index + 1,
-  }));
+  // Watch DOB fields
+  const selectedMonth = useWatch([name, "month"], form);
+  const selectedYear = useWatch([name, "year"], form);
 
+  // ------------------------------------
+  // Day length according to year + month
+  // ------------------------------------
+  const dayLength =
+    selectedYear && selectedMonth
+      ? new Date(selectedYear, selectedMonth, 0).getDate()
+      : 31;
+
+  const dayOptions = Array.from(
+    { length: dayLength },
+    (_, index) => ({
+      label: index + 1,
+      value: index + 1,
+    })
+  );
+
+  // ------------------------------------
+  // Month options
+  // ------------------------------------
   const monthOptions = [
     { label: "January", value: 1 },
     { label: "February", value: 2 },
@@ -44,9 +56,10 @@ const DobField = (props: DobProps) => {
     { label: "December", value: 12 },
   ];
 
-
+  // ------------------------------------
+  // Year options
+  // ------------------------------------
   const currentYear = dayjs().year();
-
   const maxAllowedYear = currentYear - 18;
 
   const yearOptions = Array.from(
@@ -57,134 +70,278 @@ const DobField = (props: DobProps) => {
     })
   );
 
-  const form = Form.useFormInstance();
-
-
-  const ageValidation = (_: RuleObject, value: any) => {
-    if (
-      value?.day === undefined ||
-      value?.month === undefined ||
-      value?.year === undefined
-    ) {
-      return Promise.resolve(); // no validation yet
-    }
-
-    const today = new Date();
-
-    let age = today.getFullYear() - value.year;
-
-    const monthDiff =
-      today.getMonth() - value.month;
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 &&
-        today.getDate() < value.day)
-    ) {
-      age--;
-    }
-
-    if (age < 18) {
-      return Promise.reject(
-        new Error("Age must be 18 or above")
-      );
-    }
-    return Promise.resolve();
-  };
-
+  // ------------------------------------
+  // Search filter
+  // ------------------------------------
   const filterSelectOption = (
     input: string,
-    option?: { label?: React.ReactNode; value?: unknown }
+    option?: {
+      label?: React.ReactNode;
+      value?: unknown;
+    }
   ) => {
-    const label = String(option?.label ?? "").toLowerCase();
-    const value = String(option?.value ?? "");
+    const search = input.toLowerCase();
+
+    const labelValue = String(
+      option?.label ?? ""
+    ).toLowerCase();
+
+    const optionValue = String(
+      option?.value ?? ""
+    );
 
     return (
-      label.includes(input.toLowerCase()) ||
-      value.startsWith(input)
+      labelValue.includes(search) ||
+      optionValue.startsWith(input)
     );
   };
 
+  // ------------------------------------
+  // Convert month text -> month number
+  // ------------------------------------
+  const getMonthValue = (input: string) => {
+    const search = input.trim().toLowerCase();
+
+    const month = monthOptions.find((item) =>
+      item.label
+        .toLowerCase()
+        .startsWith(search)
+    );
+
+    return month?.value;
+  };
+
+  // ------------------------------------
+  // Commit manually typed year
+  // ------------------------------------
+  const commitYear = () => {
+    const value = yearSearch.trim();
+
+    if (!value) return;
+
+    const year = Number(value);
+
+    if (
+      /^\d{4}$/.test(value) &&
+      year >= 1900 &&
+      year <= maxAllowedYear
+    ) {
+      // Only update DOB.year
+      form.setFieldValue(
+        [name, "year"],
+        year
+      );
+
+      setYearSearch("");
+
+      requestAnimationFrame(() => {
+        monthRef.current?.focus();
+      });
+
+      return;
+    }
+
+    setYearSearch("");
+  };
+
+  // ------------------------------------
+  // Commit manually typed month
+  // ------------------------------------
+  const commitMonth = () => {
+    const value = monthSearch.trim();
+
+    if (!value) return;
+
+    const month = getMonthValue(value);
+
+    if (month) {
+      // Only update DOB.month
+      form.setFieldValue(
+        [name, "month"],
+        month
+      );
+
+      setMonthSearch("");
+
+      requestAnimationFrame(() => {
+        dayRef.current?.focus();
+      });
+
+      return;
+    }
+
+    setMonthSearch("");
+  };
+
+  // ------------------------------------
+  // Commit manually typed day
+  // ------------------------------------
+  const commitDay = () => {
+    const value = daySearch.trim();
+
+    if (!value) return;
+
+    const day = Number(value);
+
+    if (
+      Number.isInteger(day) &&
+      day >= 1 &&
+      day <= dayLength
+    ) {
+      // Only update DOB.day
+      form.setFieldValue(
+        [name, "day"],
+        day
+      );
+
+      setDaySearch("");
+      return;
+    }
+
+    setDaySearch("");
+  };
+
+  // ------------------------------------
+  // Age validation
+  // ------------------------------------
+
+
   return (
     <Form.Item
-      name={name}
       label={label}
-      style={{ marginBottom: "5px" }}
-      validateTrigger={["onChange", "onBlur"]}
-      dependencies={[name]}
-      rules={[
-        { required: true, message: "Enter DOB" },
-        { validator: ageValidation },
-      ]}
+      style={{ marginBottom: 0 }}
     >
-      <div style={{
-        display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8,
-      }}>
-        {/* year field */}
+      <div
+        style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8,
+        }}
+      >
+        {/* =========================
+            YEAR
+        ========================= */}
         <Form.Item
           name={[name, "year"]}
-          noStyle
-          rules={[
-            { required: true, message: "Year is required" }
-          ]}
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: "Year is required",
+        //   },
+        // ]}
         >
           <Select
             ref={yearRef}
-            showSearch
             className="custom-input"
-            placeholder="Year" options={yearOptions}
-            onChange={() => {
+            placeholder="Year"
+            options={yearOptions}
+            allowClear
+            showSearch={{
+              filterOption:
+                filterSelectOption,
+              autoClearSearchValue: true,
+
+              onSearch: (value) => {
+                setYearSearch(value);
+              },
+            }}
+            onSelect={() => {
+              setYearSearch("");
+
               requestAnimationFrame(() => {
                 monthRef.current?.focus();
               });
             }}
+            onInputKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                commitYear();
+              }
+            }}
+            onBlur={() => { commitYear() }}
           />
         </Form.Item>
 
-        {/* month field */}
+        {/* =========================
+            MONTH
+        ========================= */}
         <Form.Item
-          noStyle
           name={[name, "month"]}
-          rules={[
-            { required: true, message: "Month is required" }
-          ]}
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: "Month is required",
+        //   },
+        // ]}
         >
           <Select
-            showSearch={{
-              filterOption: filterSelectOption,
-              autoClearSearchValue: true,
-            }}
             ref={monthRef}
             className="custom-input"
             placeholder="Month"
             options={monthOptions}
-            onChange={() => {
+            allowClear
+            showSearch={{
+              filterOption:
+                filterSelectOption,
+              autoClearSearchValue: true,
+
+              onSearch: (value) => {
+                setMonthSearch(value);
+              },
+            }}
+            onSelect={() => {
+              setMonthSearch("");
+
               requestAnimationFrame(() => {
                 dayRef.current?.focus();
               });
             }}
+            onInputKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                commitMonth();
+              }
+            }}
+            onBlur={() => { commitMonth() }}
           />
         </Form.Item>
 
-        {/* day field */}
+        {/* =========================
+            DAY
+        ========================= */}
         <Form.Item
-          noStyle
           name={[name, "day"]}
-          rules={[
-            { required: true, message: "Day is required" }
-          ]}
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: "Day is required",
+        //   },
+        // ]}
         >
           <Select
             ref={dayRef}
-            showSearch
             className="custom-input"
-            placeholder="Day" options={dayOptions}
-          // onChange={() => {
-          //   requestAnimationFrame(() => {
-          //     fatherNameRef.current?.focus();
-          //   });
-          // }}
-          ></Select>
+            placeholder="Day"
+            options={dayOptions}
+            allowClear
+            showSearch={{
+              filterOption:
+                filterSelectOption,
+              autoClearSearchValue: true,
+
+              onSearch: (value) => {
+                setDaySearch(value);
+              },
+            }}
+            onSelect={() => {
+              setDaySearch("");
+            }}
+            onInputKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                commitDay();
+              }
+            }}
+            onBlur={() => { commitDay() }}
+          />
         </Form.Item>
       </div>
     </Form.Item>
@@ -192,5 +349,5 @@ const DobField = (props: DobProps) => {
 };
 
 DobField.displayName = "DobField";
-export default DobField;
 
+export default DobField;

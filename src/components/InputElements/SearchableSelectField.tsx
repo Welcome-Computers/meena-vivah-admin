@@ -88,32 +88,32 @@ const SearchableSelectField = memo((props: IProps) => {
     }
   };
 
-  const handleCreate1 = async (value: string) => {
-    if (!allowCreate || !onCreateOption) return;
+  // const handleCreate1 = async (value: string) => {
+  //   if (!allowCreate || !onCreateOption) return;
 
-    const confirmed = await new Promise<boolean>((resolve) => {
-      Modal.confirm({
-        title: "Create new option?",
-        content: `Do you want to add "${value}" ?`,
-        onOk: () => resolve(true),
-        onCancel: () => resolve(false),
-      });
-    });
+  //   const confirmed = await new Promise<boolean>((resolve) => {
+  //     Modal.confirm({
+  //       title: "Create new option?",
+  //       content: `Do you want to add "${value}" ?`,
+  //       onOk: () => resolve(true),
+  //       onCancel: () => resolve(false),
+  //     });
+  //   });
 
-    if (!confirmed) return;
+  //   if (!confirmed) return;
 
-    const created = await onCreateOption(value);
+  //   const created = await onCreateOption(value);
 
-    if (created) {
-      const current = form.getFieldValue(name);
+  //   if (created) {
+  //     const current = form.getFieldValue(name);
 
-      if (mode === "multiple" || mode === "tags") {
-        form.setFieldValue(name, [...(current || []), created.value]);
-      } else {
-        form.setFieldValue(name, created.value);
-      }
-    }
-  };
+  //     if (mode === "multiple" || mode === "tags") {
+  //       form.setFieldValue(name, [...(current || []), created.value]);
+  //     } else {
+  //       form.setFieldValue(name, created.value);
+  //     }
+  //   }
+  // };
 
   const filteredOptions = options.filter((o) =>
     o.label.toLowerCase().includes(searchText.toLowerCase())

@@ -180,6 +180,7 @@ const BiodataEdiableDrawer = ({
               />
 
               <DobField
+                form={form}
                 name="dob"
                 label="Date of Birth"
               />

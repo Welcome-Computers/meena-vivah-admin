@@ -4,6 +4,7 @@ import AppMessageProvider from "@/lib/utility/AppMessageProvider";
 import { antdTheme } from "@/lib/utility/theme";
 import { store } from "@/redux/store";
 import "@/styles/globals.css";
+import "@/styles/utilities.css";
 import { App as AntdApp, ConfigProvider } from "antd";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";

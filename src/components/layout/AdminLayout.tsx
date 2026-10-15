@@ -1,11 +1,13 @@
 import { useAuth } from "@/hook/useAuth";
+import { useAvailableHeight } from "@/hook/useAvailableHeight";
 import { canAccessRoute } from "@/lib/routePermission";
 import { Breadcrumb, BreadcrumbProps, Button, Layout } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import PrivateSidebar from "../../config/PrivateSidebar";
+import { ProfileFilter } from "../profile/ProfileFilter";
 
 const { Header, Sider, Content } = Layout;
 
@@ -17,12 +19,33 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout(props: AdminLayoutProps) {
-  const { children, title, headerRightSec, breadcrumbItems } = props || {};
+
+  const {
+    children,
+    title,
+    headerRightSec,
+    breadcrumbItems,
+  } = props || {};
+
   const router = useRouter();
+
 
   const { userName, profilePick, sessionError, userRole, status } = useAuth();
   const [checkingPermission, setCheckingPermission] = useState(true);
 
+  const breadRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const availableHeight = useAvailableHeight({
+    subtractRefs: [headerRef, breadRef],
+    debugName: "ADMIN_LAYOUT",
+  });
+
+  // useEffect(() => {
+  //   dispatch(setLayoutHeight(availableHeight))
+  // }, [availableHeight])
+
+  // console.log("Admin Layout ", availableHeight)
   // console.log({ userName, profilePick, userRole, status })
 
   const allowedRoles = ["admin", "profile"];
@@ -172,20 +195,44 @@ export default function AdminLayout(props: AdminLayoutProps) {
 
 
 
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider breakpoint="lg" collapsedWidth="0">
-        <div style={{ color: "white", padding: 16, fontSize: 18 }}>
-          Admin Panel
-        </div>
+      <Sider breakpoint="lg" collapsedWidth="0"
+        style={{
+          height: "100vh",
+          overflow: "auto",
+        }}>
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: "column",
+          height: "100%"
+        }}>
+          <div>
+            <div
+              style={{
+                color: "white",
+                padding: 16,
+                fontSize: 18,
+              }}>
+              {title || "Admin Panel"}
+            </div>
+            <PrivateSidebar />
+          </div>
 
-        <PrivateSidebar />
+          <ProfileFilter
+            callingFrom="adminLayout"
+          />
+        </div>
 
       </Sider>
 
-      <Layout>
+      <Layout >
         {/* Header */}
-        <Header style={{ background: "#fff", paddingLeft: 16 }}>
+        <Header
+          ref={headerRef}
+          style={{ background: "#fff", paddingLeft: 16 }}>
           <h3>Welcome Mr. {userName}</h3>
           <Button
             type="primary"
@@ -201,20 +248,33 @@ export default function AdminLayout(props: AdminLayoutProps) {
         </Header>
 
         {/* Content */}
-        <Content style={{ margin: "0px 0px 0px 0px " }}>
-          <div className="admin_header">
-            <div>
-              {breadcrumbItems?.length ? (
-                <Breadcrumb items={breadcrumbItems} />
-              ) : null}
+        <Content>
+          {breadcrumbItems?.length && headerRightSec ?
+            <div
+              ref={breadRef} className="admin_header">
+              <div>
+                {breadcrumbItems?.length ? (
+                  <Breadcrumb items={breadcrumbItems} />
+                ) : null}
+              </div>
+
+              {headerRightSec ? <div>{headerRightSec}</div> : null}
             </div>
+            : null}
 
-            {headerRightSec ? <div>{headerRightSec}</div> : null}
+          <div
+            className="admin_layout_parent"
+            style={{
+              margin: 0,
+              overflowY: "auto",
+              overflowX: "hidden",
+              minHeight: 0,
+              height: availableHeight
+            }}>
+            {children}
           </div>
-
-          <div style={{ padding: 20, minHeight: 360 }}>{children}</div>
         </Content>
       </Layout>
-    </Layout>
+    </Layout >
   );
 }

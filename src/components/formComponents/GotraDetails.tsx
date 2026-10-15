@@ -1,8 +1,8 @@
 import { appMessage } from "@/lib/utility/message";
 import { useCreateGotraMutation, useGetGotrasQuery } from "@/redux/features/masterGotra";
-import { Form } from "antd";
+import style from "@/styles/profileStyle.module.css";
+import { Col, Form, Row } from "antd";
 import { memo, useState } from "react";
-import style from "../../pages/profiles/style.module.css";
 import { SelectOption } from "../InputElements/SearchableSelectField";
 import { GotraField } from "./Gotra/GotraField";
 import OtheGotraDetails from "./OtherGotraDetails";
@@ -148,25 +148,29 @@ const GotraDetials = memo((props: any) => {
         className={style["form-title"]}>Gotra</p>}
 
       {/*  gotra details fields */}
-      <div>
-        {gotraField.map((item) => (
-          <GotraField
-            key={item.name}
-            name={item.name}
-            label={item.label}
-            isGotraLoading={isGotraLoading}
-            dependencies={item.dependencies}
-            gotraValidationRules={gotraValidationRules}
-            activatedField={activatedField}
-            suggestGotra={suggestGotra}
-            handleSelectedItem={handleSelectedItem}
-            setSuggestGotra={setSuggestGotra}
-            handleInputValue={handleInputValue}
-            setActivatedField={setActivatedField}
-            handleCreateGotra={handleCreateGotra}
-            gottraOptions={gottraOptions}
-          />
-        ))}
+      <div className="gotra_table">
+        <Row gutter={[20, 0]}>
+          {gotraField.map((item) => (
+            <Col key={item.name} span={12}>
+              <GotraField
+                key={item.name}
+                name={item.name}
+                label={item.label}
+                isGotraLoading={isGotraLoading}
+                dependencies={item.dependencies}
+                gotraValidationRules={gotraValidationRules}
+                activatedField={activatedField}
+                suggestGotra={suggestGotra}
+                handleSelectedItem={handleSelectedItem}
+                setSuggestGotra={setSuggestGotra}
+                handleInputValue={handleInputValue}
+                setActivatedField={setActivatedField}
+                handleCreateGotra={handleCreateGotra}
+                gottraOptions={gottraOptions}
+              />
+            </Col>
+          ))}
+        </Row>
       </div>
 
       {/* other gotra details and  button  */}

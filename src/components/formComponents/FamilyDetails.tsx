@@ -1,6 +1,6 @@
+import style from "@/styles/profileStyle.module.css";
 import { Form } from "antd";
 import { memo } from "react";
-import style from "../../pages/profiles/style.module.css";
 import InputField from "../InputElements/InputField";
 
 const FamilyDetails = memo((props: any) => {
@@ -22,7 +22,7 @@ const FamilyDetails = memo((props: any) => {
 
       <InputField
         name="fathersoccupation"
-        label="Mother Occupation"
+        label="Father Occupation"
         disabled={!fatherName}
         rules={[
           { max: 100, message: "Maximum 30 characters" },

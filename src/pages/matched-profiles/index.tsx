@@ -1,8 +1,10 @@
 import PublicLayout from "@/components/layout/PublicLayout";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 import { ProfileFilter } from "@/components/profile/ProfileFilter";
-import { GetMatchedProfilesProps, GetProfilesProps } from "@/lib/modules/profile/profile.types";
+import { GetMatchedProfilesProps } from "@/lib/modules/profile/profile.types";
+import { setProfileFilterValues } from "@/redux/features/profile";
 import { useGetProfilesQuery } from "@/redux/features/profile/srevices";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useSearchParams } from "next/navigation";
 import {
   useCallback,
@@ -14,6 +16,9 @@ import style from "./Profile.module.css";
 
 const MatchedProfilePage = () => {
   const searchParams = useSearchParams();
+  const dispatch = useAppDispatch() as any;
+
+  const { profile_filter_values } = useAppSelector((state: any) => (state.profile));
 
   const initialFilters = useMemo<GetMatchedProfilesProps>(() => {
     const ageValues = searchParams
@@ -38,19 +43,18 @@ const MatchedProfilePage = () => {
 
   const [page, setPage] = useState(1);
 
-  const [filters, setFilters] = useState<GetMatchedProfilesProps>(initialFilters);
-
   /**
    * Sync URL filters when URL changes
    */
   useEffect(() => {
-    setFilters(initialFilters);
-    setPage(1);
-  }, [initialFilters]);
+    dispatch(setProfileFilterValues(initialFilters))
+  }, [dispatch, initialFilters])
+
 
   const { data, isFetching } = useGetProfilesQuery(
     {
-      ...filters,
+      ...profile_filter_values,
+      action: "matches",
       page,
       limit: 10,
     },
@@ -62,19 +66,9 @@ const MatchedProfilePage = () => {
   const userList = data?.data || [];
   const pagination = data?.pagination || {};
 
-  const getProfiles = useCallback(
-    (newPage: number) => {
-      setPage(newPage);
-    },
-    []
-  );
-
-  const filterDataHandler = useCallback(
-    (query: GetProfilesProps) => {
-      setPage(1);
-
-      setFilters({ ...query, action: "matches", });
-    }, []);
+  const getProfiles = useCallback((newPage: number) => {
+    setPage(newPage);
+  }, []);
 
   return (
     <PublicLayout
@@ -86,8 +80,6 @@ const MatchedProfilePage = () => {
         <div className={style.gridItem}>
           <ProfileFilter
             callingFrom="profilePage"
-            filterDataHandler={filterDataHandler}
-            initialFilters={initialFilters}
           />
 
           <ProfileContainer

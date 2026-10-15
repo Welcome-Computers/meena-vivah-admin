@@ -2,6 +2,7 @@
 import {
   Card,
   Col,
+  Row,
   Space
 } from "antd";
 
@@ -25,7 +26,7 @@ const TopStatics = (props: iProps) => {
   const { status } = props || {}
 
   return (
-    <>
+    <Row gutter={[16, 16]}>
       <Col span={6}>
         <Card>
           <Space>
@@ -73,7 +74,7 @@ const TopStatics = (props: iProps) => {
           </Space>
         </Card>
       </Col>
-    </>
+    </Row>
   )
 }
 

@@ -37,6 +37,10 @@ export const antdTheme: ThemeConfig = {
   },
 
   components: {
+    Form: {
+      itemMarginBottom: 12,
+    },
+
     Button: {
       borderRadius: 8,
       controlHeight: 42,

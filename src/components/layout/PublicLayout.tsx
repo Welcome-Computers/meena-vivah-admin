@@ -8,6 +8,7 @@ const { Content } = Layout;
 
 export default function PublicLayout({ children, headerSection }: any) {
   const headerRef = useRef<HTMLElement | null>(null);
+  const footerRef = useRef<HTMLDivElement | null>(null);
 
   const [headerHeight, setHeaderHeight] = useState(0);
   const [contentHeight, setContentHeight] = useState(0);
@@ -16,9 +17,10 @@ export default function PublicLayout({ children, headerSection }: any) {
     const updateSizes = () => {
       const fullHeight = window.innerHeight;
       const hHeight = headerRef.current?.offsetHeight || 0;
+      const fHeight = footerRef.current?.offsetHeight || 0;
 
       setHeaderHeight(hHeight);
-      setContentHeight(fullHeight - hHeight);
+      setContentHeight(fullHeight - hHeight - fHeight);
     };
 
     updateSizes();
@@ -43,7 +45,10 @@ export default function PublicLayout({ children, headerSection }: any) {
       >
         {children}
       </Content>
-      <CopyrightSection />
+
+      <div ref={footerRef}>
+        <CopyrightSection />
+      </div>
     </Layout>
   );
 }

@@ -29,4 +29,4 @@ export const AuthApi = createApi({
   }),
 });
 
-export const { useAdminLoginMutation,useGetMeQuery, useAdminLogoutMutation } = AuthApi;
+export const { useAdminLoginMutation, useGetMeQuery, useAdminLogoutMutation } = AuthApi;

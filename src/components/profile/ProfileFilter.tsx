@@ -11,10 +11,12 @@ import {
 } from "antd";
 
 
-
-import { GetGotraProps } from "@/lib/modules/master-gotra/master-gotra.types";
+import { GetMatchedProfilesProps, GetProfilesProps } from "@/lib/modules/profile/profile.types";
 import { useGetGotrasQuery } from "@/redux/features/masterGotra";
 import { useGetOccupationsQuery } from "@/redux/features/masterOccupation";
+import { setProfileFilterValues } from "@/redux/features/profile";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import SearchableSelectField from "../InputElements/SearchableSelectField";
 import AgeRangeField from "./AgeRangeField";
@@ -22,18 +24,21 @@ import style from "./ProfileFilter.module.css";
 
 
 interface iProps {
-  filterDataHandler: (query: GetGotraProps) => void;
-  callingFrom: "profilePage" | "homePage";
+  filterDataHandler?: (query: GetProfilesProps) => void;
+  callingFrom: "profilePage" | "homePage" | "adminLayout";
   initialFilters?: any
 }
 
 export const ProfileFilter = (props: iProps) => {
-  const { initialFilters, filterDataHandler, callingFrom } = props || {};
+  const { callingFrom } = props || {};
+  const { push } = useRouter()
+
+  const dispatch = useAppDispatch() as any;
 
   const [form] = Form.useForm();
-  const fromData = Form.useWatch(null, form)
+  // const fromData = Form.useWatch(null, form)
 
-  const { exclude_gotra, req_occupation } = fromData || {};
+  const { profile_filter_values } = useAppSelector((state: any) => (state.profile));
 
   const { data, isFetching: isGotraLoading } = useGetGotrasQuery({});
   const { data: occupatonList, isFetching: isOccupationLoading } = useGetOccupationsQuery({});
@@ -53,7 +58,7 @@ export const ProfileFilter = (props: iProps) => {
   /**
    * HANDLE SEARCH
    */
-  const handleSearch = (filters: any) => {
+  const handleSearch = (filters: GetMatchedProfilesProps) => {
     const query = Object.fromEntries(
       Object.entries(filters).filter(
         ([_, value]) =>
@@ -64,13 +69,16 @@ export const ProfileFilter = (props: iProps) => {
 
     // console.log(query)
     // // return;
+    dispatch(setProfileFilterValues(query))
 
-    filterDataHandler(query)
+    if (callingFrom === "homePage") {
+      push("/matched-profiles")
+    }
   };
 
   useEffect(() => {
-    form.setFieldsValue(initialFilters)
-  }, [form, initialFilters])
+    form.setFieldsValue(profile_filter_values)
+  }, [form, profile_filter_values])
 
   return (
     <div className={style.profileFilterContainer}>
